@@ -39,9 +39,9 @@ b. Start the server by running:
    node index.js
 
    or you can use nodemon for auto resfresh
-   npm i nodemon
+   `npm i nodemon`
    and Start the server by running:
-   nodemon index.js
+  `nodemon index.js`
 
 The server should now be running on the port http://localhost:3001
 
