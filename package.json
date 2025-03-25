@@ -1,0 +1,25 @@
+{
+  "name": "e-sf10-system-backend",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/QuivirCutanda/e-SF10-System-backEnd#readme",
+  "bugs": {
+    "url": "https://github.com/QuivirCutanda/e-SF10-System-backEnd/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QuivirCutanda/e-SF10-System-backEnd.git"
+  },
+  "license": "ISC",
+  "author": "Quivir Cutanda",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
