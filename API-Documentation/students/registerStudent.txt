@@ -1,0 +1,45 @@
+--------------------------------------------------
+## register Student Information
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        POST
+    -EndPoint
+        http://localhost:3001/esf10/students/register
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+{
+  "lrn": "123456789012",
+  "first_name": "Quivir",
+  "middle_name": "Añora",
+  "last_name": "Cutanda",
+  "extension_name": "",
+  "date_of_birth": "2002-05-19",
+  "gender": "Male",
+  "street": "123 Main St",
+  "city": "Manila",
+  "province": "Metro Manila",
+  "zip_code": "1000",
+  "guardian_name": "Unknown",
+  "contact_number": "09171234567"
+}
+
+
+--------------------------------------------------
+Response    (201 created)
+--------------------------------------------------
+
+
+{
+    "message": "Student successfully registered!",
+    "studentId": 8
+}

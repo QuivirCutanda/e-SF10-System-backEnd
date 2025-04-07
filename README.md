@@ -28,12 +28,20 @@ cd e-SF10-System-backEnd
 --------------------------------------------------
 ## 3. Environment Setup
 --------------------------------------------------
-### a. In the root directory of your project, create a file named `.env`.
 
-### b. Add the following lines to your `.env` file:
+### a. Import e-SF10-database.sql file  manualy in your database (*phpMyAdmin, etc.).
+
+### b. In the root directory of your project, create a file named `.env`.
+
+### c. Add the following lines to your `.env` base on your database info:
 ```
+DB_HOST=enter your host name
+DB_USER=root
+DB_PASSWORD="" add password if your database have password
+DB_NAME=e_sf10_db
+JWT_SECRET=bisagonsa rani hehhe
 PORT=3001
-API_KEY=e0ba448b-879b-4baa-baa7-afbcce605b0f
+
 ```
 
 --------------------------------------------------
@@ -49,21 +57,17 @@ node index.js
 or you can use `nodemon` for automatic refresh:
 ```
 npm i nodemon
-nodemon index.js
+nodemon sever.js
 ```
 
-The server should now be running on: [http://localhost:3001](http://localhost:3001)
+The server should now be running on: http://localhost:3001/esf10/
 
 --------------------------------------------------
 ## 5. Testing the API
 --------------------------------------------------
 You can test the API endpoints using a tool like **Postman** or **cURL**.
 
-### Public Route:
-- **URL:** `GET http://localhost:3001/`
-- **Auth Type:** API KEY
-- **Key:** `x-api-key`
-- **Value:** `e0ba448b-879b-4baa-baa7-afbcce605b0f`
+#postman
 
 --------------------------------------------------
 ## Additional Resources

@@ -1,0 +1,33 @@
+--------------------------------------------------
+## Login
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+        http://localhost:3001/esf10/login
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+{
+  "email": "quivircutandaanora.com",
+  "password": "nopassword"
+}
+
+--------------------------------------------------
+Response    (200 OK)
+--------------------------------------------------
+
+{
+    "message": "Login successful",
+    "token": "your generated token here"
+}
+

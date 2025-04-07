@@ -1,13 +1,24 @@
-const { API_KEY } = require("../config/env");
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+dotenv.config();
 
-const validateApiKey = (req, res, next) => {
-    const userApiKey = req.header("x-api-key");
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; 
 
-    if (!userApiKey || userApiKey !== API_KEY) {
-        return res.status(401).json({ message: "Unauthorized: Invalid API Key" });
-    }
+  if (!token) {
+    return res.status(401).json({ message: 'Access denied. No token provided.' });
+  }
 
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('Decoded token:', decoded); 
+    req.user = decoded;
     next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
 };
 
-module.exports = validateApiKey;
+
+module.exports = authMiddleware;
