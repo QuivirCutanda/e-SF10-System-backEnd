@@ -4,6 +4,6 @@ const { addStudent } = require('../controllers/student/student.controller');
 const { checkPermission } = require('../middleware/roleBaseAccessControl');
 const authenticate = require('../middleware/authMiddleware');
 
-router.post('/register', authenticate, checkPermission('admin'), addStudent);
+router.post('/register', authenticate, addStudent);
 
 module.exports = router;

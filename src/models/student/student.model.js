@@ -1,5 +1,5 @@
-const db = require('../config/db'); 
-const { logActivity } = require('../utils/activityLog');
+const db = require('../../config/db'); 
+const { logActivity } = require('../../utils/activityLog');
 
 const createStudent = async (data, userId) => {
   const connection = await db.getConnection(); 
