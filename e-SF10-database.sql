@@ -137,3 +137,10 @@ CREATE TABLE user_roles (
 -- Indexing for Performance
 CREATE INDEX idx_students_lrn ON students(lrn);
 CREATE INDEX idx_users_email ON users(email);
+
+-- Data Insertion
+INSERT IGNORE INTO roles (role_name) VALUES 
+('admin'), 
+('teacher'), 
+('student'), 
+('registrar');
