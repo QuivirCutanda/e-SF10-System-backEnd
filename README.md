@@ -43,7 +43,10 @@ JWT_SECRET=bisagonsa rani hehhe
 PORT=3001
 
 ```
-
+### d. Install nodemodule:
+```
+npm install
+```
 --------------------------------------------------
 ## 4. Running the Application
 --------------------------------------------------
