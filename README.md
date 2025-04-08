@@ -54,13 +54,13 @@ npm install
 
 ### b. Start the server by running:
 ```
-node sever.js
+node server.js
 ```
 
 or you can use `nodemon` for automatic refresh:
 ```
 npm i nodemon
-nodemon sever.js
+nodemon server.js
 ```
 
 The server should now be running on: http://localhost:3001/esf10/
