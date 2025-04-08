@@ -51,7 +51,7 @@ PORT=3001
 
 ### b. Start the server by running:
 ```
-node index.js
+node sever.js
 ```
 
 or you can use `nodemon` for automatic refresh:
