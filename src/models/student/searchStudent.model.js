@@ -17,6 +17,35 @@ const searchStudents = async (query) => {
     return rows;
 };
 
+const getStudentByLRN = async (lrn) => {
+    const sql = `
+        SELECT student_id, lrn, first_name, middle_name, last_name, date_of_birth, gender, street, city, province, zip_code, guardian_name, contact_number
+        FROM students
+        WHERE lrn = ?
+    `;
+    
+    const [rows] = await db.query(sql, [lrn]);
+
+    return rows[0]; 
+};
+
+const getSchoolRecordsByLRN = async (lrn) => {
+    const sql = `
+        SELECT start_year, end_year, grade_level, section
+        FROM school_records
+        WHERE student_id = (
+            SELECT student_id FROM students WHERE lrn = ?
+        )
+    `;
+    
+    const [rows] = await db.query(sql, [lrn]);
+
+    return rows; 
+};
+
+
 module.exports = {
     searchStudents,
+    getStudentByLRN,
+    getSchoolRecordsByLRN,
 };
