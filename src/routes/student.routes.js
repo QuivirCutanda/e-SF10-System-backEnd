@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { addStudent } = require('../controllers/student/student.controller');
 const { checkPermission } = require('../middleware/roleBaseAccessControl');
 const authenticate = require('../middleware/authMiddleware');
+const { addStudent } = require('../controllers/student/student.controller');
+const { searchStudents } = require('../controllers/student/searchStudent.controller');
 
 router.post('/register', authenticate, addStudent);
+router.get('/search', authenticate, searchStudents);
 
 module.exports = router;
