@@ -144,3 +144,42 @@ INSERT IGNORE INTO roles (role_name) VALUES
 ('teacher'), 
 ('student'), 
 ('registrar');
+
+-- Insert permissions 
+INSERT INTO permissions (permission_name) VALUES 
+('register_student'),
+('search_student'),
+('view_student_info'),
+('view_ecards'),
+('upload_documents'),
+('download_documents');
+
+-- Assign all permissions to admin role
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT 
+    (SELECT role_id FROM roles WHERE role_name = 'admin'),
+    permission_id
+FROM permissions;
+
+-- Assign permissions to registrar role
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT 
+    (SELECT role_id FROM roles WHERE role_name = 'registrar'),
+    permission_id
+FROM permissions;
+
+-- Assign limited permissions to teacher role
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT 
+    (SELECT role_id FROM roles WHERE role_name = 'teacher'),
+    permission_id
+FROM permissions 
+WHERE permission_name IN ('search_student', 'view_student_info', 'view_ecards', 'download_documents');
+
+-- Assign minimal permissions to student role
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT 
+    (SELECT role_id FROM roles WHERE role_name = 'student'),
+    permission_id
+FROM permissions 
+WHERE permission_name IN ('view_student_info', 'view_ecards');
