@@ -1,0 +1,49 @@
+--------------------------------------------------
+## Upload Scanned Document
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        POST
+    -EndPoint
+        http://localhost:3001/esf10/students/upload-sf10/<studentId>
+
+    -Body:form-data
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+required form
+key           type             Value
+sf10          file            examplefile.pdf(.png,jpg,docs)
+start_year    text            2024
+end_year      text            2025
+section       text            emerald
+grade_level   text            12
+
+--------------------------------------------------
+Response    (201 created)
+--------------------------------------------------
+
+
+{
+    "success": true,
+    "message": "SF10 file uploaded successfully",
+    "studentId": "1",
+    "document": {
+        "filename": "sf10-1-1746351156825.pdf",
+        "path": "C:\\D_Drive\\e-SF10-System\\e-SF10-System-backEnd\\data\\documents\\sf10\\2024-2025\\emerald\\sf10-1-1746351156825.pdf",
+        "schoolYear": "2024-2025",
+        "gradeLevel": 12,
+        "section": "emerald"
+    },
+    "metadata": {
+        "uploadedBy": 1,
+        "uploadedAt": "2025-05-04T09:32:36.858Z",
+        "fileSize": 333830
+    }
+}

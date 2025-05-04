@@ -11,7 +11,7 @@
     -Method
         GET
     -EndPoint
-        hhttp://localhost:3001/esf10/students/123456789012/details
+        http://localhost:3001/esf10/students/123456789012/details
 
 
 --------------------------------------------------
