@@ -1,0 +1,55 @@
+# Prerequisites for all endpoints
+  - Authorization
+    - Headers:
+      Key: Authorization
+      Value: Bearer your_token_here
+  - All endpoints require 'manage_users' permission
+
+--------------------------------------------------
+## 1. Get All Users
+--------------------------------------------------
+- Method: GET
+- Endpoint: http://localhost:3001/esf10/users
+
+Response (200 OK):
+[
+  {
+    "user_id": 1,
+    "first_name": "admin",
+    "middle_name": "admin",
+    "last_name": "admin",
+    "email": "admin@example.com",
+    "created_at": "2023-05-01T10:00:00.000Z",
+    "roles": "admin"
+  },
+  {
+    "user_id": 2,
+    "first_name": "John",
+    "middle_name": null,
+    "last_name": "Doe",
+    "email": "john@example.com",
+    "created_at": "2023-05-02T11:30:00.000Z",
+    "roles": "teacher"
+  }
+]
+
+## 2. Get User by ID
+--------------------------------------------------
+- Method: GET
+- Endpoint: http://localhost:3001/esf10/users/1
+
+Response (200 OK):
+{
+  "user_id": 1,
+  "first_name": "admin",
+  "middle_name": "admin",
+  "last_name": "admin",
+  "email": "admin@example.com",
+  "created_at": "2023-05-01T10:00:00.000Z",
+  "roles": "admin"
+}
+
+Response (404 Not Found):
+{
+  "message": "User not found"
+}

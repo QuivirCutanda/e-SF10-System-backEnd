@@ -154,6 +154,21 @@ INSERT INTO permissions (permission_name) VALUES
 ('upload_documents'),
 ('download_documents');
 
+--Add user management permission
+INSERT INTO permissions (permission_name) VALUES('manage_users');
+
+--Assign this permission to admin role
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT
+    (SELECT role_id FROM roles WHERE role_name = 'admin'),
+    (SELECT permission_id FROM permissions WHERE permission_name = 'manage_users');
+
+--Also assign to registrar role if appropriate
+-- INSERT INTO role_permissions (role_id, permission_id)
+-- SELECT 
+--     (SELECT role_id FROM roles WHERE role_name = 'registrar'),
+--     (SELECT permission_id FROM permissions WHERE permission_name = 'manage_users');
+
 -- Assign all permissions to admin role
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT 
@@ -183,3 +198,4 @@ SELECT
     permission_id
 FROM permissions 
 WHERE permission_name IN ('view_student_info', 'view_ecards');
+

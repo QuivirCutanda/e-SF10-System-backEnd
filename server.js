@@ -4,6 +4,7 @@
   const db = require("./src/config/db");
   const authRoutes = require("./src/routes/authRoutes");
   const studentRoutes = require("./src/routes/student.routes");
+  const userManagementRoutes = require("./src/routes/userManagement.route")
   const HomePage = require("./src/routes/homepage");
   const app = express();
 
@@ -12,6 +13,7 @@
   app.use("/esf10", HomePage);
   app.use("/esf10", authRoutes);
   app.use('/esf10/students', studentRoutes );
+  app.use("/esf10/users", userManagementRoutes);
 
   app.use((err, req, res, next) => {
     console.error(err.stack);
