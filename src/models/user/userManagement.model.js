@@ -68,4 +68,24 @@ const updateUser = async (userId, userData) =>{
     }
 }
 
-module.exports = {getAllUsers, getUserById, updateUser}
+const deleteUser =  async (userId) => {
+    const connection = await db.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        await connection.execute('DELETE FROM user_roles WHERE user_id = ?', [userId]);
+
+        const [result] = await connection.execute('DELETE FROM users WHERE user_id = ?', [userId]);
+
+        await connection.commit();
+        return result.affectedRows > 0;
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    }finally {
+        connection.release();
+
+    }
+}
+
+module.exports = {getAllUsers, getUserById, updateUser, deleteUser};

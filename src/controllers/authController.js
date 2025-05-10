@@ -35,7 +35,6 @@ const registerAdmin = async (req, res) => {
     const token = generateToken({
       user_id: result.insertId,
       email,
-      password,
     });
 
     res.status(201).json({
