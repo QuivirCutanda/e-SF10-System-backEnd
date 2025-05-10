@@ -44,4 +44,28 @@ const getUserById = async (userId) => {
  
 };
 
-module.exports = {getAllUsers, getUserById}
+const updateUser = async (userId, userData) =>{
+    const connection =  await db.getConnection();
+
+    try {
+        await connection.beginTransaction();
+
+        const {first_name, middle_name, last_name, email} = userData;
+
+        const [result] = await connection.execute(`
+            UPDATE users
+            SET first_name = ?, middle_name = ?, last_name = ?, email = ?
+            WHERE user_id = ?
+            `,[first_name,middle_name || null, last_name, email,userId]);
+
+            await connection.commit();
+            return result.affectedRows > 0;
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    }finally{
+        connection.release();
+    }
+}
+
+module.exports = {getAllUsers, getUserById, updateUser}

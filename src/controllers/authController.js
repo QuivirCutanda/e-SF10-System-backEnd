@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { createUser, assignRoleToUser, getUserByEmail } = require('../models/user');
+const { createUser, assignRoleToUser, getUserByEmail } = require('../models/User');
 const { generateToken } = require('../utils/generateToken');
 
 // Register admin
