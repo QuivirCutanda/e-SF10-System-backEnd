@@ -88,4 +88,41 @@ const deleteUser =  async (userId) => {
     }
 }
 
-module.exports = {getAllUsers, getUserById, updateUser, deleteUser};
+const changeUserRole = async (userId, roles) => {
+    const connection =  await db.getConnection();
+
+    try {
+        await connection.beginTransaction();
+
+        await connection.execute('DELETE FROM user_roles WHERE user_id= ?', [userId]);
+
+        for(const roleName of roles){
+            const [roleResult] = await connection.execute(
+                'SELECT role_id FROM roles WHERE role_name = ?',
+                [roleName]
+            );
+
+            if (roleResult.length == 0) {
+                throw new Error(`Role "${roleName}" does not exist`);
+            }
+
+            const roleId = roleResult[0].role_id;
+
+            await connection.execute(
+                `INSERT INTO user_roles (user_id, role_id) VALUES (?,?)`,
+                [userId, roleId]
+            )
+        }
+
+        await connection.commit();
+
+        return true;
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    }finally {
+        connection.release();
+    }
+}
+
+module.exports = {getAllUsers, getUserById, updateUser, deleteUser,changeUserRole};
