@@ -6,7 +6,7 @@
   - All endpoints require 'manage_users' permission
 
 --------------------------------------------------
-## 1. Get All Users
+## 1. View All Users
 --------------------------------------------------
 - Method: GET
 - Endpoint: http://localhost:3001/esf10/users
@@ -97,4 +97,76 @@ Response (400 Bad Request):
 Response (404 Not Found):
 {
   "message": "User not found"
+}
+
+--------------------------------------------------
+## 5. Change User Role
+--------------------------------------------------
+- Method: PUT
+- Endpoint: http://localhost:3001/esf10/users/2/roles
+- Body (raw JSON):
+{
+  "roles": ["teacher", "registrar"]
+}
+
+Response (200 OK):
+{
+  "message": "User roles updated successfully"
+}
+
+Response (400 Bad Request):
+{
+  "message": "Roles must be a non-empty array"
+}
+or
+{
+  "errors": [
+    {
+      "type": "field",
+      "value": ["invalid_role"],
+      "msg": "Contains invalid role(s). Valid roles are: admin, teacher, student, registrar",
+      "path": "roles",
+      "location": "body"
+    }
+  ]
+}
+
+Response (404 Not Found):
+{
+  "message": "User not found"
+}
+
+--------------------------------------------------
+## 6. Search Users
+--------------------------------------------------
+- Method: GET
+- Endpoint: http://localhost:3001/esf10/users/search?query=your_search_term
+- Query Parameters:
+  query: Search term to find users by name or email
+
+Response (200 OK):
+[
+  {
+    "user_id": 1,
+    "first_name": "admin",
+    "middle_name": "admin",
+    "last_name": "admin",
+    "email": "admin@example.com",
+    "created_at": "2023-05-01T10:00:00.000Z",
+    "roles": "admin"
+  },
+  {
+    "user_id": 3,
+    "first_name": "Adam",
+    "middle_name": null,
+    "last_name": "Smith",
+    "email": "adamsmith@example.com",
+    "created_at": "2023-05-03T14:20:00.000Z",
+    "roles": "teacher"
+  }
+]
+
+Response (400 Bad Request):
+{
+  "message": "Search query is required"
 }

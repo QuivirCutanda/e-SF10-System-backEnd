@@ -2,9 +2,9 @@ const userManagementModel = require("../models/user/userManagement.model");
 const bcrypt =  require('bcryptjs');
 const {logActivity} = require('../utils/activityLog');
 
-const getAllUsers =  async (req, res) =>{
+const viewAllUsers =  async (req, res) =>{
     try {
-        const users = await userManagementModel.getAllUsers();
+        const users = await userManagementModel.viewAllUsers();
         res.status(200).json(users);
     } catch (error) {
         console.error('Error fetching users: ', error);
@@ -93,7 +93,7 @@ const changeUserRole = async (req,res) => {
             return res.status(400).json({message: "Roles must be a non-empty array"});
               }
 
-        const existingUser =  await userManagementModel.getAllUsers(userId);
+        const existingUser =  await userManagementModel.getUserById(userId);
         if (!existingUser) {
             return res.status(404).json({message: "User not found"})
         }
@@ -112,4 +112,24 @@ const changeUserRole = async (req,res) => {
     }
 }
 
-module.exports = {getAllUsers, getUserById, updateUser, deleteUser,changeUserRole};
+const searchUsers =  async (req,res) => {
+    try {
+        const {query} = req.query;
+
+        if (!query) {
+            return res.status(400).json({message : "Search query is required"})
+        }
+
+        const users =  await userManagementModel.searchUsers(query);
+
+        await logActivity(req.user.user_id, `Search for users with query: ${query}`);
+
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error searching users:', error);
+        res.status(500).json({message : 'Failde to search users', error:error.message});
+        
+    }
+}
+
+module.exports = {viewAllUsers, getUserById, updateUser, deleteUser,changeUserRole, searchUsers};
