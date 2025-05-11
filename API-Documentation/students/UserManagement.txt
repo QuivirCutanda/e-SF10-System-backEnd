@@ -15,18 +15,18 @@ Response (200 OK):
 [
   {
     "user_id": 1,
-    "first_name": "admin",
+    "first_name": "vincent",
     "middle_name": "admin",
-    "last_name": "admin",
+    "last_name": "autentico",
     "email": "admin@example.com",
     "created_at": "2023-05-01T10:00:00.000Z",
     "roles": "admin"
   },
   {
     "user_id": 2,
-    "first_name": "John",
+    "first_name": "Vincent",
     "middle_name": null,
-    "last_name": "Doe",
+    "last_name": "Autentico",
     "email": "john@example.com",
     "created_at": "2023-05-02T11:30:00.000Z",
     "roles": "teacher"
@@ -62,9 +62,9 @@ Response (404 Not Found):
 - Endpoint: http://localhost:3001/esf10/users/1
 - Body (raw JSON):
 {
-  "first_name": "Admin",
+  "first_name": "vincent",
   "middle_name": "Super",
-  "last_name": "User",
+  "last_name": "Autentico",
   "email": "admin@example.com"
 }
 
@@ -148,10 +148,10 @@ Response (200 OK):
 [
   {
     "user_id": 1,
-    "first_name": "admin",
+    "first_name": "vincent",
     "middle_name": "admin",
-    "last_name": "admin",
-    "email": "admin@example.com",
+    "last_name": "Sanchez",
+    "email": "adminvincent@gmail.com",
     "created_at": "2023-05-01T10:00:00.000Z",
     "roles": "admin"
   },
