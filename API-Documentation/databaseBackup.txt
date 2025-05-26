@@ -1,0 +1,64 @@
+## Database Backup Management
+--------------------------------------------------
+
+#Prerequisites
+  - Authorization
+    - Headers:
+      Key: Authorization
+      Value: Bearer your_token_here
+  - All endpoints require 'manage_backups' permission
+
+--------------------------------------------------
+## 1. Create Database Backup
+--------------------------------------------------
+- Method: POST
+- Endpoint: http://localhost:3001/esf10/backups/create
+
+Response (201 Created):
+{
+  "message": "Database backup created successfully",
+  "backup": {
+    "success": true,
+    "filename": "backup-2025-05-25T12-45-30-000Z.sql",
+    "path": "C:\\Users\\User\\Desktop\\e-SF10-System-backEnd\\backups\\backup-2025-05-25T12-45-30-000Z.sql",
+    "backupId": 1,
+    "timestamp": "2025-05-25T12:45:30.000Z"
+  }
+}
+
+Response (500 Internal Server Error):
+{
+  "message": "Failed to create database backup",
+  "error": "Error message details"
+}
+
+--------------------------------------------------
+## 2. List All Backups
+--------------------------------------------------
+- Method: GET
+- Endpoint: http://localhost:3001/esf10/backups
+
+Response (200 OK):
+[
+  {
+    "backup_id": 1,
+    "backup_filename": "backup-2025-05-25T12-45-30-000Z.sql",
+    "backup_date": "2025-05-25T12:45:30.000Z",
+    "user_id": 1,
+    "user_name": "vincent admin"
+  },
+  {
+    "backup_id": 2,
+    "backup_filename": "backup-2025-05-26T09-15-22-000Z.sql",
+    "backup_date": "2025-05-26T09:15:22.000Z",
+    "user_id": 1,
+    "user_name": "admin admin"
+  }
+]
+
+Response (500 Internal Server Error):
+{
+  "message": "Failed to retrieve backups",
+  "error": "Error message details"
+}
+
