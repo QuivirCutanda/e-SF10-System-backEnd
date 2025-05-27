@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../config/db');
 const { logActivity} = require('./activityLog');
+const { timeStamp } = require('console');
 
 
 //Create the backup directory kung  wala pa
@@ -99,7 +100,69 @@ const getBackups = async () => {
     }
 }
 
+const restoreBackup = async (backupId, userId) => {
+    const connection = await db.getConnection();
+    try {
+        const [backups] =  await connection.execute(
+            'SELECT backup_filename FROM backups WHERE backup_id = ?',
+            [backupId]
+        );
+
+        if(backups.length === 0){
+            throw new Error('Backup not found');
+        }
+
+        const filename = backups[0].backup_filename;
+        const filePath = path.join(backupDir, filename);
+
+        if (!fs.existsSync(filePath)) {
+            throw new Error('Backup file not found on server');
+            
+        }
+
+        const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME} = process.env;
+         const passwordArg = DB_PASSWORD ? `-p${DB_PASSWORD}` : '';
+
+         const mysqlPath = process.env.MYSQL_PATH || 'mysql';
+
+         const cmd = `"${mysqlPath}" -h ${DB_HOST} -u ${DB_USER} ${passwordArg} ${DB_NAME} < "${filePath}"`;
+
+         return new Promise((resolve, reject) => {
+            exec(cmd, async(error, stdout, stderr) => {
+                if (error) {
+                    console.error("Restore error: ",error);
+                    return reject(error);
+                }
+
+                if(stderr && !stderr.includes('Warning')){
+                    console.error('Restore stderr: ', stderr);
+                    return reject(new Error(stderr));
+                    
+                }
+
+                try {
+                    await logActivity(userId, `Restored database from backup: ${filename}`);
+
+                    resolve({
+                        success: true,
+                        message: 'Database restored successfully',
+                        filename,
+                        timeStamp: new Date().toISOString()
+                    })
+                } catch (logError) {
+                    console.error('Failed to log restore activity: ', logError);
+                    reject(logError);
+                    
+                }
+            })
+         })
+    } finally {
+        connection.release();
+    }
+}
+
 module.exports = {
     createBackup,
-    getBackups
+    getBackups,
+    restoreBackup
 }
