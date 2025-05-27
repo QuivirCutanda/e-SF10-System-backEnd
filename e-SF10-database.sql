@@ -157,6 +157,15 @@ INSERT INTO permissions (permission_name) VALUES
 --Add user management permission
 INSERT INTO permissions (permission_name) VALUES('manage_users');
 
+--Add the manage_backups permission
+INSERT INTO permissions (permission_name) VALUES ('manage_backups');
+
+--Assign this permission to admin role
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT 
+    (SELECT role_id FROM roles WHERE role_name = 'admin'),
+    (SELECT permission_id FROM permissions WHERE permission_name = 'manage_backups');
+
 --Assign this permission to admin role
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT

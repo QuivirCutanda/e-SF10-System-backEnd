@@ -44,3 +44,6 @@ yarn.lock
 
 # Testing output directories (e.g., for Mocha or Jest)
 /coverage
+
+# Database backup files
+/backups/*.sql
