@@ -1,0 +1,55 @@
+--------------------------------------------------
+## Upload Scanned Document
+--------------------------------------------------
+
+#Prerequisites
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        PUT
+    -EndPoint
+        http://localhost:3001/esf10/students/<student-lrn>/update
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+{
+    "first_name": "John",
+    "middle_name": "Doe",
+    "last_name": "Smith",
+    "extension_name": "Jr",
+    "date_of_birth": "2005-01-01",
+    "gender": "Male",
+    "street": "123 Main St",
+    "city": "Manila",
+    "province": "Metro Manila",
+    "zip_code": "1000",
+    "guardian_name": "Jane Smith",
+    "contact_number": "09123456789"
+}
+
+--------------------------------------------------
+Response    (200 OK)
+--------------------------------------------------
+
+{
+    "message": "Student updated successfully",
+    "student": {
+        "student_id": 2,
+        "lrn": "221234569012",
+        "first_name": "Johny",
+        "middle_name": "Doe",
+        "last_name": "Smith",
+        "extension_name": "Jr",
+        "date_of_birth": "2004-12-31T16:00:00.000Z",
+        "gender": "Male",
+        "street": "123 Main St",
+        "city": "Manila",
+        "province": "Metro Manila",
+        "zip_code": "1000",
+        "guardian_name": "Jane Smith",
+        "contact_number": "09123456789"
+    }
+}
