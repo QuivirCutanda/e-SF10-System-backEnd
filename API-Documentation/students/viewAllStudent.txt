@@ -1,0 +1,36 @@
+--------------------------------------------------
+## View all Student
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/esf10/students/all
+
+
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "students": [
+        {
+            "student_id": 1,
+            "lrn": "123456789012",
+            "first_name": "Maria",
+            "middle_name": "S.",
+            "last_name": "Santos",
+            "date_of_birth": "2005-08-14T16:00:00.000Z",
+            "gender": "Female"
+        }
+    ],
+    "total": 1,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+}
