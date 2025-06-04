@@ -70,4 +70,47 @@ const getUserByEmail = async (email) => {
   }
 };
 
-module.exports = { createUser, assignRoleToUser, getUserByEmail };
+const getPermissionsByRole = async (role) => {
+  const connection = await db.getConnection();
+  try {
+    const [result] = await connection.execute(
+      `SELECT p.permission_name
+       FROM permissions p
+       JOIN role_permissions rp ON p.permission_id = rp.permission_id
+       JOIN roles r ON rp.role_id = r.role_id
+       WHERE r.role_name = ?`,
+      [role]
+    );
+
+    return result;
+  } catch (err) {
+    throw err;
+  } finally {
+    connection.release();
+  }
+};
+
+const getRoleByUserId = async (userId) => {
+  const connection = await db.getConnection();
+  try {
+    const [result] = await connection.execute(
+      `SELECT r.role_name
+       FROM roles r
+       JOIN user_roles ur ON r.role_id = ur.role_id
+       WHERE ur.user_id = ?`,
+      [userId]
+    );
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result[0];
+  } catch (err) {
+    throw err;
+  } finally {
+    connection.release();
+  }
+};
+
+module.exports = { createUser, assignRoleToUser, getUserByEmail, getPermissionsByRole, getRoleByUserId };

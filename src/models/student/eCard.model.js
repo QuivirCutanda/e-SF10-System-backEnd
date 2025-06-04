@@ -1,16 +1,17 @@
-const db = require("../../config/db");
+const db = require('../../config/db');
 
-const getECardsByStudentId = async (studentId) => {
-  
-  const sql = `
-       SELECT record_id, student_id, grade_level, section, start_year, end_year, sf10_document_path
-FROM school_records
-WHERE student_id = ?
+const getEcardsByStudentLRN = async (lrn) => {
+    const sql = `
+        SELECT sr.record_id, sr.student_id, sr.start_year, sr.end_year, sr.grade_level, 
+               sr.section, sr.sf10_document_path, sr.uploaded_at
+        FROM school_records sr
+        JOIN students s ON sr.student_id = s.student_id
+        WHERE s.lrn = ? AND sr.is_deleted = FALSE
     `;
-
-  const [rows] = await db.query(sql, [studentId]);
-
-  return rows; 
+    
+    const [rows] = await db.query(sql, [lrn]);
+    
+    return rows;
 };
 
-module.exports = { getECardsByStudentId };
+module.exports = { getEcardsByStudentLRN };
