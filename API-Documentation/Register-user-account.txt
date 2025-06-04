@@ -1,5 +1,5 @@
 --------------------------------------------------
-## Login
+## register User account
 --------------------------------------------------
 
 #Prerequisites
@@ -11,24 +11,27 @@
     -Method
         POST
     -EndPoint
-        http://localhost:3001/esf10/login
-
+       http://localhost:3001/esf10/register-user
     -Body:raw
 --------------------------------------------------
 Example requist
 --------------------------------------------------
+
 {
-  "email": "quivircutandaanora.com",
-  "password": "nopassword"
+  "first_name": "Teacher",
+  "last_name": "test",
+  "email": "teacher@gmail.com",
+  "password": "securepassword123",
+  "role": "teacher"
 }
 
---------------------------------------------------
-Response    (200 OK)
---------------------------------------------------
 
+--------------------------------------------------
+Example response
+-------------------------------------------------
 {
-    "message": "Login successful",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJlbWFpbCI6InRlYWNoZXJAZ21haWwuY29tIiwiaWF0IjoxNzQ5MDIyMTA2LCJleHAiOjE3NDkwMjU3MDZ9.n5rnXVWX805WQvVy1aABnH2xv7lfKIT_j_YWAKMx7Ns",
+    "message": "User registered successfully",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJlbWFpbCI6InRlYWNoZXJAZ21haWwuY29tIiwiaWF0IjoxNzQ5MDIyMDYyLCJleHAiOjE3NDkwMjU2NjJ9.8utCuflfCrIzr4X1gDbBHJuDMiheM_aFDKtltYqY588",
     "user": {
         "user_id": 4,
         "first_name": "Teacher",
@@ -45,4 +48,3 @@ Response    (200 OK)
         ]
     }
 }
-
