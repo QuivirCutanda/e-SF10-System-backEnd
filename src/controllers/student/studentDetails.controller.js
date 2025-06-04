@@ -14,7 +14,7 @@ const getStudentFullDetails = async (req, res) => {
 
         const eCards = await ECard.getEcardsByStudentLRN(lrn);
 
-        await logActivity(req.user.user_id, 'view_student', `Viewed student details for LRN: ${lrn}`);
+        await logActivity(req.user.user_id, 'view_student_info', `Viewed student details for LRN: ${lrn}`);
 
         return res.status(200).json({ student, eCards });
 

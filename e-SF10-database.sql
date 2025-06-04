@@ -53,7 +53,6 @@ CREATE TABLE school_defaults (
     FOREIGN KEY (updated_by) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
-
 -- School Records Table with Soft Delete
 CREATE TABLE school_records (
     record_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -152,31 +151,10 @@ INSERT INTO permissions (permission_name) VALUES
 ('view_student_info'),
 ('view_ecards'),
 ('upload_documents'),
-('download_documents');
-
---Add user management permission
-INSERT INTO permissions (permission_name) VALUES('manage_users');
-
---Add the manage_backups permission
-INSERT INTO permissions (permission_name) VALUES ('manage_backups');
-
---Assign this permission to admin role
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT 
-    (SELECT role_id FROM roles WHERE role_name = 'admin'),
-    (SELECT permission_id FROM permissions WHERE permission_name = 'manage_backups');
-
---Assign this permission to admin role
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT
-    (SELECT role_id FROM roles WHERE role_name = 'admin'),
-    (SELECT permission_id FROM permissions WHERE permission_name = 'manage_users');
-
---Also assign to registrar role if appropriate
--- INSERT INTO role_permissions (role_id, permission_id)
--- SELECT 
---     (SELECT role_id FROM roles WHERE role_name = 'registrar'),
---     (SELECT permission_id FROM permissions WHERE permission_name = 'manage_users');
+('download_documents'),
+('manage_users'),
+('manage_backups'),
+('lock_records');
 
 -- Assign all permissions to admin role
 INSERT INTO role_permissions (role_id, permission_id)
@@ -190,21 +168,36 @@ INSERT INTO role_permissions (role_id, permission_id)
 SELECT 
     (SELECT role_id FROM roles WHERE role_name = 'registrar'),
     permission_id
-FROM permissions;
+FROM permissions 
+WHERE permission_name IN (
+    'search_student',
+    'view_student_info',
+    'view_ecards',
+    'download_documents',
+    'manage_users',
+    'manage_backups',
+    'lock_records'
+);
 
--- Assign limited permissions to teacher role
+-- Assign permissions to teacher role
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT 
     (SELECT role_id FROM roles WHERE role_name = 'teacher'),
     permission_id
 FROM permissions 
-WHERE permission_name IN ('search_student', 'view_student_info', 'view_ecards', 'download_documents');
+WHERE permission_name IN (
+    'search_student',
+    'view_student_info',
+    'view_ecards',
+    'download_documents',
+    'upload_documents',
+    'lock_records'
+);
 
--- Assign minimal permissions to student role
+-- Assign permissions to student role
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT 
     (SELECT role_id FROM roles WHERE role_name = 'student'),
     permission_id
 FROM permissions 
 WHERE permission_name IN ('view_student_info', 'view_ecards');
-
