@@ -1,0 +1,22 @@
+--------------------------------------------------
+## View all Student
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        DELETE
+    -EndPoint
+       http://localhost:3001/esf10/delete-user/<user_id>
+        *only the admin can do this 
+
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "message": "User deleted successfully"
+}

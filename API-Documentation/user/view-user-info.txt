@@ -1,0 +1,40 @@
+--------------------------------------------------
+## View User
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/esf10/user/<user_id>/info
+
+
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "message": "User information retrieved successfully",
+    "user": {
+        "user_id": 1,
+        "first_name": "Quivir",
+        "middle_name": "A",
+        "last_name": "Cutanda",
+        "email": "new.email@example.com",
+        "role": "teacher",
+        "permissions": [
+            "search_student",
+            "view_student_info",
+            "view_ecards",
+            "upload_documents",
+            "download_documents",
+            "lock_records"
+        ],
+        "created_at": "2025-06-06T06:20:06.000Z",
+        "updated_at": "2025-06-06T07:01:15.000Z"
+    }
+}
