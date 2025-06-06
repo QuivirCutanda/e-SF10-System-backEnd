@@ -1,5 +1,5 @@
 --------------------------------------------------
-## update user account
+## update user Info
 --------------------------------------------------
 
 #Prerequisites
@@ -19,12 +19,9 @@ Example requist
 --------------------------------------------------
 
 {
-  "first_name": "Quivir",
-  "middle_name": "A",
-  "last_name": "Cutanda",
-  "email": "new.email@example.com",
-  "password": "nopassword",
-  "role": "teacher"
+  "first_name": "John",
+  "last_name": "Doe",
+  "email": "john.doe@example.com"
 }
 
 
@@ -35,10 +32,10 @@ Example response (200 OK)
     "message": "User updated successfully",
     "user": {
         "user_id": 1,
-        "first_name": "Quivir",
+        "first_name": "John",
         "middle_name": "A",
-        "last_name": "Cutanda",
-        "email": "new.email@example.com",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
         "role": "teacher",
         "permissions": [
             "search_student",

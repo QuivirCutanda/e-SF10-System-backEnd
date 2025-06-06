@@ -164,11 +164,8 @@ const updateUser = async (req, res) => {
   const { userId } = req.params;
   const {
     first_name,
-    middle_name,
     last_name,
-    email,
-    password,
-    role
+    email
   } = req.body;
 
   try {
@@ -187,30 +184,20 @@ const updateUser = async (req, res) => {
 
     const updateData = {
       first_name: first_name || user.first_name,
-      middle_name: middle_name !== undefined ? middle_name : user.middle_name,
+      middle_name: user.middle_name, // Preserve existing middle_name
       last_name: last_name || user.last_name,
       email: email || user.email,
+      password: user.password // Preserve existing password
     };
-
-    // Update password if provided
-    if (password) {
-      updateData.password = await bcrypt.hash(password, 10);
-    }
-
-    // Update role if provided and valid
-    if (role) {
-      const validRoles = ['admin', 'teacher', 'registrar', 'student'];
-      if (!validRoles.includes(role)) {
-        return res.status(400).json({ message: 'Invalid role specified' });
-      }
-      await assignRoleToUser(userId, role);
-    }
 
     await updateUserById(userId, updateData);
 
     // Fetch updated user data
     const updatedUser = await getUserById(userId);
     const roleResult = await getRoleByUserId(userId);
+    if (!roleResult) {
+      return res.status(400).json({ message: 'User has no assigned role' });
+    }
     const permissions = await getPermissionsByRole(roleResult.role_name);
 
     res.status(200).json({
@@ -287,4 +274,48 @@ const getUserInfo = async (req, res) => {
   }
 };
 
-module.exports = { registerAdmin, registerUser, loginUser, updateUser, deleteUser, getUserInfo };
+// Update user password
+const updateUserPassword = async (req, res) => {
+  const { userId } = req.params;
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    // Validate request body
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current password and new password are required' });
+    }
+
+    // Fetch user
+    const user = await getUserById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    const updateData = {
+      first_name: user.first_name,
+      middle_name: user.middle_name,
+      last_name: user.last_name,
+      email: user.email,
+      password: hashedNewPassword
+    };
+
+    await updateUserById(userId, updateData);
+
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error('Update User Password Error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { registerAdmin, registerUser, loginUser, updateUser, deleteUser, getUserInfo, updateUserPassword };
