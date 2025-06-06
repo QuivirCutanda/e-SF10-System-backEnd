@@ -18,19 +18,27 @@
 Response    (200 ok)
 --------------------------------------------------
 {
-    "students": [
-        {
-            "student_id": 1,
-            "lrn": "123456789012",
-            "first_name": "Maria",
-            "middle_name": "S.",
-            "last_name": "Santos",
-            "date_of_birth": "2005-08-14T16:00:00.000Z",
-            "gender": "Female"
+    "message": "School default created successfully",
+    "data": {
+        "school_id": 123455552,
+        "school_name": "Example School",
+        "school_address": "123 Main St",
+        "region": "Region 7",
+        "division": "Division A",
+        "district": "District B",
+        "school_head": "John Doe",
+        "school_logo": "/school_logos/1749209939456-54244471.png",
+        "contact_number": "09989888990",
+        "email": "admin@gmail.com",
+        "website": "www.example.com",
+        "created_at": "2025-06-06T11:38:59.000Z",
+        "updated_at": "2025-06-06T11:38:59.000Z",
+        "user": {
+            "user_id": 1,
+            "first_name": "admin",
+            "middle_name": "A",
+            "last_name": "Admin",
+            "email": "admin@gmail.com"
         }
-    ],
-    "total": 1,
-    "page": 1,
-    "limit": 10,
-    "totalPages": 1
+    }
 }
