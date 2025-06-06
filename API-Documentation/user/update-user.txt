@@ -1,0 +1,52 @@
+--------------------------------------------------
+## update user account
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        PUT
+    -EndPoint
+       http://localhost:3001/esf10/update-user/<user_id>
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "first_name": "Quivir",
+  "middle_name": "A",
+  "last_name": "Cutanda",
+  "email": "new.email@example.com",
+  "password": "nopassword",
+  "role": "teacher"
+}
+
+
+--------------------------------------------------
+Example response (200 OK)
+-------------------------------------------------
+{
+    "message": "User updated successfully",
+    "user": {
+        "user_id": 1,
+        "first_name": "Quivir",
+        "middle_name": "A",
+        "last_name": "Cutanda",
+        "email": "new.email@example.com",
+        "role": "teacher",
+        "permissions": [
+            "search_student",
+            "view_student_info",
+            "view_ecards",
+            "upload_documents",
+            "download_documents",
+            "lock_records"
+        ]
+    }
+}

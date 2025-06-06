@@ -37,6 +37,13 @@ const assignRoleToUser = async (userId, role) => {
 
     const roleId = roleResult[0].role_id;
 
+    // Remove existing roles for the user
+    await connection.execute(
+      `DELETE FROM user_roles WHERE user_id = ?`,
+      [userId]
+    );
+
+    // Assign new role
     const [result] = await connection.execute(
       `INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)`,
       [userId, roleId]
@@ -56,6 +63,26 @@ const getUserByEmail = async (email) => {
     const [result] = await connection.execute(
       `SELECT * FROM users WHERE email = ?`,
       [email]
+    );
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result[0];
+  } catch (err) {
+    throw err;
+  } finally {
+    connection.release();
+  }
+};
+
+const getUserById = async (userId) => {
+  const connection = await db.getConnection();
+  try {
+    const [result] = await connection.execute(
+      `SELECT * FROM users WHERE user_id = ?`,
+      [userId]
     );
 
     if (result.length === 0) {
@@ -113,4 +140,77 @@ const getRoleByUserId = async (userId) => {
   }
 };
 
-module.exports = { createUser, assignRoleToUser, getUserByEmail, getPermissionsByRole, getRoleByUserId };
+const updateUserById = async (userId, userData) => {
+  const connection = await db.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    const { first_name, middle_name, last_name, email, password } = userData;
+
+    const query = `
+      UPDATE users 
+      SET 
+        first_name = ?,
+        middle_name = ?,
+        last_name = ?,
+        email = ?,
+        password = COALESCE(?, password)
+      WHERE user_id = ?
+    `;
+    
+    const [result] = await connection.execute(query, [
+      first_name,
+      middle_name,
+      last_name,
+      email,
+      password,
+      userId
+    ]);
+
+    await connection.commit();
+    return result;
+  } catch (err) {
+    await connection.rollback();
+    throw err;
+  } finally {
+    connection.release();
+  }
+};
+
+const deleteUserById = async (userId) => {
+  const connection = await db.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    // Delete related user_roles entries
+    await connection.execute(
+      `DELETE FROM user_roles WHERE user_id = ?`,
+      [userId]
+    );
+
+    // Delete user
+    const [result] = await connection.execute(
+      `DELETE FROM users WHERE user_id = ?`,
+      [userId]
+    );
+
+    await connection.commit();
+    return result;
+  } catch (err) {
+    await connection.rollback();
+    throw err;
+  } finally {
+    connection.release();
+  }
+};
+
+module.exports = { 
+  createUser, 
+  assignRoleToUser, 
+  getUserByEmail, 
+  getPermissionsByRole, 
+  getRoleByUserId,
+  getUserById,
+  updateUserById,
+  deleteUserById 
+};
