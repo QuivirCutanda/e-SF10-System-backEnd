@@ -41,7 +41,7 @@ DB_PASSWORD="" add password if your database have password
 DB_NAME=e_sf10_db
 JWT_SECRET=bisagonsa rani hehhe
 PORT=3001
-
+IMAGE_BASE_URL=http://localhost:3001/esf10/images
 ```
 ### d. Install nodemodule:
 ```
