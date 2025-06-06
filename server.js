@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const path = require("path"); // Added for static file serving
 const db = require("./src/config/db");
 
 const authRoutes = require("./src/routes/authRoutes");
@@ -14,8 +15,11 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors()); // allow all origins or configure as needed
+app.use(cors());
 app.use(express.json());
+
+// Serve static files for SF10 documents
+app.use("/esf10/images", express.static(path.join(__dirname, "data/documents/sf10")));
 
 // Routes
 app.use("/esf10", homePage);
@@ -29,10 +33,7 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
     message: "Something went wrong!",
-    error:
-      process.env.NODE_ENV === "development"
-        ? err.message
-        : "Internal Server Error",
+    error: process.env.NODE_ENV === "development" ? err.message : "Internal Server Error",
   });
 });
 

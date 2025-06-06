@@ -16,8 +16,8 @@ const createSchoolRecord = async (studentId, data, userId) => {
         data.end_year,
         data.grade_level,
         data.section,
-        data.sf10_document_path, 
-        userId
+        data.sf10_document_path,
+        userId,
       ]
     );
 

@@ -20,7 +20,7 @@ Response    (200 ok)
 {
     "student": {
         "student_id": 1,
-        "lrn": "123456789012",
+        "lrn": "341234569012",
         "first_name": "Quivir",
         "middle_name": "Añora",
         "last_name": "Cutanda",
@@ -33,5 +33,16 @@ Response    (200 ok)
         "guardian_name": "Unknown",
         "contact_number": "09171234567"
     },
-    "eCards": []
+    "eCards": [
+        {
+            "record_id": 6,
+            "student_id": 1,
+            "start_year": 2024,
+            "end_year": 2025,
+            "grade_level": "12",
+            "section": "emerald",
+            "sf10_document_path": "http://localhost:3001/esf10/images/2024-2025/emerald/sf10-1-1749177130552.pdf",
+            "uploaded_at": "2025-06-06T02:32:10.000Z"
+        }
+    ]
 }

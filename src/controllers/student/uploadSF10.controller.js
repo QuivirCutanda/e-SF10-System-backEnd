@@ -13,7 +13,7 @@ exports.uploadSF10 = async (req, res) => {
         success: false,
         error: "No file uploaded",
         studentId,
-        details: "Please include an SF10 file in your request"
+        details: "Please include an SF10 file in your request",
       });
     }
 
@@ -27,12 +27,12 @@ exports.uploadSF10 = async (req, res) => {
         error: "Missing required fields",
         studentId,
         missingFields: [
-          ...(!start_year ? ['start_year'] : []),
-          ...(!end_year ? ['end_year'] : []),
-          ...(!grade_level ? ['grade_level'] : []),
-          ...(!section ? ['section'] : [])
+          ...(!start_year ? ["start_year"] : []),
+          ...(!end_year ? ["end_year"] : []),
+          ...(!grade_level ? ["grade_level"] : []),
+          ...(!section ? ["section"] : []),
         ],
-        details: "All fields are required for SF10 upload"
+        details: "All fields are required for SF10 upload",
       });
     }
 
@@ -47,7 +47,7 @@ exports.uploadSF10 = async (req, res) => {
         success: false,
         error: "Invalid start year",
         studentId,
-        details: "Start year must be a valid number"
+        details: "Start year must be a valid number",
       });
     }
 
@@ -57,7 +57,7 @@ exports.uploadSF10 = async (req, res) => {
         success: false,
         error: "Invalid end year",
         studentId,
-        details: "End year must be a valid number"
+        details: "End year must be a valid number",
       });
     }
 
@@ -67,7 +67,7 @@ exports.uploadSF10 = async (req, res) => {
         success: false,
         error: "Invalid year format",
         studentId,
-        details: "Years must be 4-digit numbers"
+        details: "Years must be 4-digit numbers",
       });
     }
 
@@ -77,7 +77,7 @@ exports.uploadSF10 = async (req, res) => {
         success: false,
         error: "Invalid start year range",
         studentId,
-        details: `Start year must be between 2000 and ${currentYear + 5}`
+        details: `Start year must be between 2000 and ${currentYear + 5}`,
       });
     }
 
@@ -87,7 +87,7 @@ exports.uploadSF10 = async (req, res) => {
         success: false,
         error: "Invalid end year range",
         studentId,
-        details: `End year must be between 2000 and ${currentYear + 5}`
+        details: `End year must be between 2000 and ${currentYear + 5}`,
       });
     }
 
@@ -97,7 +97,7 @@ exports.uploadSF10 = async (req, res) => {
         success: false,
         error: "Invalid year span",
         studentId,
-        details: "Start year and end year cannot be the same"
+        details: "Start year and end year cannot be the same",
       });
     }
 
@@ -107,7 +107,7 @@ exports.uploadSF10 = async (req, res) => {
         success: false,
         error: "Invalid year sequence",
         studentId,
-        details: "Start year cannot be greater than end year"
+        details: "Start year cannot be greater than end year",
       });
     }
 
@@ -117,7 +117,7 @@ exports.uploadSF10 = async (req, res) => {
         success: false,
         error: "Invalid year span",
         studentId,
-        details: "School year span cannot be more than 1 year"
+        details: "School year span cannot be more than 1 year",
       });
     }
 
@@ -129,7 +129,7 @@ exports.uploadSF10 = async (req, res) => {
         success: false,
         error: "Invalid grade level",
         studentId,
-        details: "Grade level must be between 1 and 12"
+        details: "Grade level must be between 1 and 12",
       });
     }
 
@@ -141,7 +141,7 @@ exports.uploadSF10 = async (req, res) => {
     const fileExt = path.extname(file.originalname);
     const newFilename = `sf10-${studentId}-${Date.now()}${fileExt}`;
     const absoluteFilePath = path.join(finalDir, newFilename);
-    
+
     fs.renameSync(file.path, absoluteFilePath);
 
     // Database record creation
@@ -168,18 +168,17 @@ exports.uploadSF10 = async (req, res) => {
         path: absoluteFilePath,
         schoolYear: `${start_year}-${end_year}`,
         gradeLevel: gradeLevelNum,
-        section
+        section,
       },
       metadata: {
         uploadedBy: userId,
         uploadedAt: new Date().toISOString(),
-        fileSize: file.size
-      }
+        fileSize: file.size,
+      },
     });
-
   } catch (error) {
     console.error("Upload Error:", error);
-    
+
     // Clean up file if error occurs
     if (req.file?.path && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
@@ -189,8 +188,8 @@ exports.uploadSF10 = async (req, res) => {
       success: false,
       error: "Server error during file upload",
       studentId,
-      details: process.env.NODE_ENV === 'development' ? error.message : "Please try again later",
-      timestamp: new Date().toISOString()
+      details: process.env.NODE_ENV === "development" ? error.message : "Please try again later",
+      timestamp: new Date().toISOString(),
     });
   }
 };
