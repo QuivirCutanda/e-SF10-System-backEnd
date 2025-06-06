@@ -9,6 +9,7 @@ const authRoutes = require("./src/routes/authRoutes");
 const studentRoutes = require("./src/routes/student.routes");
 const userManagementRoutes = require("./src/routes/userManagement.route");
 const backupRoutes = require("./src/routes/backup.routes");
+const schoolDefualt = require("./src/routes/schoolDefault.routes");
 const homePage = require("./src/routes/homepage");
 
 const app = express();
@@ -20,6 +21,7 @@ app.use(express.json());
 
 // Serve static files for SF10 documents
 app.use("/esf10/images", express.static(path.join(__dirname, "data/documents/sf10")));
+app.use('/school_logos', express.static(path.join(__dirname, 'data/school_logos')));
 
 // Routes
 app.use("/esf10", homePage);
@@ -27,6 +29,7 @@ app.use("/esf10", authRoutes);
 app.use("/esf10/students", studentRoutes);
 app.use("/esf10/users", userManagementRoutes);
 app.use("/esf10/backups", backupRoutes);
+app.use("/esf10/school-defaults", schoolDefualt);
 
 // Error handler
 app.use((err, req, res, next) => {

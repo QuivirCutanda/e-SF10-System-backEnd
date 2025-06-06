@@ -1,0 +1,63 @@
+--------------------------------------------------
+## udate School Default
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+       http://localhost:3001/esf10/school-defaults/<school_id>
+
+    -Body:form-data
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+required form
+key                 type             Value
+school_id           file            1234555554
+school_name         text            Example School
+school_address      text            123 Main St
+region              text            Region 7
+division            text            Division A
+district            text            District B
+school_head         text            John Doe
+contact_number      text            09989888990
+email               text            school@example.com
+website             text            www.example.com
+school_logo         file            examplefile.pdf(.png,jpg)
+
+
+
+--------------------------------------------------
+Example response (200 OK)
+-------------------------------------------------
+{
+    "message": "School default updated successfully",
+    "data": {
+        "school_id": 1234555554,
+        "school_name": "haha",
+        "school_address": "ok",
+        "region": "v",
+        "division": "vd",
+        "district": "vd",
+        "school_head": "Quivir Cutanda",
+        "school_logo": "/school_logos/1749188983503-226558462.png",
+        "contact_number": "09999099887",
+        "email": "quivircutandaanora.com",
+        "website": "www.website.com",
+        "created_at": "2025-06-06T05:49:43.000Z",
+        "updated_at": "2025-06-06T05:53:50.000Z",
+        "user": {
+            "user_id": 2,
+            "first_name": "admin",
+            "middle_name": "admin",
+            "last_name": "admin",
+            "email": "quivircutandaanora.com"
+        }
+    }
+}
