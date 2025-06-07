@@ -13,6 +13,7 @@ const schoolDefualt = require("./src/routes/schoolDefault.routes");
 const dashboard = require("./src/routes/dashboard.routes");
 const homePage = require("./src/routes/homepage");
 const activityLog = require("./src/routes/activityLog.route");
+const roleAndPermission = require("./src/routes/role.route");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -34,6 +35,7 @@ app.use("/esf10/backups", backupRoutes);
 app.use("/esf10/school-defaults", schoolDefualt);
 app.use("/esf10/dashboard", dashboard);
 app.use("/esf10/activity-log", activityLog);
+app.use("/esf10/roles/", roleAndPermission);
 
 // Error handler
 app.use((err, req, res, next) => {

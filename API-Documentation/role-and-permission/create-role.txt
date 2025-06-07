@@ -1,0 +1,56 @@
+--------------------------------------------------
+## Create role and Assign permission base on permission ID
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+       http://localhost:3001/esf10/roles/create-role
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "role_name": "staff10",
+  "permission_ids": [1, 3, 6, 19] // e.g., approve_transfers, view_student_info, view_ecards, view_logs
+}
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Role created successfully",
+    "role": {
+        "role_id": 14,
+        "role_name": "staff10",
+        "permissions": [
+            {
+                "permission_id": 1,
+                "permission_name": "register_student"
+            },
+            {
+                "permission_id": 3,
+                "permission_name": "view_student_info"
+            },
+            {
+                "permission_id": 6,
+                "permission_name": "view_ecards"
+            },
+            {
+                "permission_id": 19,
+                "permission_name": "view_logs"
+            }
+        ]
+    },
+    "timestamp": "2025-06-07T23:15:35.160Z"
+}

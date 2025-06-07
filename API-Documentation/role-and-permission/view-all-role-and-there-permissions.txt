@@ -1,0 +1,412 @@
+--------------------------------------------------
+## View all role and there permission
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/esf10/roles/Roles-and-Permissions
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "roles": [
+        {
+            "role_id": 1,
+            "role_name": "admin",
+            "permissions": [
+                {
+                    "permission_id": 12,
+                    "permission_name": "approve_transfers"
+                },
+                {
+                    "permission_id": 9,
+                    "permission_name": "delete_documents"
+                },
+                {
+                    "permission_id": 5,
+                    "permission_name": "delete_student"
+                },
+                {
+                    "permission_id": 8,
+                    "permission_name": "download_documents"
+                },
+                {
+                    "permission_id": 4,
+                    "permission_name": "edit_student_info"
+                },
+                {
+                    "permission_id": 20,
+                    "permission_name": "export_data"
+                },
+                {
+                    "permission_id": 21,
+                    "permission_name": "import_data"
+                },
+                {
+                    "permission_id": 10,
+                    "permission_name": "lock_records"
+                },
+                {
+                    "permission_id": 17,
+                    "permission_name": "manage_backups"
+                },
+                {
+                    "permission_id": 16,
+                    "permission_name": "manage_permissions"
+                },
+                {
+                    "permission_id": 15,
+                    "permission_name": "manage_roles"
+                },
+                {
+                    "permission_id": 18,
+                    "permission_name": "manage_school_settings"
+                },
+                {
+                    "permission_id": 14,
+                    "permission_name": "manage_users"
+                },
+                {
+                    "permission_id": 1,
+                    "permission_name": "register_student"
+                },
+                {
+                    "permission_id": 13,
+                    "permission_name": "request_transfers"
+                },
+                {
+                    "permission_id": 2,
+                    "permission_name": "search_student"
+                },
+                {
+                    "permission_id": 11,
+                    "permission_name": "unlock_records"
+                },
+                {
+                    "permission_id": 7,
+                    "permission_name": "upload_documents"
+                },
+                {
+                    "permission_id": 6,
+                    "permission_name": "view_ecards"
+                },
+                {
+                    "permission_id": 19,
+                    "permission_name": "view_logs"
+                },
+                {
+                    "permission_id": 22,
+                    "permission_name": "view_reports"
+                },
+                {
+                    "permission_id": 3,
+                    "permission_name": "view_student_info"
+                }
+            ]
+        },
+        {
+            "role_id": 7,
+            "role_name": "it_support",
+            "permissions": [
+                {
+                    "permission_id": 17,
+                    "permission_name": "manage_backups"
+                },
+                {
+                    "permission_id": 16,
+                    "permission_name": "manage_permissions"
+                },
+                {
+                    "permission_id": 15,
+                    "permission_name": "manage_roles"
+                },
+                {
+                    "permission_id": 14,
+                    "permission_name": "manage_users"
+                },
+                {
+                    "permission_id": 19,
+                    "permission_name": "view_logs"
+                }
+            ]
+        },
+        {
+            "role_id": 6,
+            "role_name": "parent_guardian",
+            "permissions": [
+                {
+                    "permission_id": 6,
+                    "permission_name": "view_ecards"
+                },
+                {
+                    "permission_id": 3,
+                    "permission_name": "view_student_info"
+                }
+            ]
+        },
+        {
+            "role_id": 2,
+            "role_name": "registrar",
+            "permissions": [
+                {
+                    "permission_id": 12,
+                    "permission_name": "approve_transfers"
+                },
+                {
+                    "permission_id": 9,
+                    "permission_name": "delete_documents"
+                },
+                {
+                    "permission_id": 5,
+                    "permission_name": "delete_student"
+                },
+                {
+                    "permission_id": 8,
+                    "permission_name": "download_documents"
+                },
+                {
+                    "permission_id": 4,
+                    "permission_name": "edit_student_info"
+                },
+                {
+                    "permission_id": 20,
+                    "permission_name": "export_data"
+                },
+                {
+                    "permission_id": 21,
+                    "permission_name": "import_data"
+                },
+                {
+                    "permission_id": 10,
+                    "permission_name": "lock_records"
+                },
+                {
+                    "permission_id": 17,
+                    "permission_name": "manage_backups"
+                },
+                {
+                    "permission_id": 14,
+                    "permission_name": "manage_users"
+                },
+                {
+                    "permission_id": 1,
+                    "permission_name": "register_student"
+                },
+                {
+                    "permission_id": 13,
+                    "permission_name": "request_transfers"
+                },
+                {
+                    "permission_id": 2,
+                    "permission_name": "search_student"
+                },
+                {
+                    "permission_id": 11,
+                    "permission_name": "unlock_records"
+                },
+                {
+                    "permission_id": 7,
+                    "permission_name": "upload_documents"
+                },
+                {
+                    "permission_id": 6,
+                    "permission_name": "view_ecards"
+                },
+                {
+                    "permission_id": 19,
+                    "permission_name": "view_logs"
+                },
+                {
+                    "permission_id": 22,
+                    "permission_name": "view_reports"
+                },
+                {
+                    "permission_id": 3,
+                    "permission_name": "view_student_info"
+                }
+            ]
+        },
+        {
+            "role_id": 5,
+            "role_name": "school_head",
+            "permissions": [
+                {
+                    "permission_id": 12,
+                    "permission_name": "approve_transfers"
+                },
+                {
+                    "permission_id": 9,
+                    "permission_name": "delete_documents"
+                },
+                {
+                    "permission_id": 8,
+                    "permission_name": "download_documents"
+                },
+                {
+                    "permission_id": 10,
+                    "permission_name": "lock_records"
+                },
+                {
+                    "permission_id": 18,
+                    "permission_name": "manage_school_settings"
+                },
+                {
+                    "permission_id": 1,
+                    "permission_name": "register_student"
+                },
+                {
+                    "permission_id": 2,
+                    "permission_name": "search_student"
+                },
+                {
+                    "permission_id": 7,
+                    "permission_name": "upload_documents"
+                },
+                {
+                    "permission_id": 6,
+                    "permission_name": "view_ecards"
+                },
+                {
+                    "permission_id": 19,
+                    "permission_name": "view_logs"
+                },
+                {
+                    "permission_id": 22,
+                    "permission_name": "view_reports"
+                },
+                {
+                    "permission_id": 3,
+                    "permission_name": "view_student_info"
+                }
+            ]
+        },
+        {
+            "role_id": 9,
+            "role_name": "staff2",
+            "permissions": []
+        },
+        {
+            "role_id": 10,
+            "role_name": "staff3",
+            "permissions": []
+        },
+        {
+            "role_id": 11,
+            "role_name": "staff5",
+            "permissions": []
+        },
+        {
+            "role_id": 12,
+            "role_name": "staff6",
+            "permissions": [
+                {
+                    "permission_id": 1,
+                    "permission_name": "register_student"
+                },
+                {
+                    "permission_id": 6,
+                    "permission_name": "view_ecards"
+                },
+                {
+                    "permission_id": 19,
+                    "permission_name": "view_logs"
+                },
+                {
+                    "permission_id": 3,
+                    "permission_name": "view_student_info"
+                }
+            ]
+        },
+        {
+            "role_id": 13,
+            "role_name": "staff9",
+            "permissions": [
+                {
+                    "permission_id": 1,
+                    "permission_name": "register_student"
+                },
+                {
+                    "permission_id": 6,
+                    "permission_name": "view_ecards"
+                },
+                {
+                    "permission_id": 19,
+                    "permission_name": "view_logs"
+                },
+                {
+                    "permission_id": 3,
+                    "permission_name": "view_student_info"
+                }
+            ]
+        },
+        {
+            "role_id": 4,
+            "role_name": "student",
+            "permissions": [
+                {
+                    "permission_id": 4,
+                    "permission_name": "edit_student_info"
+                },
+                {
+                    "permission_id": 13,
+                    "permission_name": "request_transfers"
+                },
+                {
+                    "permission_id": 6,
+                    "permission_name": "view_ecards"
+                },
+                {
+                    "permission_id": 3,
+                    "permission_name": "view_student_info"
+                }
+            ]
+        },
+        {
+            "role_id": 3,
+            "role_name": "teacher",
+            "permissions": [
+                {
+                    "permission_id": 9,
+                    "permission_name": "delete_documents"
+                },
+                {
+                    "permission_id": 8,
+                    "permission_name": "download_documents"
+                },
+                {
+                    "permission_id": 10,
+                    "permission_name": "lock_records"
+                },
+                {
+                    "permission_id": 1,
+                    "permission_name": "register_student"
+                },
+                {
+                    "permission_id": 2,
+                    "permission_name": "search_student"
+                },
+                {
+                    "permission_id": 7,
+                    "permission_name": "upload_documents"
+                },
+                {
+                    "permission_id": 6,
+                    "permission_name": "view_ecards"
+                },
+                {
+                    "permission_id": 3,
+                    "permission_name": "view_student_info"
+                }
+            ]
+        }
+    ],
+    "timestamp": "2025-06-07T23:12:32.341Z"
+}
