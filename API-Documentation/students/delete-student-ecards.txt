@@ -1,0 +1,24 @@
+--------------------------------------------------
+## Delete Student Ecards
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        DELETE
+    -EndPoint
+        http://localhost:3001/esf10/students/<recordId>/delete-sf10
+
+
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "message": "SF10 record deleted successfully",
+    "recordId": "2"
+}

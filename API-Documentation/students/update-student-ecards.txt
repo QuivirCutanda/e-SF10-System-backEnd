@@ -1,0 +1,49 @@
+--------------------------------------------------
+## update student ecards
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        PUT
+    -EndPoint
+       http://localhost:3001/esf10/students/<recordId>/update-sf10
+
+    -Body:form-data
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+required form
+key           type             Value
+sf10          file            examplefile.pdf(.png,jpg,docs)
+start_year    text            2024
+end_year      text            2025
+section       text            emerald
+grade_level   text            12
+
+
+
+--------------------------------------------------
+Example response (200 OK)
+-------------------------------------------------
+{
+    "success": true,
+    "message": "SF10 file updated successfully",
+    "recordId": "1",
+    "document": {
+        "filename": "sf10-1-1749282711945.pdf",
+        "path": "C:\\D_Drive\\e-SF10-System\\e-SF10-System-backEnd\\data\\documents\\sf10\\2024-2025\\emerald\\sf10-1-1749282711945.pdf",
+        "schoolYear": "2024-2025",
+        "gradeLevel": 11,
+        "section": "emerald"
+    },
+    "metadata": {
+        "uploadedBy": 1,
+        "uploadedAt": "2025-06-07T07:51:51.960Z",
+        "fileSize": 333830
+    }
+}
