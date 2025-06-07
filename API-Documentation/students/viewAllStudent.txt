@@ -13,7 +13,11 @@
     -EndPoint
        http://localhost:3001/esf10/students/all
 
+        *To go to the next page (page 2), append ?page=2 to the URL
+        http://localhost:3001/esf10/students/all?page=2
 
+        *If you want to explicitly specify the limit:
+        http://localhost:3001/esf10/students/all?page=1&limit=12
 --------------------------------------------------
 Response    (200 ok)
 --------------------------------------------------
