@@ -1,0 +1,60 @@
+--------------------------------------------------
+## update Permission by User
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        PUT
+    -EndPoint
+       http://localhost:3001/esf10/user/<user_id>/permissions
+
+    -Body:raw
+
+    *only one permission per requist
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+    "permission_name": "manage_permissions",
+    "is_granted": true
+}
+
+
+--------------------------------------------------
+Example response (200 OK)
+-------------------------------------------------
+{
+    "message": "User permissions modified successfully",
+    "user": {
+        "user_id": 4,
+        "permissions": {
+            "approve_transfers": false,
+            "delete_documents": false,
+            "delete_student": false,
+            "download_documents": true,
+            "edit_student_info": false,
+            "export_data": false,
+            "import_data": false,
+            "lock_records": true,
+            "manage_backups": false,
+            "manage_permissions": true,
+            "manage_roles": false,
+            "manage_users": false,
+            "register_student": false,
+            "request_transfers": false,
+            "search_student": true,
+            "unlock_records": false,
+            "upload_documents": true,
+            "view_ecards": true,
+            "view_logs": false,
+            "view_reports": false,
+            "view_student_info": true
+        }
+    }
+}
