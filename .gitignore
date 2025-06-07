@@ -13,6 +13,7 @@ yarn-error.log*
 # Build output
 /dist
 /build
+data/
 # Dependency directories
 bower_components/
 
