@@ -1,0 +1,51 @@
+--------------------------------------------------
+## Dashboard
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/esf10/dashboard
+
+
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "user": {
+        "user_id": 1,
+        "first_name": "Quivir",
+        "last_name": "Cutanda",
+        "email": "admin@gmail.com",
+        "roles": "admin"
+    },
+    "studentStats": {
+        "total_students": 0,
+        "recent_students": 0,
+        "pending_transfers": 0
+    },
+    "schoolInfo": {
+        "school_id": 1234567890,
+        "school_name": "School Name Here",
+        "school_address": "School Address",
+        "region": "School Region",
+        "division": "School Division",
+        "district": "School District",
+        "school_head": "School Head Name"
+    },
+    "recentLogs": [
+        {
+            "log_id": 1,
+            "action": "Modified permission 'manage_permissions' to true for user_id 1",
+            "log_timestamp": "2025-06-07T02:28:56.000Z"
+        }
+    ],
+    "latestBackup": {},
+    "recentRecords": []
+}

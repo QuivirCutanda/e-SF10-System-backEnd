@@ -10,6 +10,7 @@ const studentRoutes = require("./src/routes/student.routes");
 const userManagementRoutes = require("./src/routes/userManagement.route");
 const backupRoutes = require("./src/routes/backup.routes");
 const schoolDefualt = require("./src/routes/schoolDefault.routes");
+const dashboard = require("./src/routes/dashboard.routes");
 const homePage = require("./src/routes/homepage");
 
 const app = express();
@@ -30,6 +31,7 @@ app.use("/esf10/students", studentRoutes);
 app.use("/esf10/users", userManagementRoutes);
 app.use("/esf10/backups", backupRoutes);
 app.use("/esf10/school-defaults", schoolDefualt);
+app.use("/esf10/dashboard", dashboard);
 
 // Error handler
 app.use((err, req, res, next) => {
