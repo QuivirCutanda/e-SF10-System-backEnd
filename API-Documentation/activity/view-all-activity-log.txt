@@ -1,0 +1,127 @@
+--------------------------------------------------
+## View all activity log
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/api/activity-logs?page=1&limit=10
+
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "logs": [
+        {
+            "log_id": 29,
+            "user_id": 1,
+            "action": "Created student with ID 14",
+            "log_timestamp": "2025-06-07T08:11:07.000Z",
+            "first_name": "Quivir",
+            "middle_name": "Anora",
+            "last_name": "Cutanda",
+            "email": "admin@gmail.com"
+        },
+        {
+            "log_id": 28,
+            "user_id": 1,
+            "action": "Created student with ID 11",
+            "log_timestamp": "2025-06-07T08:10:49.000Z",
+            "first_name": "Quivir",
+            "middle_name": "Anora",
+            "last_name": "Cutanda",
+            "email": "admin@gmail.com"
+        },
+        {
+            "log_id": 27,
+            "user_id": 1,
+            "action": "Created student with ID 10",
+            "log_timestamp": "2025-06-07T08:10:45.000Z",
+            "first_name": "Quivir",
+            "middle_name": "Anora",
+            "last_name": "Cutanda",
+            "email": "admin@gmail.com"
+        },
+        {
+            "log_id": 26,
+            "user_id": 1,
+            "action": "Created student with ID 9",
+            "log_timestamp": "2025-06-07T08:10:41.000Z",
+            "first_name": "Quivir",
+            "middle_name": "Anora",
+            "last_name": "Cutanda",
+            "email": "admin@gmail.com"
+        },
+        {
+            "log_id": 25,
+            "user_id": 1,
+            "action": "Created student with ID 8",
+            "log_timestamp": "2025-06-07T08:10:37.000Z",
+            "first_name": "Quivir",
+            "middle_name": "Anora",
+            "last_name": "Cutanda",
+            "email": "admin@gmail.com"
+        },
+        {
+            "log_id": 24,
+            "user_id": 1,
+            "action": "Created student with ID 7",
+            "log_timestamp": "2025-06-07T08:10:33.000Z",
+            "first_name": "Quivir",
+            "middle_name": "Anora",
+            "last_name": "Cutanda",
+            "email": "admin@gmail.com"
+        },
+        {
+            "log_id": 23,
+            "user_id": 1,
+            "action": "Created student with ID 6",
+            "log_timestamp": "2025-06-07T08:10:29.000Z",
+            "first_name": "Quivir",
+            "middle_name": "Anora",
+            "last_name": "Cutanda",
+            "email": "admin@gmail.com"
+        },
+        {
+            "log_id": 22,
+            "user_id": 1,
+            "action": "Created student with ID 5",
+            "log_timestamp": "2025-06-07T08:10:25.000Z",
+            "first_name": "Quivir",
+            "middle_name": "Anora",
+            "last_name": "Cutanda",
+            "email": "admin@gmail.com"
+        },
+        {
+            "log_id": 21,
+            "user_id": 1,
+            "action": "Created student with ID 4",
+            "log_timestamp": "2025-06-07T08:10:20.000Z",
+            "first_name": "Quivir",
+            "middle_name": "Anora",
+            "last_name": "Cutanda",
+            "email": "admin@gmail.com"
+        },
+        {
+            "log_id": 20,
+            "user_id": 1,
+            "action": "Created student with ID 3",
+            "log_timestamp": "2025-06-07T08:10:16.000Z",
+            "first_name": "Quivir",
+            "middle_name": "Anora",
+            "last_name": "Cutanda",
+            "email": "admin@gmail.com"
+        }
+    ],
+    "total": 29,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 3
+}
