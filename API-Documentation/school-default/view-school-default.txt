@@ -11,7 +11,7 @@
     -Method
         GET
     -EndPoint
-       http://localhost:3001/esf10/school-defaults/<school_id>
+       http://localhost:3001/esf10/school-defaults/1234567890
 
 
 --------------------------------------------------
@@ -20,24 +20,24 @@ Response    (200 ok)
 {
     "message": "School default created successfully",
     "data": {
-        "school_id": 123455552,
-        "school_name": "Example School",
-        "school_address": "123 Main St",
-        "region": "Region 7",
-        "division": "Division A",
-        "district": "District B",
-        "school_head": "John Doe",
-        "school_logo": "/school_logos/1749209939456-54244471.png",
+        "school_id": 1234567890,
+        "school_name": "School Name Here",
+        "school_address": "School Address",
+        "region": "School Region",
+        "division": "School Division",
+        "district": "School District",
+        "school_head": "School Head Name",
+        "school_logo": "/school_logos/1749257101975-688779572.png",
         "contact_number": "09989888990",
         "email": "admin@gmail.com",
         "website": "www.example.com",
-        "created_at": "2025-06-06T11:38:59.000Z",
-        "updated_at": "2025-06-06T11:38:59.000Z",
+        "created_at": "2025-06-07T00:45:01.000Z",
+        "updated_at": "2025-06-07T00:45:01.000Z",
         "user": {
             "user_id": 1,
-            "first_name": "admin",
-            "middle_name": "A",
-            "last_name": "Admin",
+            "first_name": "Quivir",
+            "middle_name": "Anora",
+            "last_name": "Cutanda",
             "email": "admin@gmail.com"
         }
     }
