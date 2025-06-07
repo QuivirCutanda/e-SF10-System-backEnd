@@ -1,0 +1,37 @@
+--------------------------------------------------
+## View activity log by user
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/esf10/activity-log/1?page=1&limit=10
+
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "logs": [
+        {
+            "log_id": 5,
+            "user_id": 2,
+            "action": "Assigned role 'student' to user_id 2",
+            "log_timestamp": "2025-06-07T07:11:31.000Z",
+            "first_name": "Student",
+            "middle_name": "S",
+            "last_name": "Student",
+            "email": "student@gmail.com"
+        }
+    ],
+    "total": 1,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+}
