@@ -11,4 +11,5 @@ router.get("/:userId", authenticate, checkPermission('manage_users'), getUserByI
 router.put("/:userId", authenticate, checkPermission('manage_users'), validateUserUpdate, updateUser);
 router.delete("/:userId", authenticate, checkPermission('manage_users'), deleteUser);
 router.put("/:userId/roles", authenticate, checkPermission('manage_users'), validateRoles, changeUserRole);
+
 module.exports = router;
