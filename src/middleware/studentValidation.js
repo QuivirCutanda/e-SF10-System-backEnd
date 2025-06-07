@@ -183,11 +183,19 @@ const validateUpdateSF10 = [
     validateResults,
 ];
 
+const validateDeleteSF10 = [
+    param('recordId')
+        .isNumeric()
+        .withMessage('Record ID must be a number'),
+    validateResults,
+];
+
 module.exports = {
     validateStudentUpdate,
     validateStudentRegistration,
     validateStudentSearch,
     validateLRN,
     validateStudentId,
-    validateUpdateSF10
+    validateUpdateSF10,
+    validateDeleteSF10
 };
