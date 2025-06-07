@@ -302,3 +302,6 @@ INSERT INTO `users` (`user_id`, `first_name`, `middle_name`, `last_name`, `email
 INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
 (1, 1);
 
+
+INSERT INTO `school_defaults` (`school_id`, `school_name`, `school_address`, `region`, `division`, `district`, `school_head`, `school_logo`, `contact_number`, `email`, `website`, `updated_by`, `created_at`, `updated_at`) VALUES
+(1234567890, 'School Name Here', 'School Address', 'School Region', 'School Division', 'School District', 'School Head Name', '/school_logos/1749257101975-688779572.png', '09989888990', 'school@example.com', 'www.example.com', 1, '2025-06-07 00:45:01', '2025-06-07 00:45:01');
