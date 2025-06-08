@@ -14,6 +14,7 @@ const dashboard = require("./src/routes/dashboard.routes");
 const homePage = require("./src/routes/homepage");
 const activityLog = require("./src/routes/activityLog.route");
 const roleAndPermission = require("./src/routes/role.route");
+const transferRequest = require("./src/routes/transferRequest.route");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -36,6 +37,7 @@ app.use("/esf10/school-defaults", schoolDefualt);
 app.use("/esf10/dashboard", dashboard);
 app.use("/esf10/activity-log", activityLog);
 app.use("/esf10/roles/", roleAndPermission);
+app.use("/esf10/transfer-request/", transferRequest);
 
 // Error handler
 app.use((err, req, res, next) => {

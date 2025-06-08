@@ -1,0 +1,58 @@
+--------------------------------------------------
+## View all request
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/esf10/transfer-request/view-all-requests?page=1&limit=10
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "data": [
+        {
+            "transfer_id": 2,
+            "student_id": 2,
+            "lrn": "341234564013",
+            "first_name": "Quivir",
+            "last_name": "Cutanda",
+            "requesting_school": "Tagum Sur National High School",
+            "request_status": "Pending",
+            "requested_at": "2025-06-08T04:10:33.000Z",
+            "processed_by": 0,
+            "processed_at": "0000-00-00 00:00:00",
+            "processor_first_name": "Not Processed",
+            "processor_last_name": "Not Processed"
+        },
+        {
+            "transfer_id": 1,
+            "student_id": 1,
+            "lrn": "341234564012",
+            "first_name": "Quivir",
+            "last_name": "Cutanda",
+            "requesting_school": "Tagum Sur National High School",
+            "request_status": "",
+            "requested_at": "2025-06-08T03:54:16.000Z",
+            "processed_by": 0,
+            "processed_at": "0000-00-00 00:00:00",
+            "processor_first_name": "Not Processed",
+            "processor_last_name": "Not Processed"
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 2,
+        "totalPages": 1
+    }
+}
