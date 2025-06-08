@@ -1,0 +1,34 @@
+--------------------------------------------------
+## Create Transfer school
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:Bearer paste your generated token here
+    -Method
+        POST
+    -EndPoint
+       http://localhost:3001/esf10/transfer-request/create-request
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+    "student_id": 3, 
+    "requesting_school": "Tagum Sur  High School"
+}
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Transfer request created successfully",
+    "transferId": 4
+}

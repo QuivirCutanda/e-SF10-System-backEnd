@@ -7,7 +7,7 @@
         No Auth
     -Headers (add)
         Key:Content-Type
-        Value:application/json
+         Value:Bearer paste your generated token here
     -Method
         POST
     -EndPoint

@@ -1,0 +1,36 @@
+--------------------------------------------------
+## View request by transfer_id
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/esf10/transfer-request/view-request/<transfer_id>
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "data": {
+        "transfer_id": 4,
+        "student_id": 3,
+        "lrn": "341234564033",
+        "first_name": "Quivir",
+        "last_name": "Cutanda",
+        "requesting_school": "Tagum Sur  High School",
+        "request_status": "Approved",
+        "requested_at": "2025-06-08T06:36:25.000Z",
+        "processed_by": 1,
+        "processed_at": "2025-06-08 14:37:26",
+        "processor_first_name": "Quivir",
+        "processor_last_name": "Cutanda"
+    }
+}

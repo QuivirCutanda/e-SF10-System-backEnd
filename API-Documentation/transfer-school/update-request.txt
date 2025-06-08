@@ -1,0 +1,33 @@
+--------------------------------------------------
+## update request
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:Bearer paste your generated token here
+    -Method
+        PUT
+    -EndPoint
+       http://localhost:3001/esf10/transfer-request/update-request/<transfer_id>
+
+    -Body:raw
+
+    *accepted request_status are (Pending,Approved,Rejected)
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+ {"request_status":"Approved"}
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Transfer request updated to Approved successfully",
+    "transferId": 4
+}

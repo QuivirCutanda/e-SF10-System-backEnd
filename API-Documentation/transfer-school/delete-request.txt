@@ -1,0 +1,24 @@
+--------------------------------------------------
+##Delete request
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:Bearer paste your generated token here
+    -Method
+        DELETE
+    -EndPoint
+       http://localhost:3001/esf10/transfer-request/delete/3
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Transfer request deleted successfully",
+    "transferId": 3
+}
