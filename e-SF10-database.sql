@@ -80,7 +80,7 @@ CREATE TABLE transfer_requests (
     transfer_id INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL,
     requesting_school VARCHAR(255) NOT NULL,
-    request_status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    request_status ENUM('Pending', 'Approved', 'Rejected','Deleted') DEFAULT 'Pending',
     requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     processed_by INT,
     processed_at TIMESTAMP,
