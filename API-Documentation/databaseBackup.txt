@@ -62,3 +62,19 @@ Response (500 Internal Server Error):
   "error": "Error message details"
 }
 
+
+--------------------------------------------------
+## 2. Open or Download the specific sql file back up
+--------------------------------------------------
+Authorization
+    - Headers:
+      Key: Authorization
+      Value: Bearer your_token_here
+      
+- Method: GET
+- Endpoint: http://localhost:3001/esf10/backups/<backup_filename>
+  
+  example: http://localhost:3001/esf10/backups/backup-2025-06-08T09-20-02-889Z.sql
+
+Response (200 OK):
+the response is the content of the sql file
