@@ -11,7 +11,7 @@
     -Method
         GET
     -EndPoint
-       http://localhost:3001/api/activity-logs?page=1&limit=10
+       http://localhost:3001/esf10/activity-log?page=1&limit=10
 
 --------------------------------------------------
 Response    (200 ok)
