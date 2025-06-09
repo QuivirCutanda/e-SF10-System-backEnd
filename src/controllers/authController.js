@@ -14,10 +14,10 @@ const registerUser = async (req, res) => {
   } = req.body;
 
   try {
-    const validRoles = ['admin', 'teacher', 'registrar', 'student', 'school_head', 'parent_guardian', 'it_support'];
-    if (!validRoles.includes(role)) {
-      return res.status(400).json({ message: 'Invalid role specified' });
-    }
+    // const validRoles = ['admin', 'teacher', 'registrar', 'student', 'school_head', 'parent_guardian', 'it_support'];
+    // if (!validRoles.includes(role)) {
+    //   return res.status(400).json({ message: 'Invalid role specified' });
+    // }
 
     const existingUser = await getUserByEmail(email);
     if (existingUser) {
