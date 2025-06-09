@@ -1,5 +1,20 @@
 const db = require('../config/db');
 
+const checkRoleExists = async (role) => {
+  const connection = await db.getConnection();
+  try {
+    const [roleResult] = await connection.execute(
+      `SELECT role_id FROM roles WHERE role_name = LOWER(?)`,
+      [role]
+    );
+    return roleResult.length > 0;
+  } catch (err) {
+    throw err;
+  } finally {
+    connection.release();
+  }
+};
+
 const createUser = async (user) => {
   const connection = await db.getConnection();
   try {
@@ -264,5 +279,6 @@ module.exports = {
   getUserById,
   updateUserById,
   deleteUserById,
-  modifyUserPermissions
+  modifyUserPermissions,
+  checkRoleExists
 };

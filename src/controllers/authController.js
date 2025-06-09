@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { createUser, assignRoleToUser, getUserByEmail, getPermissionsByUserId, getRoleByUserId, updateUserById, deleteUserById, getUserById, modifyUserPermissions } = require('../models/User');
+const { createUser, assignRoleToUser, getUserByEmail, getPermissionsByUserId, getRoleByUserId, updateUserById, deleteUserById, getUserById, modifyUserPermissions, checkRoleExists } = require('../models/User');
 const { generateToken } = require('../utils/generateToken');
 
 // Register user with role
@@ -14,18 +14,24 @@ const registerUser = async (req, res) => {
   } = req.body;
 
   try {
-    const validRoles = ['admin', 'teacher', 'registrar', 'student', 'school_head', 'parent_guardian', 'it_support'];
-    if (!validRoles.includes(role)) {
-      return res.status(400).json({ message: 'Invalid role specified' });
-    }
-
+    // Check for existing user
     const existingUser = await getUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ message: 'Email already in use' });
     }
 
+    // Check if role exists before creating user
+    const roleExists = await checkRoleExists(role);
+    if (!roleExists) {
+      return res.status(400).json({ 
+        message: `Role ${role} does not exist. Please try again with a valid role.` 
+      });
+    }
+
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create user
     const result = await createUser({
       first_name,
       middle_name,
@@ -34,23 +40,18 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
+    // Assign role to user
     const roleResult = await assignRoleToUser(result.insertId, role);
-
     if (!roleResult) {
-      return res.status(400).json({ message: 'Role not found or cannot be assigned.' });
+      return res.status(400).json({ message: 'Role assignment failed. Please try again.' });
     }
 
+    // Get user permissions
     const permissions = await getPermissionsByUserId(result.insertId);
 
-    const token = generateToken({
-      user_id: result.insertId,
-      email,
-      role
-    });
-
+    // Return success response
     res.status(201).json({
       message: 'User registered successfully',
-      token,
       user: {
         user_id: result.insertId,
         first_name,
@@ -62,7 +63,7 @@ const registerUser = async (req, res) => {
     });
   } catch (err) {
     console.error('Register User Error:', err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Internal server error. Please try again later.' });
   }
 };
 
@@ -78,6 +79,18 @@ const registerAdmin = async (req, res) => {
   } = req.body;
 
   try {
+    const existingUser = await getUserByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+
+    const roleExists = await checkRoleExists(role);
+    if (!roleExists) {
+      return res.status(400).json({ 
+        message: `Role ${role} does not exist. Please try again with a valid role.` 
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await createUser({
@@ -89,22 +102,14 @@ const registerAdmin = async (req, res) => {
     });
 
     const roleResult = await assignRoleToUser(result.insertId, role);
-
     if (!roleResult) {
-      return res.status(400).json({ message: 'Role not found or cannot be assigned.' });
+      return res.status(400).json({ message: 'Role assignment failed. Please try again.' });
     }
 
     const permissions = await getPermissionsByUserId(result.insertId);
 
-    const token = generateToken({
-      user_id: result.insertId,
-      email,
-      role
-    });
-
     res.status(201).json({
       message: 'Admin registered successfully',
-      token,
       user: {
         user_id: result.insertId,
         first_name,
@@ -116,7 +121,7 @@ const registerAdmin = async (req, res) => {
     });
   } catch (err) {
     console.error('Register Admin Error:', err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Internal server error. Please try again later.' });
   }
 };
 
@@ -315,28 +320,23 @@ const updateUserPassword = async (req, res) => {
   }
 };
 
-// Modify user permissions
 const modifyUserPermission = async (req, res) => {
   const { userId } = req.params;
   const { permission_name, is_granted } = req.body;
-  const requestingUserId = req.user.user_id; // From authMiddleware
+  const requestingUserId = req.user.user_id; 
 
   try {
-    // Validate request body
     if (!permission_name || typeof is_granted !== 'boolean') {
       return res.status(400).json({ message: 'permission_name and is_granted (boolean) are required' });
     }
 
-    // Check if user exists
     const user = await getUserById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Modify permission
     await modifyUserPermissions(userId, permission_name, is_granted, requestingUserId);
 
-    // Fetch updated permissions
     const updatedPermissions = await getPermissionsByUserId(userId);
 
     res.status(200).json({
@@ -352,13 +352,11 @@ const modifyUserPermission = async (req, res) => {
   }
 };
 
-// Placeholder for listing students
 const listStudents = async (req, res) => {
   try {
-    // This is a stub; implement actual student fetching logic here
     res.status(200).json({
       message: 'Students retrieved successfully',
-      students: [] // Replace with actual data
+      students: [] 
     });
   } catch (err) {
     console.error('List Students Error:', err);
