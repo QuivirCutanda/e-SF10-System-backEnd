@@ -160,4 +160,102 @@ const createNewRole = async (roleName, permissionIds, userId) => {
   }
 };
 
-module.exports = { getAllRolesAndPermissions, createNewRole, getAllRolesAndPermissionsSeparately };
+// Update user roles
+const updateUserRole = async (userId, roleIds, requesterId) => {
+  let connection;
+  try {
+    // Validate requesterId
+    if (!requesterId || !Number.isInteger(requesterId)) {
+      throw new Error('Invalid requester ID for logging');
+    }
+
+    // Check if user exists
+    const [userResult] = await db.execute(
+      'SELECT user_id FROM users WHERE user_id = ?',
+      [userId]
+    );
+    if (userResult.length === 0) {
+      throw new Error('User not found');
+    }
+
+    // Validate role IDs
+    if (roleIds.length > 0) {
+      const placeholders = roleIds.map(() => '?').join(',');
+      const query = `SELECT role_id FROM roles WHERE role_id IN (${placeholders})`;
+      const [validRoles] = await db.execute(query, roleIds);
+      const validRoleIds = validRoles.map(r => r.role_id);
+
+      if (validRoleIds.length !== roleIds.length) {
+        throw new Error('Invalid role IDs');
+      }
+    }
+
+    // Get a connection for the transaction
+    connection = await db.getConnection();
+
+    // Begin transaction
+    await connection.beginTransaction();
+
+    // Delete existing roles for the user
+    await connection.execute(
+      'DELETE FROM user_roles WHERE user_id = ?',
+      [userId]
+    );
+
+    // Insert new roles if provided
+    if (roleIds.length > 0) {
+      const placeholders = roleIds.map(() => '(?, ?)').join(',');
+      const values = roleIds.flatMap(roleId => [userId, roleId]);
+      const insertQuery = `INSERT INTO user_roles (user_id, role_id) VALUES ${placeholders}`;
+      const [roleResult] = await connection.execute(insertQuery, values);
+      console.log(`Inserted ${roleResult.affectedRows} roles for user_id=${userId}`);
+    } else {
+      console.log(`No roles assigned for user_id=${userId}`);
+    }
+
+    // Log role update to activity_logs
+    const roleIdsStr = roleIds.length > 0 ? roleIds.join(', ') : 'none';
+    const [logResult] = await connection.execute(
+      'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',
+      [requesterId, `Updated roles for user_id=${userId} to role_ids=[${roleIdsStr}]`]
+    );
+    console.log(`Activity log created: log_id=${logResult.insertId}, requester_id=${requesterId}`);
+
+    // Commit transaction
+    await connection.commit();
+
+    // Fetch the updated user roles
+    const [rows] = await connection.execute(
+      `SELECT ur.user_id, ur.role_id, r.role_name
+       FROM user_roles ur
+       JOIN roles r ON ur.role_id = r.role_id
+       WHERE ur.user_id = ?`,
+      [userId]
+    );
+
+    // Transform the result
+    const userRoles = {
+      user_id: userId,
+      roles: rows.map(row => ({
+        role_id: row.role_id,
+        role_name: row.role_name
+      }))
+    };
+
+    return userRoles;
+  } catch (err) {
+    // Rollback transaction on error
+    if (connection) {
+      await connection.rollback();
+    }
+    console.error('Error in updateUserRole:', err);
+    throw new Error(err.message);
+  } finally {
+    // Release the connection
+    if (connection) {
+      connection.release();
+    }
+  }
+};
+
+module.exports = { getAllRolesAndPermissions, createNewRole, getAllRolesAndPermissionsSeparately, updateUserRole };

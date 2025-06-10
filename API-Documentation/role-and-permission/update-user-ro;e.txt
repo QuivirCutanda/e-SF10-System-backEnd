@@ -1,0 +1,43 @@
+--------------------------------------------------
+# Update user role
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+       http://localhost:3001/esf10/roles/update-user-role
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "user_id": 2,
+  "role_ids": [5]
+}
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "User roles updated successfully",
+    "user_roles": {
+        "user_id": 2,
+        "roles": [
+            {
+                "role_id": 5,
+                "role_name": "school_head"
+            }
+        ]
+    },
+    "timestamp": "2025-06-10T01:10:10.149Z"
+}
