@@ -6,6 +6,24 @@ const createStudent = async (data, userId) => {
   try {
     await connection.beginTransaction();
 
+    // Check for duplicate LRN
+    const [existingLrn] = await connection.execute(
+      'SELECT lrn FROM students WHERE lrn = ?',
+      [data.lrn]
+    );
+    if (existingLrn.length > 0) {
+      throw new Error('Registration failed: LRN already exists in the database');
+    }
+
+    // Check for duplicate name combination
+    const [existingName] = await connection.execute(
+      'SELECT * FROM students WHERE first_name = ? AND middle_name = ? AND last_name = ?',
+      [data.first_name, data.middle_name, data.last_name]
+    );
+    if (existingName.length > 0) {
+      throw new Error('Registration failed: Student with same first name, middle name, and last name already exists');
+    }
+
     const [result] = await connection.execute(
       `INSERT INTO students 
          (lrn, first_name, middle_name, last_name, extension_name, date_of_birth, gender, street, city, province, zip_code, guardian_name, contact_number) 

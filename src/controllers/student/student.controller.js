@@ -9,7 +9,7 @@ const addStudent = async (req, res) => {
 
     res.status(201).json({ message: 'Student successfully registered!', studentId: result.insertId });
   } catch (error) {
-    res.status(500).json({ message: 'Registration failed', error: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
