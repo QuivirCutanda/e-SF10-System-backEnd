@@ -1,0 +1,27 @@
+--------------------------------------------------
+## Search School
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/esf10/transfer-request/search-schools?query=school
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "data": [
+        "School Name Here",
+        "Tagum Sur National High School",
+        "Tagum Sur  High School"
+    ]
+}

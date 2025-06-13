@@ -1,133 +1,132 @@
-  const db = require('../../config/db');
-  const { createTransferRequestModel, getAllTransferRequestsModel, getTransferRequestByIdModel, updateTransferRequestModel, deleteTransferRequestModel } = require('../../models/transferRequest/transferRequest.model');
-  const { validationResult } = require('express-validator');
+const db = require('../../config/db');
+const { createTransferRequestModel, getAllTransferRequestsModel, getTransferRequestByIdModel, updateTransferRequestModel, deleteTransferRequestModel } = require('../../models/transferRequest/transferRequest.model');
+const { validationResult } = require('express-validator');
 
-  exports.createTransferRequest = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
-    }
+exports.createTransferRequest = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, errors: errors.array() });
+  }
 
-    const { student_id, requesting_school } = req.body;
-    const userId = req.user?.user_id;
-    let connection;
+  const { student_id, requesting_school } = req.body;
+  const userId = req.user?.user_id;
+  let connection;
 
-    if (!userId) {
-      return res.status(401).json({
+  if (!userId) {
+    return res.status(401).json({
+      success: false,
+      error: 'Unauthorized: User ID not found in request'
+    });
+  }
+
+  try {
+    connection = await db.getConnection();
+
+    // Verify student exists
+    const [studentRows] = await connection.execute(
+      'SELECT student_id FROM students WHERE student_id = ?',
+      [student_id]
+    );
+    if (studentRows.length === 0) {
+      return res.status(404).json({
         success: false,
-        error: 'Unauthorized: User ID not found in request'
+        error: 'Student not found',
+        details: `No student found with ID ${student_id}`
       });
     }
 
-    try {
-      connection = await db.getConnection();
+    const result = await createTransferRequestModel(student_id, requesting_school, userId);
 
-      // Verify student exists
-      const [studentRows] = await connection.execute(
-        'SELECT student_id FROM students WHERE student_id = ?',
-        [student_id]
-      );
-      if (studentRows.length === 0) {
-        return res.status(404).json({
-          success: false,
-          error: 'Student not found',
-          details: `No student found with ID ${student_id}`
-        });
+    return res.status(201).json({
+      success: true,
+      message: 'Transfer request created successfully',
+      transferId: result.insertId
+    });
+  } catch (error) {
+    console.error('Create Transfer Request Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Server error during transfer request creation',
+      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
+      timestamp: new Date().toISOString()
+    });
+  } finally {
+    if (connection) await connection.release();
+  }
+};
+
+exports.getAllTransferRequests = async (req, res) => {
+  let { page = 1, limit = 10 } = req.query;
+  page = parseInt(page) > 0 ? parseInt(page) : 1;
+  limit = parseInt(limit) > 0 ? parseInt(limit) : 10;
+  const offset = (page - 1) * limit;
+  let connection;
+
+  try {
+    connection = await db.getConnection();
+    const { requests, total } = await getAllTransferRequestsModel(limit, offset);
+
+    return res.status(200).json({
+      success: true,
+      data: requests,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
       }
+    });
+  } catch (error) {
+    console.error('Get All Transfer Requests Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Server error retrieving transfer requests',
+      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
+      timestamp: new Date().toISOString()
+    });
+  } finally {
+    if (connection) await connection.release();
+  }
+};
 
-      const result = await createTransferRequestModel(student_id, requesting_school, userId);
+exports.getTransferRequestById = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, errors: errors.array() });
+  }
 
-      return res.status(201).json({
-        success: true,
-        message: 'Transfer request created successfully',
-        transferId: result.insertId
-      });
-    } catch (error) {
-      console.error('Create Transfer Request Error:', error);
-      return res.status(500).json({
+  const { id } = req.params;
+  const transferId = parseInt(id);
+  let connection;
+
+  try {
+    connection = await db.getConnection();
+    const request = await getTransferRequestByIdModel(transferId);
+
+    if (!request) {
+      return res.status(404).json({
         success: false,
-        error: 'Server error during transfer request creation',
-        details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
-        timestamp: new Date().toISOString()
+        error: 'Transfer request not found',
+        details: `No transfer request found with ID ${transferId}`
       });
-    } finally {
-      if (connection) await connection.release();
-    }
-  };
-
-  exports.getAllTransferRequests = async (req, res) => {
-    let { page = 1, limit = 10 } = req.query;
-    page = parseInt(page) > 0 ? parseInt(page) : 1;
-    limit = parseInt(limit) > 0 ? parseInt(limit) : 10;
-    const offset = (page - 1) * limit;
-    let connection;
-
-    try {
-      connection = await db.getConnection();
-      const { requests, total } = await getAllTransferRequestsModel(limit, offset);
-
-      return res.status(200).json({
-        success: true,
-        data: requests,
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit)
-        }
-      });
-    } catch (error) {
-      console.error('Get All Transfer Requests Error:', error);
-      return res.status(500).json({
-        success: false,
-        error: 'Server error retrieving transfer requests',
-        details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
-        timestamp: new Date().toISOString()
-      });
-    } finally {
-      if (connection) await connection.release();
-    }
-  };
-
-  exports.getTransferRequestById = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const { id } = req.params;
-    const transferId = parseInt(id);
-    let connection;
-
-    try {
-      connection = await db.getConnection();
-      const request = await getTransferRequestByIdModel(transferId);
-
-      if (!request) {
-        return res.status(404).json({
-          success: false,
-          error: 'Transfer request not found',
-          details: `No transfer request found with ID ${transferId}`
-        });
-      }
-
-      return res.status(200).json({
-        success: true,
-        data: request
-      });
-    } catch (error) {
-      console.error('Get Transfer Request By ID Error:', error);
-      return res.status(500).json({
-        success: false,
-        error: 'Server error retrieving transfer request',
-        details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
-        timestamp: new Date().toISOString()
-      });
-    } finally {
-      if (connection) await connection.release();
-    }
-  };
-
+    return res.status(200).json({
+      success: true,
+      data: request
+    });
+  } catch (error) {
+    console.error('Get Transfer Request By ID Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Server error retrieving transfer request',
+      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
+      timestamp: new Date().toISOString()
+    });
+  } finally {
+    if (connection) await connection.release();
+  }
+};
 
 exports.updateTransferRequest = async (req, res) => {
   // Validate request input
@@ -193,42 +192,76 @@ exports.updateTransferRequest = async (req, res) => {
   }
 };
 
-  exports.deleteTransferRequest = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
-    }
+exports.deleteTransferRequest = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ success: false, errors: errors.array() });
+  }
 
-    const { id } = req.params;
-    const transferId = parseInt(id);
-    const userId = req.user?.user_id;
-    let connection;
+  const { id } = req.params;
+  const transferId = parseInt(id);
+  const userId = req.user?.user_id;
+  let connection;
 
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        error: 'Unauthorized: User ID not found in request'
-      });
-    }
+  if (!userId) {
+    return res.status(401).json({
+      success: false,
+      error: 'Unauthorized: User ID not found in request'
+    });
+  }
 
-    try {
-      connection = await db.getConnection();
-      const result = await deleteTransferRequestModel(transferId, userId);
-      return res.status(200).json({
-        success: true,
-        message: 'Transfer request deleted successfully',
-        transferId
-      });
-    } catch (error) {
-      console.error('Delete Transfer Request Error:', error);
-      return res.status(error.message.includes('not found') ? 404 : 500).json({
-        success: false,
-        error: error.message.includes('not found') ? 'Transfer request not found' : 'Server error deleting transfer request',
-        transferId,
-        details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
-        timestamp: new Date().toISOString()
-      });
-    } finally {
-      if (connection) await connection.release();
-    }
-  };
+  try {
+    connection = await db.getConnection();
+    const result = await deleteTransferRequestModel(transferId, userId);
+    return res.status(200).json({
+      success: true,
+      message: 'Transfer request deleted successfully',
+      transferId
+    });
+  } catch (error) {
+    console.error('Delete Transfer Request Error:', error);
+    return res.status(error.message.includes('not found') ? 404 : 500).json({
+      success: false,
+      error: error.message.includes('not found') ? 'Transfer request not found' : 'Server error deleting transfer request',
+      transferId,
+      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
+      timestamp: new Date().toISOString()
+    });
+  } finally {
+    if (connection) await connection.release();
+  }
+};
+
+exports.searchSchoolNames = async (req, res) => {
+  const { query } = req.query;
+  let connection;
+
+  try {
+    connection = await db.getConnection();
+    
+    // Search school names from both school_defaults and transfer_requests
+    const [schoolRows] = await connection.execute(
+      `SELECT DISTINCT school_name AS name FROM school_defaults 
+       WHERE school_name LIKE ? 
+       UNION 
+       SELECT DISTINCT requesting_school AS name FROM transfer_requests 
+       WHERE requesting_school LIKE ? AND request_status != 'Deleted'`,
+      [`%${query}%`, `%${query}%`]
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: schoolRows.map(row => row.name)
+    });
+  } catch (error) {
+    console.error('Search School Names Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Server error searching school names',
+      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
+      timestamp: new Date().toISOString()
+    });
+  } finally {
+    if (connection) await connection.release();
+  }
+};

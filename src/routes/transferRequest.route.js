@@ -4,7 +4,25 @@ const authenticate = require('../middleware/authMiddleware');
 const authorizePermission = require('../middleware/authorizePermission');
 const { validateTransferRequest, validateTransferId, validateTransferUpdate } = require('../middleware/transferRequestValidation');
 const { validatePagination } = require('../middleware/paginationValidation');
-const { createTransferRequest, getAllTransferRequests, getTransferRequestById, updateTransferRequest, deleteTransferRequest } = require('../controllers/transferRequest/transferRequest.controller');
+const { check, validationResult } = require('express-validator');
+const { createTransferRequest, getAllTransferRequests, getTransferRequestById, updateTransferRequest, deleteTransferRequest, searchSchoolNames } = require('../controllers/transferRequest/transferRequest.controller');
+
+// // Validation middleware for search query
+// const validateSchoolSearch = [
+//   check('query')
+//     .optional()
+//     .isString()
+//     .trim()
+//     .isLength({ min: 1, max: 255 })
+//     .withMessage('Search query must be a string between 1 and 255 characters'),
+//   (req, res, next) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({ success: false, errors: errors.array() });
+//     }
+//     next();
+//   }
+// ];
 
 router.post(
   '/create-request',
@@ -45,6 +63,13 @@ router.delete(
   authorizePermission('manage_users'),
   validateTransferId,
   deleteTransferRequest
+);
+
+router.get(
+  '/search-schools',
+  authenticate,
+  authorizePermission('request_transfers', 'approve_transfers'),
+  searchSchoolNames
 );
 
 module.exports = router;
