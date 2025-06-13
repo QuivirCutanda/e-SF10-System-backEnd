@@ -15,6 +15,7 @@ const homePage = require("./src/routes/homepage");
 const activityLog = require("./src/routes/activityLog.route");
 const roleAndPermission = require("./src/routes/role.route");
 const transferRequest = require("./src/routes/transferRequest.route");
+const generateExcel = require("./src/routes/excel.route");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -38,6 +39,7 @@ app.use("/esf10/dashboard", dashboard);
 app.use("/esf10/activity-log", activityLog);
 app.use("/esf10/roles/", roleAndPermission);
 app.use("/esf10/transfer-request/", transferRequest);
+app.use("/esf10/", generateExcel);
 
 // Error handler
 app.use((err, req, res, next) => {
