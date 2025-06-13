@@ -8,12 +8,33 @@ const createBackupHandler = async (req, res) => {
         const userId = req.user.user_id;
         const result = await createBackup(userId);
 
-        res.status(201).json({
-            message: 'Database backup created successfully',
-            backup: result
+        // Set headers for ZIP download
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+
+        // Stream the ZIP file
+        result.stream.pipe(res);
+
+        // Handle stream errors
+        result.stream.on('error', (err) => {
+            console.error('ZIP stream error:', err);
+            if (!res.headersSent) {
+                res.status(500).json({
+                    message: 'Failed to stream backup file',
+                    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+                });
+            }
         });
+
+        // Clean up temporary files after streaming
+        res.on('finish', () => {
+            result.cleanup();
+        });
+
+        // Log success (note: database logging is already done in createBackup)
+        console.log(`Backup ${result.filename} streamed successfully`);
     } catch (error) {
-        console.log('Backup creation failed: ', error);
+        console.error('Backup creation failed: ', error);
         res.status(500).json({
             message: 'Failed to create database backup',
             error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
