@@ -14,23 +14,8 @@
 - Method: POST
 - Endpoint: http://localhost:3001/esf10/backups/create
 
-Response (201 Created):
-{
-  "message": "Database backup created successfully",
-  "backup": {
-    "success": true,
-    "filename": "backup-2025-05-25T12-45-30-000Z.sql",
-    "path": "C:\\Users\\User\\Desktop\\e-SF10-System-backEnd\\backups\\backup-2025-05-25T12-45-30-000Z.sql",
-    "backupId": 1,
-    "timestamp": "2025-05-25T12:45:30.000Z"
-  }
-}
-
-Response (500 Internal Server Error):
-{
-  "message": "Failed to create database backup",
-  "error": "Error message details"
-}
+Response (200 OK):
+Download automatically.
 
 --------------------------------------------------
 ## 2. List All Backups

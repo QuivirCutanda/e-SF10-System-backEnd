@@ -1,51 +1,64 @@
-const { createConnection } = require('mysql2/promise');
+const { createPool } = require('mysql2/promise');
 const path = require('path');
 const fs = require('fs');
 const { logActivity } = require('./activityLog');
+const archiver = require('archiver');
+const os = require('os');
 
-// Create the backup directory if it doesn't exist
-const backupDir = path.join(__dirname, '../../backups');
-if (!fs.existsSync(backupDir)) {
-    fs.mkdirSync(backupDir, { recursive: true });
-}
+// Create a connection pool
+const pool = createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    connectTimeout: 10000 // 10 seconds
+});
 
 /**
- * Creates a MySQL database backup using mysql2
+ * Creates a MySQL database backup and zips it with the contents of ../../../data
  * @param {number} userId - The ID of the user initiating the backup
- * @returns {Promise<Object>} - Result of the backup operation
+ * @returns {Promise<Object>} - Result including ZIP stream and metadata
  */
 const createBackup = async (userId) => {
+    console.log(`Starting backup creation for user ${userId}...`);
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filename = `backup-${timestamp}.sql`;
-    const filePath = path.join(backupDir, filename);
+    const sqlFilename = `backup-${timestamp}.sql`;
+    const zipFilename = `backup-${timestamp}.zip`;
+    const tempDir = os.tmpdir();
+    const tempSqlPath = path.join(tempDir, sqlFilename);
+    console.log('Temporary SQL path:', tempSqlPath);
 
-    const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
+    const { DB_HOST, DB_USER, DB_NAME } = process.env;
 
     // Validate environment variables
     if (!DB_HOST || !DB_USER || !DB_NAME) {
-        throw new Error('Database configuration missing');
+        throw new Error('Database configuration missing: DB_HOST, DB_USER, or DB_NAME not set');
     }
 
-    // Create a new connection for backup
-    const connection = await createConnection({
-        host: DB_HOST,
-        user: DB_USER,
-        password: DB_PASSWORD,
-        database: DB_NAME
-    });
-
+    let connection;
     try {
-        // Start writing SQL file
-        const stream = fs.createWriteStream(filePath);
+        // Get connection from pool
+        console.log('Acquiring database connection...');
+        connection = await pool.getConnection();
+
+        // Write SQL file temporarily
+        console.log('Writing SQL file...');
+        const stream = fs.createWriteStream(tempSqlPath);
         stream.write(`-- Backup for ${DB_NAME} created at ${new Date().toISOString()}\n`);
         stream.write(`-- Database: ${DB_NAME}\n\n`);
-        stream.write(`SET FOREIGN_KEY_CHECKS=0;\n\n`); // Disable foreign key checks for restore
+        stream.write(`SET FOREIGN_KEY_CHECKS=0;\n\n`);
 
         // Get all tables
+        console.log('Fetching tables...');
         const [tables] = await connection.query("SHOW TABLES");
         const tableNames = tables.map(row => Object.values(row)[0]);
+        console.log('Tables:', tableNames);
 
         for (const table of tableNames) {
+            console.log(`Processing table: ${table}`);
             // Get table structure
             const [createTable] = await connection.query(`SHOW CREATE TABLE \`${table}\``);
             stream.write(`-- Table structure for ${table}\n`);
@@ -58,16 +71,16 @@ const createBackup = async (userId) => {
                 stream.write(`INSERT INTO \`${table}\` VALUES\n`);
                 rows.forEach((row, index) => {
                     const values = Object.values(row).map(val => {
-                        if (val === null) return 'NULL';
+                        if (val === null || val === undefined) return 'NULL';
                         if (val instanceof Date) {
-                            // Check if the date is valid
-                            if (isNaN(val.getTime())) {
-                                console.warn(`Invalid date found in table ${table}: ${val}`);
-                                return 'NULL'; // Replace invalid dates with NULL
+                            if (isNaN(val.getTime()) || val.getTime() === 0) {
+                                console.warn(`Invalid or zero date found in table ${table}: ${val}`);
+                                return 'NULL';
                             }
                             return `'${val.toISOString().slice(0, 19).replace('T', ' ')}'`;
                         }
                         if (typeof val === 'string') return `'${val.replace(/'/g, "''")}'`;
+                        if (typeof val === 'boolean') return val ? 'TRUE' : 'FALSE';
                         return val;
                     }).join(', ');
                     stream.write(`(${values})${index < rows.length - 1 ? ',' : ';'}\n`);
@@ -76,47 +89,111 @@ const createBackup = async (userId) => {
             }
         }
 
-        stream.write(`SET FOREIGN_KEY_CHECKS=1;\n`); // Re-enable foreign key checks
+        stream.write(`SET FOREIGN_KEY_CHECKS=1;\n`);
         stream.end();
 
-        // Log backup in database
-        const dbConnection = await createConnection({
-            host: DB_HOST,
-            user: DB_USER,
-            password: DB_PASSWORD,
-            database: DB_NAME
+        // Wait for stream to finish writing
+        console.log('Waiting for SQL file to finish writing...');
+        await new Promise((resolve, reject) => {
+            stream.on('finish', () => {
+                console.log('SQL file write completed');
+                resolve();
+            });
+            stream.on('error', (err) => {
+                console.error('SQL file write error:', err);
+                reject(err);
+            });
         });
-        try {
-            const [result] = await dbConnection.execute(
-                'INSERT INTO backups (backup_filename, created_by) VALUES (?,?)',
-                [filename, userId]
-            );
 
-            await logActivity(userId, `Created database backup: ${filename}`);
+        // Create ZIP archive
+        console.log('Creating ZIP archive...');
+        const archive = archiver('zip', { zlib: { level: 9 } });
+        const zipStream = archive;
 
-            return {
-                success: true,
-                filename,
-                path: filePath,
-                backupId: result.insertId,
-                timestamp: new Date().toISOString()
-            };
-        } finally {
-            await dbConnection.end();
+        // Handle ZIP stream errors and timeout
+        let streamTimeout;
+        const timeoutPromise = new Promise((_, reject) => {
+            streamTimeout = setTimeout(() => {
+                reject(new Error('ZIP stream timed out after 60 seconds'));
+            }, 60000); // 60 seconds timeout
+        });
+
+        archive.on('error', (err) => {
+            console.error('ZIP archive error:', err);
+            clearTimeout(streamTimeout);
+            throw err;
+        });
+
+        archive.on('finish', () => {
+            console.log('ZIP archive finalized');
+            clearTimeout(streamTimeout);
+        });
+
+        // Append SQL file
+        console.log('Adding SQL file to ZIP...');
+        archive.file(tempSqlPath, { name: sqlFilename });
+
+        // Append all files from ../../../data
+        const dataDir = path.join(__dirname, '../../../data');
+        console.log('Data directory:', dataDir, 'Exists:', fs.existsSync(dataDir));
+        if (fs.existsSync(dataDir)) {
+            archive.directory(dataDir, 'data');
+        } else {
+            console.warn(`Data directory not found: ${dataDir}`);
         }
+
+        // Finalize archive
+        console.log('Finalizing ZIP archive...');
+        await Promise.race([
+            new Promise((resolve, reject) => {
+                archive.on('finish', resolve);
+                archive.on('error', reject);
+                archive.finalize();
+            }),
+            timeoutPromise
+        ]);
+
+        // Log backup in database
+        console.log('Logging backup to database...');
+        const [result] = await connection.execute(
+            'INSERT INTO backups (backup_filename, created_by) VALUES (?,?)',
+            [zipFilename, userId]
+        );
+
+        await logActivity(userId, `Created database backup: ${zipFilename}`);
+        console.log('Backup logged in database:', zipFilename);
+
+        return {
+            success: true,
+            filename: zipFilename,
+            stream: zipStream,
+            backupId: result.insertId,
+            timestamp: new Date().toISOString(),
+            cleanup: () => fs.unlink(tempSqlPath, err => {
+                if (err) console.error(`Failed to delete temp file ${tempSqlPath}:`, err);
+                else console.log('Temporary SQL file deleted:', tempSqlPath);
+            })
+        };
+    } catch (error) {
+        // Clean up temp file if it exists
+        if (fs.existsSync(tempSqlPath)) {
+            fs.unlinkSync(tempSqlPath);
+            console.log('Cleaned up temp file due to error:', tempSqlPath);
+        }
+        console.error('Backup creation error:', error.message, error.stack);
+        throw new Error(`Backup failed: ${error.message}`);
     } finally {
-        await connection.end();
+        if (connection) {
+            connection.release();
+            console.log('Database connection released');
+        }
     }
 };
 
 const getBackups = async () => {
-    const connection = await createConnection({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME
-    });
+    let connection;
     try {
+        connection = await pool.getConnection();
         const [rows] = await connection.execute(`
             SELECT b.backup_id, b.backup_filename, b.backup_date,
             u.user_id, CONCAT(u.first_name, ' ', u.last_name) as user_name
@@ -126,18 +203,14 @@ const getBackups = async () => {
         `);
         return rows;
     } finally {
-        await connection.end();
+        if (connection) connection.release();
     }
 };
 
 const restoreBackup = async (backupId, userId) => {
-    const connection = await createConnection({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME
-    });
+    let connection;
     try {
+        connection = await pool.getConnection();
         const [backups] = await connection.execute(
             'SELECT backup_filename FROM backups WHERE backup_id = ?',
             [backupId]
@@ -148,7 +221,7 @@ const restoreBackup = async (backupId, userId) => {
         }
 
         const filename = backups[0].backup_filename;
-        const filePath = path.join(backupDir, filename);
+        const filePath = path.join(__dirname, '../../backups', filename);
 
         if (!fs.existsSync(filePath)) {
             throw new Error('Backup file not found on server');
@@ -187,7 +260,7 @@ const restoreBackup = async (backupId, userId) => {
             });
         });
     } finally {
-        await connection.end();
+        if (connection) connection.release();
     }
 };
 
