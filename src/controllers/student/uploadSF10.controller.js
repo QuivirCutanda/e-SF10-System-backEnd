@@ -20,7 +20,7 @@ exports.uploadSF10 = async (req, res) => {
     const { start_year, end_year, grade_level, section } = req.body;
 
     // Required fields check
-    if (!start_year || !end_year || !grade_level || !section) {
+    if (!start_year || !end_year || !grade_level) {
       fs.unlinkSync(file.path);
       return res.status(400).json({
         success: false,
@@ -30,9 +30,8 @@ exports.uploadSF10 = async (req, res) => {
           ...(!start_year ? ["start_year"] : []),
           ...(!end_year ? ["end_year"] : []),
           ...(!grade_level ? ["grade_level"] : []),
-          ...(!section ? ["section"] : []),
         ],
-        details: "All fields are required for SF10 upload",
+        details: "Start year, end year, and grade level are required for SF10 upload",
       });
     }
 
@@ -135,7 +134,7 @@ exports.uploadSF10 = async (req, res) => {
 
     // File processing
     const baseDir = path.join(__dirname, '../../../data/documents/sf10');
-    const finalDir = path.join(baseDir, `${start_year}-${end_year}`, section);
+    const finalDir = path.join(baseDir, `${start_year}-${end_year}`, `grade-${grade_level}`);
     fs.mkdirSync(finalDir, { recursive: true });
 
     const fileExt = path.extname(file.originalname);
@@ -152,7 +151,7 @@ exports.uploadSF10 = async (req, res) => {
         start_year: startYearNum,
         end_year: endYearNum,
         grade_level: gradeLevelNum,
-        section,
+        section: section || null,
         sf10_document_path: absoluteFilePath,
       },
       userId
@@ -168,7 +167,7 @@ exports.uploadSF10 = async (req, res) => {
         path: absoluteFilePath,
         schoolYear: `${start_year}-${end_year}`,
         gradeLevel: gradeLevelNum,
-        section,
+        section: section || null,
       },
       metadata: {
         uploadedBy: userId,

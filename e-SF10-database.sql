@@ -64,7 +64,7 @@ CREATE TABLE school_records (
     start_year YEAR NOT NULL,
     end_year YEAR NOT NULL,
     grade_level VARCHAR(20) NOT NULL,
-    section VARCHAR(50) NOT NULL,
+    section VARCHAR(50) ,
     sf10_document_path VARCHAR(255),
     uploaded_by INT,
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
