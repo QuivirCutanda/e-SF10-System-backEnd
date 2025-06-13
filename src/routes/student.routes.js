@@ -3,7 +3,7 @@ const router = express.Router();
 const authorizePermission = require('../middleware/authorizePermission');
 const authenticate = require('../middleware/authMiddleware');
 const uploadSF10 = require('../middleware/uploadSF10.middleware');
-const { addStudent } = require('../controllers/student/student.controller');
+const { addStudent, bulkRegisterStudents } = require('../controllers/student/student.controller');
 const { searchStudents } = require('../controllers/student/searchStudent.controller');
 const { viewStudentECards } = require('../controllers/student/eCard.controller');
 const { viewAllStudents } = require('../controllers/student/viewAllStudents.controller');
@@ -14,8 +14,12 @@ const { validateStudentRegistration, validateStudentSearch, validateLRN, validat
 const { uploadSF10: uploadSF10Handler } = require('../controllers/student/uploadSF10.controller');
 const { updateSF10 } = require('../controllers/student/updateSF10.controller');
 const { deleteSF10 } = require('../controllers/student/deleteSF10.controller');
+const multer = require('multer');
+
+const upload = multer({ dest: 'uploads/' });
 
 router.post('/register', authenticate, authorizePermission('register_student'), validateStudentRegistration, addStudent);
+router.post('/bulk-register', authenticate, authorizePermission('register_student'), upload.single('file'), bulkRegisterStudents);
 router.get('/search', authenticate, authorizePermission('search_student'), validateStudentSearch, searchStudents);
 router.get('/all', authenticate, validatePagination, viewAllStudents);
 router.get('/:lrn/details', authenticate, authorizePermission('view_student_info'), validateLRN, getStudentFullDetails);

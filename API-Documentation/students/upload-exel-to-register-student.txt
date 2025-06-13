@@ -1,0 +1,60 @@
+--------------------------------------------------
+## Upload exel to bulk register student 
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        POST
+    -EndPoint
+        http://localhost:3001/esf10/students/bulk-register
+
+    -Body:form-data
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+required form
+key           type             Value
+file          file            student-data.xlsx
+
+
+--------------------------------------------------
+Response    (200 OK)
+--------------------------------------------------
+{
+    "message": "Bulk registration processed",
+    "successful": [
+        {
+            "row": 2,
+            "studentId": 18,
+            "message": "Student registered successfully"
+        },
+        {
+            "row": 3,
+            "studentId": 19,
+            "message": "Student registered successfully"
+        },
+        {
+            "row": 4,
+            "studentId": 20,
+            "message": "Student registered successfully"
+        },
+        {
+            "row": 5,
+            "studentId": 21,
+            "message": "Student registered successfully"
+        },
+        {
+            "row": 6,
+            "studentId": 22,
+            "message": "Student registered successfully"
+        }
+    ],
+    "errors": [
+        "Row 1: Registration failed: LRN already exists in the database"
+    ]
+}
