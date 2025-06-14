@@ -8,9 +8,12 @@ const createBackupHandler = async (req, res) => {
         const userId = req.user.user_id;
         const result = await createBackup(userId);
 
-        // Set headers for ZIP download
+        // Set headers for ZIP download to ensure automatic download
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
 
         // Stream the ZIP file
         result.stream.pipe(res);
@@ -31,7 +34,7 @@ const createBackupHandler = async (req, res) => {
             result.cleanup();
         });
 
-        // Log success (note: database logging is already done in createBackup)
+        // Log success
         console.log(`Backup ${result.filename} streamed successfully`);
     } catch (error) {
         console.error('Backup creation failed: ', error);

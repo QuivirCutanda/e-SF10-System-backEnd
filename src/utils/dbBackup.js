@@ -23,6 +23,11 @@ const pool = createPool({
  * @returns {Promise<Object>} - Result including ZIP stream and metadata
  */
 const createBackup = async (userId) => {
+    const fs = require('fs');
+    const path = require('path');
+    const os = require('os');
+    const archiver = require('archiver');
+
     console.log(`Starting backup creation for user ${userId}...`);
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const sqlFilename = `backup-${timestamp}.sql`;
