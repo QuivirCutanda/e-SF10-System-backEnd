@@ -1,4 +1,7 @@
 const { body, param, query, validationResult } = require('express-validator');
+const db = require('../config/db');
+const XLSX = require('xlsx');
+const fs = require('fs').promises;
 
 const validateResults = (req, res, next) => {
     const errors = validationResult(req);
@@ -190,6 +193,58 @@ const validateDeleteSF10 = [
     validateResults,
 ];
 
+const validateBulkRegistration = async (req, res, next) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        const filePath = req.file.path;
+        const workbook = XLSX.readFile(filePath);
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+            header: [
+                'lrn', 'first_name', 'middle_name', 'last_name', 'extension_name',
+                'date_of_birth', 'gender', 'street', 'city', 'province', 'zip_code',
+                'guardian_name', 'contact_number'
+            ],
+            range: 1, // Start reading from row 2
+        });
+
+        if (jsonData.length === 0) {
+            await fs.unlink(filePath);
+            return res.status(400).json({ message: 'Excel file is empty' });
+        }
+
+        const errors = [];
+
+        for (const [index, student] of jsonData.entries()) {
+            // Validate LRN is 12 digits
+            if (!student.lrn || student.lrn.toString().length !== 12 || isNaN(student.lrn)) {
+                errors.push(`Row ${index + 2}: LRN must be exactly 12 digits`);
+                continue;
+            }
+        }
+
+        await fs.unlink(filePath);
+
+        if (errors.length > 0) {
+            return res.status(400).json({ errors });
+        }
+
+        req.validatedStudents = jsonData;
+        next();
+    } catch (error) {
+        if (req.file && req.file.path) {
+            await fs.unlink(req.file.path).catch((err) => {
+                console.error(`Failed to delete file ${req.file.path}:`, err);
+            });
+        }
+        res.status(500).json({ message: `Validation error: ${error.message}` });
+    }
+};
+
 module.exports = {
     validateStudentUpdate,
     validateStudentRegistration,
@@ -197,5 +252,6 @@ module.exports = {
     validateLRN,
     validateStudentId,
     validateUpdateSF10,
-    validateDeleteSF10
+    validateDeleteSF10,
+    validateBulkRegistration
 };
