@@ -218,22 +218,30 @@ const validateBulkRegistration = async (req, res, next) => {
         }
 
         const errors = [];
+        const skipped = [];
+        const validStudents = [];
 
         for (const [index, student] of jsonData.entries()) {
             // Validate LRN is 12 digits
             if (!student.lrn || student.lrn.toString().length !== 12 || isNaN(student.lrn)) {
-                errors.push(`Row ${index + 2}: LRN must be exactly 12 digits`);
+                skipped.push(`Row ${index + 2}: LRN must be exactly 12 digits`);
                 continue;
             }
+            validStudents.push(student);
         }
 
         await fs.unlink(filePath);
 
-        if (errors.length > 0) {
-            return res.status(400).json({ errors });
+        if (validStudents.length === 0) {
+            return res.status(400).json({ 
+                message: 'No valid students to process',
+                skipped,
+                errors
+            });
         }
 
-        req.validatedStudents = jsonData;
+        req.validatedStudents = validStudents;
+        req.skippedRows = skipped; // Attach skipped rows to request for controller
         next();
     } catch (error) {
         if (req.file && req.file.path) {
@@ -244,7 +252,6 @@ const validateBulkRegistration = async (req, res, next) => {
         res.status(500).json({ message: `Validation error: ${error.message}` });
     }
 };
-
 module.exports = {
     validateStudentUpdate,
     validateStudentRegistration,
