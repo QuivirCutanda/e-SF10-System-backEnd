@@ -18,9 +18,8 @@ const pool = createPool({
 });
 
 /**
- * Creates a MySQL database backup and zips it with the contents of ../../../data
- * @param {number} userId - The ID of the user initiating the backup
- * @returns {Promise<Object>} - Result including ZIP stream and metadata
+ * @param {number} userId 
+ * @returns {Promise<Object>} 
  */
 const createBackup = async (userId) => {
     const fs = require('fs');
@@ -44,7 +43,7 @@ const createBackup = async (userId) => {
     }
 
     // Define the absolute path to the data directory
-    const dataDir = 'C:\\D_Drive\\e-SF10-System\\e-SF10-System-backEnd\\data';
+    const dataDir = '../data';
     console.log('Data directory:', dataDir);
 
     // Validate data directory
