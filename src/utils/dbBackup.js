@@ -38,6 +38,16 @@ const createBackup = async (userId) => {
         throw new Error('Database configuration missing: DB_HOST, DB_USER, or DB_NAME not set');
     }
 
+    // Define the absolute path to the data directory
+    const dataDir = 'C:\\D_Drive\\e-SF10-System\\e-SF10-System-backEnd\\data';
+    console.log('Data directory:', dataDir);
+
+    // Validate data directory
+    if (!fs.existsSync(dataDir)) {
+        console.error(`Data directory does not exist: ${dataDir}`);
+        throw new Error(`Backup failed: Data directory ${dataDir} not found`);
+    }
+
     let connection;
     try {
         // Get connection from pool
@@ -133,14 +143,9 @@ const createBackup = async (userId) => {
         console.log('Adding SQL file to ZIP...');
         archive.file(tempSqlPath, { name: sqlFilename });
 
-        // Append all files from ../../../data
-        const dataDir = path.join(__dirname, '../../../data');
-        console.log('Data directory:', dataDir, 'Exists:', fs.existsSync(dataDir));
-        if (fs.existsSync(dataDir)) {
-            archive.directory(dataDir, 'data');
-        } else {
-            console.warn(`Data directory not found: ${dataDir}`);
-        }
+        // Append all files from the specified data directory
+        console.log(`Adding files from ${dataDir} to ZIP...`);
+        archive.directory(dataDir, 'data');
 
         // Finalize archive
         console.log('Finalizing ZIP archive...');
