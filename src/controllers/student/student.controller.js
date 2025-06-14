@@ -1,6 +1,8 @@
 const { createStudent } = require('../../models/student/student.model');
 const XLSX = require('xlsx');
 const fs = require('fs').promises;
+const db = require('../../config/db');
+
 
 const addStudent = async (req, res) => {
   try {
@@ -17,34 +19,44 @@ const addStudent = async (req, res) => {
 
 const bulkRegisterStudents = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
-    }
-
     const userId = req.user.user_id;
-    const filePath = req.file.path;
-    const workbook = XLSX.readFile(filePath);
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: [
-      'lrn', 'first_name', 'middle_name', 'last_name', 'extension_name',
-      'date_of_birth', 'gender', 'street', 'city', 'province', 'zip_code',
-      'guardian_name', 'contact_number'
-    ], skipHeader: true });
-
-    if (jsonData.length === 0) {
-      await fs.unlink(filePath); // Clean up uploaded file
-      return res.status(400).json({ message: 'Excel file is empty' });
-    }
+    const jsonData = req.validatedStudents; // Use validated data from middleware
 
     const results = [];
     const errors = [];
+    const skipped = []; // New array to track skipped duplicates
 
     for (const [index, student] of jsonData.entries()) {
       try {
         // Validate required fields
         if (!student.lrn || !student.first_name || !student.last_name || !student.date_of_birth || !student.gender) {
-          errors.push(`Row ${index + 1}: Missing required fields`);
+          errors.push(`Row ${index + 2}: Missing required fields`);
+          continue;
+        }
+
+        // Check for duplicate LRN in database
+        const [existingLRN] = await db.execute(
+          'SELECT * FROM students WHERE lrn = ?',
+          [student.lrn.toString()]
+        );
+
+        if (existingLRN.length > 0) {
+          skipped.push(`Row ${index + 2}: Student with LRN ${student.lrn} already exists in the database`);
+          continue;
+        }
+
+        // Check for duplicate name combination in database
+        const [existingName] = await db.execute(
+          'SELECT * FROM students WHERE first_name = ? AND middle_name = ? AND last_name = ?',
+          [
+            student.first_name || '',
+            student.middle_name || '',
+            student.last_name || ''
+          ]
+        );
+
+        if (existingName.length > 0) {
+          skipped.push(`Row ${index + 2}: Student with name ${student.first_name} ${student.middle_name || ''} ${student.last_name} already exists in the database`);
           continue;
         }
 
@@ -65,23 +77,19 @@ const bulkRegisterStudents = async (req, res) => {
         };
 
         const result = await createStudent(studentData, userId);
-        results.push({ row: index + 1, studentId: result.insertId, message: 'Student registered successfully' });
+        results.push({ row: index + 2, studentId: result.insertId, message: 'Student registered successfully' });
       } catch (error) {
-        errors.push(`Row ${index + 1}: ${error.message}`);
+        errors.push(`Row ${index + 2}: ${error.message}`);
       }
     }
-
-    await fs.unlink(filePath); // Clean up uploaded file
 
     res.status(200).json({
       message: 'Bulk registration processed',
       successful: results,
+      skipped: skipped.length > 0 ? skipped : undefined, // Include skipped students in response
       errors: errors.length > 0 ? errors : undefined
     });
   } catch (error) {
-    if (req.file && req.file.path) {
-      await fs.unlink(req.file.path).catch(() => {}); // Clean up on error
-    }
     res.status(500).json({ message: `Server error: ${error.message}` });
   }
 };

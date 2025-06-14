@@ -26,35 +26,8 @@ file          file            student-data.xlsx
 Response    (200 OK)
 --------------------------------------------------
 {
-    "message": "Bulk registration processed",
-    "successful": [
-        {
-            "row": 2,
-            "studentId": 18,
-            "message": "Student registered successfully"
-        },
-        {
-            "row": 3,
-            "studentId": 19,
-            "message": "Student registered successfully"
-        },
-        {
-            "row": 4,
-            "studentId": 20,
-            "message": "Student registered successfully"
-        },
-        {
-            "row": 5,
-            "studentId": 21,
-            "message": "Student registered successfully"
-        },
-        {
-            "row": 6,
-            "studentId": 22,
-            "message": "Student registered successfully"
-        }
-    ],
-    "errors": [
-        "Row 1: Registration failed: LRN already exists in the database"
-    ]
+  "message": "Bulk registration processed",
+  "successful": [], // Array of successfully registered students
+  "skipped": [],   // Array of students skipped due to duplicates (LRN or name)
+  "errors": []     // Array of errors (validation or database errors)
 }
