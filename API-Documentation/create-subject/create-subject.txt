@@ -1,0 +1,44 @@
+--------------------------------------------------
+## Create subject
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+        http://localhost:3001/esf10/subjects/create-subject
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "subject_code": "MATH101",
+  "subject_name": "Mathematics 101",
+  "description": "Basic introduction to mathematics covering algebra and geometry.",
+  "grade_level": "Grade 10"
+}
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Subject created successfully",
+    "subjectId": 1,
+    "data": {
+        "subject_id": 1,
+        "subject_code": "MATH101",
+        "subject_name": "Mathematics 101",
+        "description": "Basic introduction to mathematics covering algebra and geometry.",
+        "grade_level": "Grade 10"
+    }
+}
