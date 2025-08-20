@@ -9,7 +9,7 @@
         Key:Content-Type
         Value:application/json
     -Method
-        GET
+        DELETE
     -EndPoint
          http://localhost:3001/esf10/subjects//delete-subject/2
 --------------------------------------------------
