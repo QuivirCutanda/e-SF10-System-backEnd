@@ -1,0 +1,37 @@
+--------------------------------------------------
+## Update Subject
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        PUT
+    -EndPoint
+       http://localhost:3001/esf10/subjects/update-subject/1
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "subject_code": "MATH102",
+  "subject_name": "Mathematics 102",
+  "description": "Advanced algebra and geometry",
+  "grade_level": "Grade 10"
+}
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Subject updated successfully",
+    "subjectId": 1
+}
