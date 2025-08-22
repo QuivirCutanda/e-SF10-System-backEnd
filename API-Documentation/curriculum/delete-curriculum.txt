@@ -1,0 +1,26 @@
+--------------------------------------------------
+## Delete Curriculum
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        DELETE
+    -EndPoint
+          http://localhost:3001/esf10/curriculum/delete-curriculum/:curriculum-id
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Curriculum deleted successfully",
+    "curriculumId": 7
+}

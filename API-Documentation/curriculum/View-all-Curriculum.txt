@@ -1,0 +1,49 @@
+--------------------------------------------------
+## View All Curriculum
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+        http://localhost:3001/esf10/curriculum/view-all-curriculums
+
+
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "data": [
+        {
+            "curriculum_id": 7,
+            "curriculum_name": "Science Curriculum 2024",
+            "school_year_id": 1,
+            "is_active": 1,
+            "created_at": "2025-08-22T10:41:47.000Z",
+            "updated_at": "2025-08-22T10:41:47.000Z",
+            "school_year_period": "2025-2026"
+        },
+        {
+            "curriculum_id": 4,
+            "curriculum_name": "Math Curriculum 2025",
+            "school_year_id": 1,
+            "is_active": 1,
+            "created_at": "2025-08-22T09:19:41.000Z",
+            "updated_at": "2025-08-22T10:19:44.000Z",
+            "school_year_period": "2025-2026"
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 2,
+        "totalPages": 1
+    },
+    "filters": {}
+}

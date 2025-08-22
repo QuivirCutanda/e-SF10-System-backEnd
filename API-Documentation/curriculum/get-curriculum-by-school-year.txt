@@ -1,0 +1,33 @@
+--------------------------------------------------
+## get-curriculum-by-school-year
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        GET
+    -EndPoint
+           http://localhost:3001/esf10/curriculum/by-school-year/2026?page=1&limit=10
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+Example response (200ok)
+-------------------------------------------------
+{
+    "success": true,
+    "data": [],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 0,
+        "totalPages": 0
+    },
+    "school_year_id": "2026",
+    "filters": {}
+}

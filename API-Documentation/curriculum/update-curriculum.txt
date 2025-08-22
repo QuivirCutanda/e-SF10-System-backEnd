@@ -1,0 +1,36 @@
+--------------------------------------------------
+## Update Curriculum
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        PUT
+    -EndPoint
+        http://localhost:3001/esf10/curriculum/update-curriculum/:curriculum_id
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "curriculum_name": "Math Curriculum 2025",
+  "school_year_id": 1,
+  "is_active": true
+}
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Curriculum updated successfully",
+    "curriculumId": 4
+}
