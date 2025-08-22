@@ -1,0 +1,43 @@
+--------------------------------------------------
+## Create Curriculum
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+        http://localhost:3001/esf10/curriculum/create-curriculum
+
+    -Body:raw
+
+    *note: You need to create school year to use for school_year_id / Make sure the School year ID is available.
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "curriculum_name": "Science Curriculum 2024",
+  "school_year_id": 1,
+  "is_active": true
+}
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Curriculum created successfully",
+    "curriculumId": 7,
+    "data": {
+        "curriculum_id": 7,
+        "curriculum_name": "Science Curriculum 2024",
+        "school_year_id": 1,
+        "is_active": true
+    }
+}

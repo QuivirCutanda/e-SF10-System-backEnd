@@ -1,0 +1,43 @@
+--------------------------------------------------
+## Add subject
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+         http://localhost:3001/esf10/curriculum/add-subjects/:curriculum_id
+
+    -Body:raw
+
+    *Note: subject ID is base on Subject ID created
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "subject_ids": [3, 4]
+}
+
+
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Subjects processed for curriculum",
+    "data": [
+        {
+            "curriculum_id": 4,
+            "subject_id": 5
+        }
+    ]
+}

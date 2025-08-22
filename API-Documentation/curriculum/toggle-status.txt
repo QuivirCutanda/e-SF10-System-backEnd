@@ -1,0 +1,31 @@
+--------------------------------------------------
+## toggle-status
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        PATCH
+    -EndPoint
+             http://localhost:3001/esf10/curriculum/toggle-status/:curriculum_id
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+Example response (200ok)
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Curriculum status updated successfully",
+    "data": {
+        "curriculum_id": 4,
+        "curriculum_name": "Math Curriculum 2025",
+        "previous_status": 1,
+        "new_status": false
+    }
+}
