@@ -1,0 +1,46 @@
+--------------------------------------------------
+## Update School Year By ID
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        PUT
+    -EndPoint
+         http://localhost:3001/esf10/school-year/update-school-year/:school_year_id
+
+    -Body:raw
+
+    *Note: Make sure there is not same School year to make it successful.
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "start_year": 2026,
+  "end_year": 2027,
+  "is_active": true
+}
+
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "School year updated successfully",
+    "schoolYear": {
+        "school_year_id": 6,
+        "start_year": 2026,
+        "end_year": 2027,
+        "is_active": 1,
+        "created_at": "2025-08-22T11:34:55.000Z"
+    },
+    "timestamp": "2025-08-22T11:55:34.978Z"
+}

@@ -12,34 +12,28 @@ const {
   setActiveSchoolYear
 } = require('../controllers/schoolYear/schoolYear.controller');
 
-// Create a new school year
-router.post('/', authenticate,
+router.post('/create-school-year', authenticate,
     //  authorizePermission('manage_school_years'), 
      createSchoolYear);
 
-// Get all school years with pagination
-router.get('/', authenticate, 
+router.get('/all-school-years', authenticate, 
     // authorizePermission('view_school_years'), 
     validatePagination, 
     getAllSchoolYears);
 
-// Get school year by ID
-router.get('/:id', authenticate, 
+router.get('/school-year/:id', authenticate, 
     // authorizePermission('view_school_years'), 
     getSchoolYearById);
 
-// Update school year
-router.put('/:id', authenticate, 
+router.put('/update-school-year/:id', authenticate, 
     // authorizePermission('manage_school_years'),
     updateSchoolYear);
 
-// Set active school year
-router.patch('/:id/set-active', authenticate, 
+router.patch('/school-year/:id/set-active', authenticate, 
     // authorizePermission('manage_school_years'), 
     setActiveSchoolYear);
 
-// Delete school year (soft delete)
-router.delete('/:id', authenticate, 
+router.delete('/delete-school-year/:id', authenticate, 
     // authorizePermission('manage_school_years'), 
     deleteSchoolYear);
 

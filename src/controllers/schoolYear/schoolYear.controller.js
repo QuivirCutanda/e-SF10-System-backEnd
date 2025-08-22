@@ -8,11 +8,9 @@ const {
   checkSchoolYearExists
 } = require('../../models/schoolYear/schoolYear.model');
 
-// Create a new school year
 exports.createSchoolYear = async (req, res) => {
   const { start_year, end_year } = req.body;
 
-  // Validation
   if (!start_year || !end_year) {
     return res.status(400).json({
       success: false,
@@ -79,12 +77,11 @@ exports.createSchoolYear = async (req, res) => {
   }
 };
 
-// Get all school years with pagination
 exports.getAllSchoolYears = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const search = req.query.search || '';
-  const active = req.query.active; // Filter by active status
+  const active = req.query.active; 
 
   try {
     const result = await getAllSchoolYearsModel(page, limit, search, active);
