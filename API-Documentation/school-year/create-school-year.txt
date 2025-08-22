@@ -1,0 +1,43 @@
+--------------------------------------------------
+## Create School Year
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+         http://localhost:3001/esf10/school-year/create-school-year
+
+    -Body:raw
+
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "start_year": 2027,
+  "end_year": 2028
+}
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "School year created successfully",
+    "schoolYear": {
+        "school_year_id": 7,
+        "start_year": 2027,
+        "end_year": 2028,
+        "is_active": 1,
+        "created_at": "2025-08-22T11:36:43.000Z"
+    },
+    "timestamp": "2025-08-22T11:36:43.811Z"
+}

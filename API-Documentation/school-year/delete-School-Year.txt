@@ -1,0 +1,26 @@
+--------------------------------------------------
+## Delete School Year
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        DELETE
+    -EndPoint
+           http://localhost:3001/esf10/school-year/delete-school-year/:school_year_id
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "School year deleted successfully",
+    "timestamp": "2025-08-22T11:58:05.979Z"
+}

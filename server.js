@@ -26,6 +26,7 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Serve static files for SF10 documents
 app.use("/esf10/images", express.static(path.join(__dirname, "data/documents/sf10")));
@@ -45,7 +46,7 @@ app.use("/esf10/transfer-request/", transferRequest);
 app.use("/esf10/", generateExcel);
 app.use("/esf10/subjects/", subjectRoutes);
 app.use("/esf10/curriculum/", curriculumRoutes);
-app.use("/esf10/school-years/", schoolYearRoutes);
+app.use("/esf10/school-year/", schoolYearRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
