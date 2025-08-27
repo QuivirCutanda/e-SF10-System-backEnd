@@ -1,0 +1,47 @@
+--------------------------------------------------
+## update-assignment-teacher
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        PUT
+    -EndPoint
+        http://localhost:3001/esf10/teacher-assignments/update/:assignment_id
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+{
+  "teacher_id": 2,
+  "subject_id": 1,
+  "section_id": 1,
+  "school_year_id": 1
+}
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Teacher assignment updated successfully",
+    "data": {
+        "assignment_id": 1,
+        "teacher_id": 2,
+        "teacher_name": "Jemil M. Doblas",
+        "subject_id": 1,
+        "subject_code": "MATH201",
+        "subject_name": "Advanced Mathematics",
+        "section_id": 1,
+        "section_name": "Section B",
+        "grade_name": "Grade 1",
+        "school_year_id": 1,
+        "school_year": "2024-2025"
+    },
+    "timestamp": "2025-08-27T13:15:30.335Z"
+}

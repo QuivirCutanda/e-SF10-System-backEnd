@@ -23,7 +23,7 @@ const gradeLevelsRoutes = require("./src/routes/gradeLevel.route");
 const subjectGradeLevelsRoutes = require("./src/routes/subjectGradeLevel.route"); 
 const sectionRoutes = require("./src/routes/section.route");
 const teacherRoutes = require("./src/routes/teacher.route");
-
+const teacherAssignmentRoutes = require("./src/routes/teacherAssignment.route");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -56,6 +56,7 @@ app.use("/esf10/grade-levels/", gradeLevelsRoutes);
 app.use("/esf10/subject-grade-levels/", subjectGradeLevelsRoutes);
 app.use("/esf10/sections/", sectionRoutes);
 app.use("/esf10/teachers/", teacherRoutes);
+app.use("/esf10/teacher-assignments/", teacherAssignmentRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
