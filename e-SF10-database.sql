@@ -159,6 +159,17 @@ CREATE TABLE user_permissions (
     INDEX idx_user_permissions_permission (permission_id)
 );
 
+-- Grade Levels Table
+CREATE TABLE grade_levels (
+    grade_level_id INT PRIMARY KEY AUTO_INCREMENT,
+    grade_code VARCHAR(10) UNIQUE NOT NULL,
+    grade_name VARCHAR(50) NOT NULL,
+    grade_order INT UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_grade_levels_code (grade_code),
+    INDEX idx_grade_levels_order (grade_order)
+);
+
 -- School Years Table
 CREATE TABLE school_years (
     school_year_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -173,10 +184,12 @@ CREATE TABLE school_years (
 CREATE TABLE sections (
     section_id INT PRIMARY KEY AUTO_INCREMENT,
     section_name VARCHAR(50) NOT NULL,
-    grade_level VARCHAR(20) NOT NULL,
+    grade_level_id INT NOT NULL,            
     school_year_id INT NOT NULL,
-    UNIQUE (section_name, school_year_id),
+    UNIQUE (section_name, grade_level_id, school_year_id),
+    FOREIGN KEY (grade_level_id) REFERENCES grade_levels(grade_level_id) ON DELETE RESTRICT,
     FOREIGN KEY (school_year_id) REFERENCES school_years(school_year_id) ON DELETE CASCADE,
+    INDEX idx_sections_grade_level (grade_level_id),
     INDEX idx_sections_school_year (school_year_id)
 );
 
@@ -202,9 +215,21 @@ CREATE TABLE subjects (
     subject_code VARCHAR(20) UNIQUE NOT NULL,
     subject_name VARCHAR(255) NOT NULL,
     description TEXT,
-    grade_level VARCHAR(20) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- subject_grade_levels     Table
+CREATE TABLE subject_grade_levels (
+    subject_id INT NOT NULL,
+    grade_level_id INT NOT NULL,
+    is_required BOOLEAN DEFAULT TRUE,           
+    units DECIMAL(3,1),                        
+    PRIMARY KEY (subject_id, grade_level_id),
+    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id) ON DELETE CASCADE,
+    FOREIGN KEY (grade_level_id) REFERENCES grade_levels(grade_level_id) ON DELETE CASCADE,
+    INDEX idx_subject_grade_levels_subject (subject_id),
+    INDEX idx_subject_grade_levels_grade (grade_level_id)
 );
 
 -- Curriculum Table
@@ -235,8 +260,7 @@ CREATE TABLE enrollment (
     enrollment_id INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL,
     school_year_id INT NOT NULL,
-    grade_level VARCHAR(20) NOT NULL,
-    section_id INT NOT NULL,
+    section_id INT NOT NULL,                   
     curriculum_id INT NULL,
     enrollment_date DATE, 
     status ENUM('Enrolled', 'Pending', 'Withdrawn', 'Completed') DEFAULT 'Enrolled',
