@@ -13,7 +13,9 @@
     -EndPoint
          http://localhost:3001/esf10/subjects/search-subjects?query=math
          or
-         http://localhost:3001/esf10/subjects/search-subjects?query=math&grade_level=Grade 10
+         http://localhost:3001/esf10/subjects/search-subjects?query=math&grade_level=1
+         or
+         http://localhost:3001/esf10/subjects/search-subjects
 --------------------------------------------------
 
 
@@ -26,12 +28,12 @@ Example response
     "data": [
         {
             "subject_id": 1,
-            "subject_code": "MATH102",
-            "subject_name": "Mathematics 102",
-            "description": "Advanced algebra and geometry",
-            "grade_level": "Grade 10",
-            "created_at": "2025-08-18T08:23:54.000Z",
-            "updated_at": "2025-08-18T08:41:26.000Z"
+            "subject_code": "MATH201",
+            "subject_name": "Advanced Mathematics",
+            "description": "Covers algebra, calculus, and probability.",
+            "created_at": "2025-08-27T02:24:26.000Z",
+            "updated_at": "2025-08-27T02:47:48.000Z",
+            "grade_levels": []
         }
     ],
     "query": "math",

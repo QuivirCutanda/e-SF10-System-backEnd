@@ -11,7 +11,7 @@
     -Method
         PUT
     -EndPoint
-       http://localhost:3001/esf10/subjects/update-subject/1
+       http://localhost:3001/esf10/subjects/update-subject/:subject_id
 
     -Body:raw
 --------------------------------------------------
@@ -19,10 +19,10 @@ Example requist
 --------------------------------------------------
 
 {
-  "subject_code": "MATH102",
-  "subject_name": "Mathematics 102",
-  "description": "Advanced algebra and geometry",
-  "grade_level": "Grade 10"
+  "subject_code": "MATH201",
+  "subject_name": "Advanced Mathematics",
+  "description": "Covers algebra, calculus, and probability.",
+  "grade_levels": [1, 2, 3]
 }
 
 
@@ -33,5 +33,15 @@ Example response
 {
     "success": true,
     "message": "Subject updated successfully",
-    "subjectId": 1
+    "data": {
+        "subjectId": 1,
+        "changes": {
+            "subject": true,
+            "gradeLevels": {
+                "added": 0,
+                "removed": 0,
+                "updated": 0
+            }
+        }
+    }
 }

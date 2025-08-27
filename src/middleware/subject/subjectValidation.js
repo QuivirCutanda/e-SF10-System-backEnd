@@ -29,16 +29,6 @@ const validateSubject = [
     .isLength({ max: 1000 })
     .withMessage('Description must not exceed 1000 characters'),
 
-  check('grade_level')
-    .notEmpty()
-    .withMessage('Grade level is required')
-    .isString()
-    .trim()
-    .isLength({ min: 1, max: 20 })
-    .withMessage('Grade level must be between 1 and 20 characters')
-    .matches(/^(Kindergarten|Grade [1-9]|Grade 1[0-2]|K|[1-9]|1[0-2])$/i)
-    .withMessage('Invalid grade level format'),
-
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

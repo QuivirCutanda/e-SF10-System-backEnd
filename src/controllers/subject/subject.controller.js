@@ -32,7 +32,6 @@ exports.createSubject = async (req, res) => {
   try {
     connection = await db.getConnection();
 
-    // Check if subject code already exists
     const codeExists = await checkSubjectCodeExistsModel(subject_code);
     if (codeExists) {
       return res.status(409).json({
@@ -59,7 +58,6 @@ exports.createSubject = async (req, res) => {
   } catch (error) {
     console.error('Create Subject Error:', error);
     
-    // Handle duplicate entry error
     if (error.code === 'ER_DUP_ENTRY') {
       return res.status(409).json({
         success: false,
@@ -80,7 +78,7 @@ exports.createSubject = async (req, res) => {
 };
 
 exports.getAllSubjects = async (req, res) => {
-  let { page = 1, limit = 10, grade_level } = req.query;
+  let { page = 1, limit = 10, grade_level_id } = req.query;
   page = parseInt(page) > 0 ? parseInt(page) : 1;
   limit = parseInt(limit) > 0 ? parseInt(limit) : 10;
   const offset = (page - 1) * limit;
@@ -88,7 +86,7 @@ exports.getAllSubjects = async (req, res) => {
 
   try {
     connection = await db.getConnection();
-    const { subjects, total } = await getAllSubjectsModel(limit, offset, grade_level);
+    const { subjects, total } = await getAllSubjectsModel(limit, offset, grade_level_id);
 
     return res.status(200).json({
       success: true,
@@ -99,7 +97,6 @@ exports.getAllSubjects = async (req, res) => {
         total,
         totalPages: Math.ceil(total / limit)
       },
-      filters: grade_level ? { grade_level } : {}
     });
   } catch (error) {
     console.error('Get All Subjects Error:', error);
@@ -180,7 +177,6 @@ exports.updateSubject = async (req, res) => {
   }
 
   try {
-    // Check if subject code is being changed and already exists
     if (subject_code) {
       const connection = await db.getConnection();
       try {
@@ -210,7 +206,6 @@ exports.updateSubject = async (req, res) => {
   } catch (error) {
     console.error('Update Subject Error:', error);
     
-    // Handle duplicate entry error
     if (error.code === 'ER_DUP_ENTRY') {
       return res.status(409).json({
         success: false,
@@ -234,71 +229,6 @@ exports.updateSubject = async (req, res) => {
   }
 };
 
-exports.deleteSubject = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ success: false, errors: errors.array() });
-  }
-
-  const { id } = req.params;
-  const subjectId = parseInt(id);
-  const userId = req.user?.user_id;
-  let connection;
-
-  if (!userId) {
-    return res.status(401).json({
-      success: false,
-      error: 'Unauthorized: User ID not found in request'
-    });
-  }
-
-  try {
-    connection = await db.getConnection();
-    
-    // Check if subject is referenced in other tables
-    const [references] = await connection.execute(`
-      SELECT 
-        (SELECT COUNT(*) FROM curriculum_subjects WHERE subject_id = ?) as curriculum_count,
-        (SELECT COUNT(*) FROM teacher_assignments WHERE subject_id = ?) as assignment_count,
-        (SELECT COUNT(*) FROM student_grades WHERE subject_id = ?) as grades_count
-    `, [subjectId, subjectId, subjectId]);
-
-    const { curriculum_count, assignment_count, grades_count } = references[0];
-    
-    if (curriculum_count > 0 || assignment_count > 0 || grades_count > 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'Cannot delete subject',
-        details: 'Subject is currently being used in curriculum, assignments, or grades',
-        references: {
-          curriculum: curriculum_count,
-          assignments: assignment_count,
-          grades: grades_count
-        }
-      });
-    }
-
-    const result = await deleteSubjectModel(subjectId, userId);
-    
-    return res.status(200).json({
-      success: true,
-      message: 'Subject deleted successfully',
-      subjectId
-    });
-  } catch (error) {
-    console.error('Delete Subject Error:', error);
-    return res.status(error.message.includes('not found') ? 404 : 500).json({
-      success: false,
-      error: error.message.includes('not found') ? 'Subject not found' : 'Server error deleting subject',
-      subjectId,
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
-      timestamp: new Date().toISOString()
-    });
-  } finally {
-    if (connection) await connection.release();
-  }
-};
-
 exports.searchSubjects = async (req, res) => {
   const { query = '', grade_level } = req.query;
   let connection;
@@ -318,47 +248,6 @@ exports.searchSubjects = async (req, res) => {
     return res.status(500).json({
       success: false,
       error: 'Server error searching subjects',
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
-      timestamp: new Date().toISOString()
-    });
-  } finally {
-    if (connection) await connection.release();
-  }
-};
-
-exports.getSubjectsByGradeLevel = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ success: false, errors: errors.array() });
-  }
-
-  const { grade_level } = req.params;
-  let { page = 1, limit = 10 } = req.query;
-  page = parseInt(page) > 0 ? parseInt(page) : 1;
-  limit = parseInt(limit) > 0 ? parseInt(limit) : 10;
-  const offset = (page - 1) * limit;
-  let connection;
-
-  try {
-    connection = await db.getConnection();
-    const { subjects, total } = await getSubjectsByGradeLevelModel(grade_level, limit, offset);
-
-    return res.status(200).json({
-      success: true,
-      data: subjects,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit)
-      },
-      grade_level
-    });
-  } catch (error) {
-    console.error('Get Subjects By Grade Level Error:', error);
-    return res.status(500).json({
-      success: false,
-      error: 'Server error retrieving subjects by grade level',
       details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
       timestamp: new Date().toISOString()
     });
