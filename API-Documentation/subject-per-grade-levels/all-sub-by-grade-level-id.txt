@@ -1,0 +1,48 @@
+--------------------------------------------------
+## gall-sub-by-grade-level-id
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        GET
+    -EndPoint
+               http://localhost:3001/esf10/subject-grade-levels/by-grade-level/:grade_level_id
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+Example response (200ok)
+-------------------------------------------------
+{
+    "success": true,
+    "data": [
+        {
+            "subject_id": 8,
+            "is_required": false,
+            "units": "2.0",
+            "subject": {
+                "subject_code": "SAMPLE2",
+                "subject_name": "sample2",
+                "description": null
+            }
+        },
+        {
+            "subject_id": 9,
+            "is_required": true,
+            "units": "4.0",
+            "subject": {
+                "subject_code": "SAMPLE3",
+                "subject_name": "sample3",
+                "description": null
+            }
+        }
+    ],
+    "count": 2,
+    "timestamp": "2025-08-27T07:29:31.802Z"
+}

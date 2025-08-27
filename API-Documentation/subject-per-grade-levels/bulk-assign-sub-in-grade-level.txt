@@ -1,0 +1,100 @@
+--------------------------------------------------
+## Bulk assign-sub-in-grade-level
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+          http://localhost:3001/esf10/subject-grade-levels/bulk-create
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "assignments": [
+    {
+      "subject_id": 7,
+      "grade_level_id": 2,
+      "is_required": true,
+      "units": 3
+    },
+    {
+      "subject_id": 8,
+      "grade_level_id": 2,
+      "is_required": false,
+      "units": 2
+    },
+    {
+      "subject_id": 9,
+      "grade_level_id": 2,
+      "is_required": true,
+      "units": 4
+    }
+  ]
+}
+
+
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Subject grade level assignments created successfully",
+    "data": [
+        {
+            "subject_id": 7,
+            "grade_level_id": 2,
+            "is_required": true,
+            "units": 3,
+            "subject": {
+                "subject_code": "SAMPLE1",
+                "subject_name": "sample1"
+            },
+            "grade_level": {
+                "grade_code": "G2",
+                "grade_name": "Grade 2"
+            }
+        },
+        {
+            "subject_id": 8,
+            "grade_level_id": 2,
+            "is_required": false,
+            "units": 2,
+            "subject": {
+                "subject_code": "SAMPLE2",
+                "subject_name": "sample2"
+            },
+            "grade_level": {
+                "grade_code": "G2",
+                "grade_name": "Grade 2"
+            }
+        },
+        {
+            "subject_id": 9,
+            "grade_level_id": 2,
+            "is_required": true,
+            "units": 4,
+            "subject": {
+                "subject_code": "SAMPLE3",
+                "subject_name": "sample3"
+            },
+            "grade_level": {
+                "grade_code": "G2",
+                "grade_name": "Grade 2"
+            }
+        }
+    ],
+    "count": 3,
+    "timestamp": "2025-08-27T07:13:11.309Z"
+}
