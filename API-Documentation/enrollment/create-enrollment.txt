@@ -1,0 +1,52 @@
+--------------------------------------------------
+## Create Enrollment
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+        http://localhost:3001/esf10/enrollments/create
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "student_id": 3,
+  "school_year_id": 1,
+  "grade_level_id": 1,
+  "section_id": 1,
+  "curriculum_id": 1,
+  "enrollment_date": "2025-08-27",
+  "status": "Enrolled"
+}
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Enrollment created successfully",
+    "data": {
+        "enrollment_id": 3,
+        "student_id": 3,
+        "student_name": "Sample Doblas",
+        "school_year_id": 1,
+        "school_year": "2024-2025",
+        "section_id": 1,
+        "section_name": "Section B",
+        "curriculum_id": 1,
+        "curriculum_name": "K-12 Curriculum 3035-2026",
+        "enrollment_date": "2025-08-26T16:00:00.000Z",
+        "status": "Enrolled"
+    },
+    "timestamp": "2025-08-27T23:14:55.663Z"
+}
