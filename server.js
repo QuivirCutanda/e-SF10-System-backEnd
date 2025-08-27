@@ -22,6 +22,7 @@ const schoolYearRoutes = require("./src/routes/schoolYear.route");
 const gradeLevelsRoutes = require("./src/routes/gradeLevel.route");
 const subjectGradeLevelsRoutes = require("./src/routes/subjectGradeLevel.route"); 
 const sectionRoutes = require("./src/routes/section.route");
+const teacherRoutes = require("./src/routes/teacher.route");
 
 
 const app = express();
@@ -54,6 +55,7 @@ app.use("/esf10/school-year/", schoolYearRoutes);
 app.use("/esf10/grade-levels/", gradeLevelsRoutes);
 app.use("/esf10/subject-grade-levels/", subjectGradeLevelsRoutes);
 app.use("/esf10/sections/", sectionRoutes);
+app.use("/esf10/teachers/", teacherRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {

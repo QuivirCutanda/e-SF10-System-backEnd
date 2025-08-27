@@ -1,0 +1,52 @@
+--------------------------------------------------
+## Update Teacher
+--------------------------------------------------
+
+#Prerequisites
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        PUT
+    -EndPoint
+         http://localhost:3001/esf10/teachers/update/:teacher_id
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+{
+  "first_name": "Juan",
+  "middle_name": "Reyes",
+  "last_name": "Dela Cruz",
+  "extension_name": "Jr.",
+  "teacher_address": "456 New Street, Makati City",
+  "date_of_birth": "1985-05-12",
+  "email": "juan.delacruz@example.com",
+  "contact_number": "09181234567",
+  "is_active": true
+}
+
+
+--------------------------------------------------
+Response    (200 OK)
+--------------------------------------------------
+{
+    "success": true,
+    "message": "Teacher updated successfully",
+    "data": {
+        "teacher_id": 1,
+        "first_name": "Juan",
+        "middle_name": "Reyes",
+        "last_name": "Dela Cruz",
+        "extension_name": "Jr.",
+        "full_name": "Juan Reyes Dela Cruz Jr.",
+        "teacher_address": "456 New Street, Makati City",
+        "date_of_birth": "1985-05-11T16:00:00.000Z",
+        "email": "juan.delacruz@example.com",
+        "contact_number": "09181234567",
+        "is_active": true,
+        "created_at": "2025-08-27T12:21:39.000Z",
+        "updated_at": "2025-08-27T12:25:44.000Z"
+    },
+    "timestamp": "2025-08-27T12:25:44.764Z"
+}
