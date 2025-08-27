@@ -1,0 +1,53 @@
+--------------------------------------------------
+## create-class-schedule
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+          http://localhost:3001/esf10/class-schedules/create
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "subject_id": 6,
+  "teacher_id": 2,
+  "section_id": 1,
+  "school_year_id": 1,
+  "day_of_week": "Monday",
+  "start_time": "10:00:00",
+  "end_time": "13:30:00"
+}
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Class schedule created successfully",
+    "data": {
+        "schedule_id": 2,
+        "subject_id": 6,
+        "subject_name": "ESP",
+        "teacher_id": 2,
+        "teacher_name": "Jemil Doblas",
+        "section_id": 1,
+        "section_name": "Section B",
+        "school_year_id": 1,
+        "school_year": "2024-2025",
+        "day_of_week": "Monday",
+        "start_time": "10:00:00",
+        "end_time": "13:30:00"
+    },
+    "timestamp": "2025-08-27T14:11:40.806Z"
+}
