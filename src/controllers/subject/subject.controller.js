@@ -18,7 +18,7 @@ exports.createSubject = async (req, res) => {
     return res.status(400).json({ success: false, errors: errors.array() });
   }
 
-  const { subject_code, subject_name, description, grade_level } = req.body;
+  const { subject_code, subject_name, description, grade_level, is_required, units } = req.body;
   const userId = req.user?.user_id;
   let connection;
 
@@ -41,7 +41,15 @@ exports.createSubject = async (req, res) => {
       });
     }
 
-    const result = await createSubjectModel(subject_code, subject_name, description, grade_level, userId);
+    const result = await createSubjectModel(
+      subject_code, 
+      subject_name, 
+      description, 
+      grade_level, 
+      is_required, 
+      units, 
+      userId
+    );
 
     return res.status(201).json({
       success: true,

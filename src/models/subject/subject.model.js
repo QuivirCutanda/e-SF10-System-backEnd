@@ -30,7 +30,12 @@ const createSubjectModel = async (subjectCode, subjectName, description, gradeLe
       );
     }
 
-    await logActivity(userId, `Created subject: ${subjectName} (${subjectCode}) for grade levels: ${gradeLevelIds ? gradeLevelIds.join(', ') : 'none'}`);
+    if (userId !== undefined && userId !== null) {
+      await logActivity(
+        userId, 
+        `Created subject: ${subjectName} (${subjectCode}) for grade levels: ${gradeLevelIds ? gradeLevelIds.join(', ') : 'none'}`
+      );
+    }
 
     await connection.commit();
     return result;
@@ -41,6 +46,7 @@ const createSubjectModel = async (subjectCode, subjectName, description, gradeLe
     if (connection) await connection.release();
   }
 };
+
 
 const getAllSubjectsModel = async (limit, offset, gradeLevelId = null) => {
   let connection;
