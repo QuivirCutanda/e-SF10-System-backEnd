@@ -11,7 +11,15 @@
     -Method
         GET
     -EndPoint
-          http://localhost:3001/esf10/curriculum/search-curriculums?query=Math&school_year_id=1&is_active=true
+          
+          Filter by active status
+          http://localhost:3001/esf10/curriculum/search-curriculums?is_active=true
+          Filter by school year
+          http://localhost:3001/esf10/curriculum/search-curriculums?school_year_id=2
+          Get all curriculums
+           http://localhost:3001/esf10/curriculum/search-curriculums
+           Combine filters
+            http://localhost:3001/esf10/curriculum/search-curriculums?query=Math&school_year_id=1&is_active=true
 --------------------------------------------------
 
 

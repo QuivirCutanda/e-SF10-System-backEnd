@@ -34,10 +34,32 @@ Example response
 {
     "success": true,
     "message": "Subjects processed for curriculum",
-    "data": [
-        {
-            "curriculum_id": 4,
-            "subject_id": 5
+    "data": {
+        "successful": [],
+        "failed": [
+            {
+                "curriculum_id": 1,
+                "curriculum_name": "K-12 Curriculum 3035-2026",
+                "subject_id": 6,
+                "error": "Subject already exists in this curriculum"
+            },
+            {
+                "curriculum_id": 1,
+                "curriculum_name": "K-12 Curriculum 3035-2026",
+                "subject_id": 5,
+                "error": "Subject already exists in this curriculum"
+            },
+            {
+                "curriculum_id": 1,
+                "curriculum_name": "K-12 Curriculum 3035-2026",
+                "subject_id": 1,
+                "error": "Subject already exists in this curriculum"
+            }
+        ],
+        "summary": {
+            "total": 3,
+            "successful": 0,
+            "failed": 3
         }
-    ]
+    }
 }

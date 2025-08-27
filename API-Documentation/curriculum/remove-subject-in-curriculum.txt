@@ -1,5 +1,5 @@
 --------------------------------------------------
-## Delete Curriculum
+## remove-subject-in-curriculum
 --------------------------------------------------
 
 #Prerequisites
@@ -11,7 +11,7 @@
     -Method
         DELETE
     -EndPoint
-          http://localhost:3001/esf10/curriculum/delete-curriculum/:curriculum-id
+            http://localhost:3001/esf10/curriculum/remove-subject/:curriculum_id/:subject_id
 --------------------------------------------------
 
 
@@ -21,6 +21,12 @@ Example response
 -------------------------------------------------
 {
     "success": true,
-    "message": "Curriculum deleted successfully",
-    "curriculumId": 7
+    "message": "Subject removed from curriculum successfully",
+    "data": {
+        "curriculum_id": 1,
+        "curriculum_name": "K-12 Curriculum 3035-2026",
+        "subject_id": 6,
+        "subject_name": "ESP",
+        "subject_code": "ESP"
+    }
 }
