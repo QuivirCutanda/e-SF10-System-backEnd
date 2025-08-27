@@ -1,0 +1,45 @@
+--------------------------------------------------
+## Create section
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+          http://localhost:3001/esf10/sections/create
+
+    -Body:raw
+
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "section_name": "Section A",
+  "grade_level_id": 1,
+  "school_year_id": 1
+}
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Section created successfully",
+    "data": {
+        "section_id": 1,
+        "section_name": "Section A",
+        "grade_level_id": 1,
+        "grade_name": "Grade 1",
+        "school_year_id": 1,
+        "school_year": "2024-2025"
+    },
+    "timestamp": "2025-08-27T08:57:58.641Z"
+}
