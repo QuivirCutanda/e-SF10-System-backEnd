@@ -1,0 +1,54 @@
+--------------------------------------------------
+## assign-sub-in-grade-level
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+         http://localhost:3001/esf10/subject-grade-levels/create
+
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+
+{
+  "subject_id": 6,
+  "grade_level_id": 6,
+  "is_required": true,
+  "units": 3
+}
+
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Subject grade level assignment created successfully",
+    "data": {
+        "subject_id": 6,
+        "grade_level_id": 6,
+        "is_required": true,
+        "units": "3.0",
+        "subject": {
+            "subject_code": "ESP",
+            "subject_name": "ESP",
+            "description": null
+        },
+        "grade_level": {
+            "grade_code": "G6",
+            "grade_name": "Grade 6",
+            "grade_order": 6
+        }
+    },
+    "timestamp": "2025-08-27T06:58:10.194Z"
+}

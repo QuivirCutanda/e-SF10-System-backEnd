@@ -1,0 +1,24 @@
+--------------------------------------------------
+## delete-sub-in-grade-level
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        DELETE
+    -EndPoint
+         http://localhost:3001/esf10/subject-grade-levels/delete/7/2
+
+
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "message": "Subject grade level assignment deleted successfully",
+    "timestamp": "2025-08-27T07:23:53.002Z"
+}
