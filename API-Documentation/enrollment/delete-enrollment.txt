@@ -1,0 +1,26 @@
+--------------------------------------------------
+## delete-enrollment
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        DELETE
+    -EndPoint
+            http://localhost:3001/esf10/enrollments/delete/:enrollment_id
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Enrollment deleted successfully",
+    "timestamp": "2025-08-27T23:20:51.852Z"
+}

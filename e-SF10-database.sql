@@ -259,17 +259,25 @@ CREATE TABLE curriculum_subjects (
 CREATE TABLE enrollment (
     enrollment_id INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL,
+    grade_level_id INT NOT NULL,              
     school_year_id INT NOT NULL,
     section_id INT NOT NULL,                   
     curriculum_id INT NULL,
     enrollment_date DATE, 
     status ENUM('Enrolled', 'Pending', 'Withdrawn', 'Completed') DEFAULT 'Enrolled',
+
     FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (grade_level_id) REFERENCES grade_levels(grade_level_id) ON DELETE RESTRICT,
     FOREIGN KEY (school_year_id) REFERENCES school_years(school_year_id) ON DELETE CASCADE,
     FOREIGN KEY (section_id) REFERENCES sections(section_id) ON DELETE CASCADE,
     FOREIGN KEY (curriculum_id) REFERENCES curriculum(curriculum_id) ON DELETE SET NULL,
-    INDEX idx_enrollment_student (student_id)
+
+    INDEX idx_enrollment_student (student_id),
+    INDEX idx_enrollment_grade (grade_level_id),
+    INDEX idx_enrollment_section (section_id),
+    INDEX idx_enrollment_sy (school_year_id)
 );
+
 
 -- Teacher Assignments Table
 CREATE TABLE teacher_assignments (
