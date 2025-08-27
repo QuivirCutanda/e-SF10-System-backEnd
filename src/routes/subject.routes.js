@@ -10,9 +10,7 @@ const {
   getAllSubjects, 
   getSubjectById, 
   updateSubject, 
-  deleteSubject,
   searchSubjects,
-  getSubjectsByGradeLevel 
 } = require('../controllers/subject/subject.controller');
 
 // Validation middleware for search query
@@ -83,13 +81,6 @@ router.put(
   updateSubject
 );
 
-router.delete(
-  '/delete-subject/:id',
-  authenticate,
-//   authorizePermission('manage_subjects'),
-  validateSubjectId,
-  deleteSubject
-);
 
 router.get(
   '/search-subjects',
@@ -99,13 +90,5 @@ router.get(
   searchSubjects
 );
 
-router.get(
-  '/by-grade/:grade_level',
-  authenticate,
-//   authorizePermission('view_subjects', 'manage_subjects'),
-  validateGradeLevel,
-  validatePagination,
-  getSubjectsByGradeLevel
-);
 
 module.exports = router;

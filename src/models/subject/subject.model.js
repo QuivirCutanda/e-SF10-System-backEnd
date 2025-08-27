@@ -1,20 +1,36 @@
 const db = require('../../config/db');
 const { logActivity } = require('../../utils/activityLog');
 
-const createSubjectModel = async (subjectCode, subjectName, description, gradeLevel, userId) => {
+const createSubjectModel = async (subjectCode, subjectName, description, gradeLevelIds, isRequired, units, userId) => {
   let connection;
   try {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
     const [result] = await connection.execute(
-      `INSERT INTO subjects (subject_code, subject_name, description, grade_level)
-       VALUES (?, ?, ?, ?)`,
-      [subjectCode, subjectName, description || null, gradeLevel]
+      `INSERT INTO subjects (subject_code, subject_name, description)
+       VALUES (?, ?, ?)`,
+      [subjectCode, subjectName, description || null]
     );
 
     const subjectId = result.insertId;
-    await logActivity(userId, `Created subject: ${subjectName} (${subjectCode}) for ${gradeLevel}`);
+
+    if (Array.isArray(gradeLevelIds) && gradeLevelIds.length > 0) {
+      const gradeLevelValues = gradeLevelIds.map(gradeLevelId => [
+        subjectId,
+        parseInt(gradeLevelId),
+        isRequired !== undefined ? isRequired : true,
+        units !== undefined ? parseFloat(units) : null
+      ]);
+      
+      await connection.query(
+        `INSERT INTO subject_grade_levels (subject_id, grade_level_id, is_required, units)
+         VALUES ?`,
+        [gradeLevelValues]
+      );
+    }
+
+    await logActivity(userId, `Created subject: ${subjectName} (${subjectCode}) for grade levels: ${gradeLevelIds ? gradeLevelIds.join(', ') : 'none'}`);
 
     await connection.commit();
     return result;
@@ -26,36 +42,89 @@ const createSubjectModel = async (subjectCode, subjectName, description, gradeLe
   }
 };
 
-const getAllSubjectsModel = async (limit, offset, gradeLevel = null) => {
+const getAllSubjectsModel = async (limit, offset, gradeLevelId = null) => {
   let connection;
   try {
     connection = await db.getConnection();
     
     let query = `
-      SELECT subject_id, subject_code, subject_name, description, grade_level, 
-             created_at, updated_at
-      FROM subjects
+      SELECT 
+        s.subject_id, 
+        s.subject_code, 
+        s.subject_name, 
+        s.description, 
+        s.created_at, 
+        s.updated_at,
+        GROUP_CONCAT(
+          CONCAT(
+            sgl.grade_level_id, '|', 
+            sgl.is_required, '|', 
+            IFNULL(sgl.units, ''), '|', 
+            IFNULL(gl.grade_code, ''), '|', 
+            IFNULL(gl.grade_name, '')
+          ) SEPARATOR ';'
+        ) as grade_levels_data
+      FROM subjects s
+      LEFT JOIN subject_grade_levels sgl ON s.subject_id = sgl.subject_id
+      LEFT JOIN grade_levels gl ON sgl.grade_level_id = gl.grade_level_id
     `;
-    let countQuery = `SELECT COUNT(*) as total FROM subjects`;
+    
+    let countQuery = `
+      SELECT COUNT(DISTINCT s.subject_id) as total 
+      FROM subjects s
+    `;
+    
     let queryParams = [];
     let countParams = [];
 
-    if (gradeLevel) {
-      query += ` WHERE grade_level = ?`;
-      countQuery += ` WHERE grade_level = ?`;
-      queryParams.push(gradeLevel);
-      countParams.push(gradeLevel);
+    if (gradeLevelId) {
+      query += ` WHERE sgl.grade_level_id = ?`;
+      countQuery += ` 
+        INNER JOIN subject_grade_levels sgl ON s.subject_id = sgl.subject_id 
+        WHERE sgl.grade_level_id = ?
+      `;
+      queryParams.push(parseInt(gradeLevelId));
+      countParams.push(parseInt(gradeLevelId));
     }
 
-    query += ` ORDER BY grade_level ASC, subject_name ASC LIMIT ? OFFSET ?`;
+    query += ` GROUP BY s.subject_id, s.subject_code, s.subject_name, s.description, s.created_at, s.updated_at
+               ORDER BY s.subject_name ASC LIMIT ? OFFSET ?`;
     queryParams.push(parseInt(limit), parseInt(offset));
 
     const [rows] = await connection.execute(query, queryParams);
     const [totalRows] = await connection.execute(countQuery, countParams);
     
-    return { subjects: rows, total: totalRows[0].total };
+    const processedSubjects = rows.map(subject => {
+      const gradeLevels = [];
+      
+      if (subject.grade_levels_data) {
+        const gradeLevelsArray = subject.grade_levels_data.split(';');
+        
+        gradeLevelsArray.forEach(gradeLevel => {
+          const [grade_level_id, is_required, units, grade_code, grade_name] = gradeLevel.split('|');
+          
+          if (grade_level_id) {
+            gradeLevels.push({
+              grade_level_id: parseInt(grade_level_id),
+              is_required: is_required === '1',
+              units: units ? parseFloat(units) : null,
+              grade_code: grade_code || null,
+              grade_name: grade_name || null
+            });
+          }
+        });
+      }
+      
+      return {
+        ...subject,
+        grade_levels: gradeLevels
+      };
+    });
+    
+    return { subjects: processedSubjects, total: totalRows[0].total };
   } catch (err) {
-    throw err;
+    console.error('Model Error:', err);
+    throw new Error('Failed to retrieve subjects from database');
   } finally {
     if (connection) await connection.release();
   }
@@ -65,16 +134,51 @@ const getSubjectByIdModel = async (subjectId) => {
   let connection;
   try {
     connection = await db.getConnection();
-    const [rows] = await connection.execute(
-      `SELECT subject_id, subject_code, subject_name, description, grade_level, 
-              created_at, updated_at
-       FROM subjects
-       WHERE subject_id = ?`,
+    
+    const [subjectRows] = await connection.execute(
+      `SELECT 
+        s.subject_id, 
+        s.subject_code, 
+        s.subject_name, 
+        s.description, 
+        s.created_at, 
+        s.updated_at
+       FROM subjects s
+       WHERE s.subject_id = ?`,
       [parseInt(subjectId)]
     );
-    return rows[0] || null;
+    
+    if (subjectRows.length === 0) {
+      return null;
+    }
+    
+    const subject = subjectRows[0];
+    
+    const [gradeLevelRows] = await connection.execute(
+      `SELECT 
+        sgl.grade_level_id,
+        sgl.is_required,
+        sgl.units,
+        gl.grade_code,
+        gl.grade_name
+       FROM subject_grade_levels sgl
+       LEFT JOIN grade_levels gl ON sgl.grade_level_id = gl.grade_level_id
+       WHERE sgl.subject_id = ?`,
+      [parseInt(subjectId)]
+    );
+    
+    subject.grade_levels = gradeLevelRows.map(row => ({
+      grade_level_id: row.grade_level_id,
+      is_required: Boolean(row.is_required),
+      units: row.units,
+      grade_code: row.grade_code,
+      grade_name: row.grade_name
+    }));
+    
+    return subject;
   } catch (err) {
-    throw err;
+    console.error('Model Error:', err);
+    throw new Error('Failed to retrieve subject from database');
   } finally {
     if (connection) await connection.release();
   }
@@ -86,7 +190,6 @@ const updateSubjectModel = async (subjectId, updateData, userId) => {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    // Check if subject exists
     const [existing] = await connection.execute(
       'SELECT subject_id, subject_name, subject_code FROM subjects WHERE subject_id = ?',
       [subjectId]
@@ -95,149 +198,226 @@ const updateSubjectModel = async (subjectId, updateData, userId) => {
       throw new Error('Subject not found');
     }
 
-    // Build dynamic update query
-    const updateFields = [];
-    const updateValues = [];
+    const subjectFields = [];
+    const subjectValues = [];
 
-    Object.entries(updateData).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        updateFields.push(`${key} = ?`);
-        updateValues.push(value);
-      }
-    });
+    const { subject_code, subject_name, description, grade_levels } = updateData;
 
-    if (updateFields.length === 0) {
-      throw new Error('No valid fields to update');
+    if (subject_code !== undefined) {
+      subjectFields.push('subject_code = ?');
+      subjectValues.push(subject_code);
+    }
+    if (subject_name !== undefined) {
+      subjectFields.push('subject_name = ?');
+      subjectValues.push(subject_name);
+    }
+    if (description !== undefined) {
+      subjectFields.push('description = ?');
+      subjectValues.push(description);
     }
 
-    updateFields.push('updated_at = CURRENT_TIMESTAMP');
-    updateValues.push(subjectId);
+    if (subjectFields.length > 0) {
+      subjectFields.push('updated_at = CURRENT_TIMESTAMP');
+      subjectValues.push(subjectId);
 
-    const [result] = await connection.execute(
-      `UPDATE subjects SET ${updateFields.join(', ')} WHERE subject_id = ?`,
-      updateValues
-    );
+      await connection.execute(
+        `UPDATE subjects SET ${subjectFields.join(', ')} WHERE subject_id = ?`,
+        subjectValues
+      );
+    }
 
-    if (result.affectedRows === 0) {
-      throw new Error('Failed to update subject');
+    let gradeLevelChanges = { added: 0, removed: 0, updated: 0 };
+    
+    if (Array.isArray(grade_levels)) {
+      const [currentGradeLevels] = await connection.execute(
+        'SELECT grade_level_id, is_required, units FROM subject_grade_levels WHERE subject_id = ?',
+        [subjectId]
+      );
+
+      const currentGradeLevelMap = new Map();
+      currentGradeLevels.forEach(gl => {
+        currentGradeLevelMap.set(gl.grade_level_id, {
+          is_required: Boolean(gl.is_required),
+          units: gl.units
+        });
+      });
+
+      const newGradeLevelMap = new Map();
+      grade_levels.forEach(gl => {
+        if (gl.grade_level_id) {
+          newGradeLevelMap.set(parseInt(gl.grade_level_id), {
+            is_required: gl.is_required !== undefined ? Boolean(gl.is_required) : true,
+            units: gl.units !== undefined ? parseFloat(gl.units) : null
+          });
+        }
+      });
+
+      const gradeLevelsToRemove = [];
+      const gradeLevelsToAddOrUpdate = [];
+
+      for (const [gradeLevelId, currentData] of currentGradeLevelMap.entries()) {
+        if (!newGradeLevelMap.has(gradeLevelId)) {
+          gradeLevelsToRemove.push(gradeLevelId);
+          gradeLevelChanges.removed++;
+        } else {
+          const newData = newGradeLevelMap.get(gradeLevelId);
+          if (currentData.is_required !== newData.is_required || currentData.units !== newData.units) {
+            gradeLevelsToAddOrUpdate.push([
+              subjectId,
+              gradeLevelId,
+              newData.is_required,
+              newData.units
+            ]);
+            gradeLevelChanges.updated++;
+          }
+          newGradeLevelMap.delete(gradeLevelId); 
+        }
+      }
+
+      for (const [gradeLevelId, newData] of newGradeLevelMap.entries()) {
+        gradeLevelsToAddOrUpdate.push([
+          subjectId,
+          gradeLevelId,
+          newData.is_required,
+          newData.units
+        ]);
+        gradeLevelChanges.added++;
+      }
+
+      if (gradeLevelsToRemove.length > 0) {
+        const placeholders = gradeLevelsToRemove.map(() => '?').join(', ');
+        await connection.execute(
+          `DELETE FROM subject_grade_levels WHERE subject_id = ? AND grade_level_id IN (${placeholders})`,
+          [subjectId, ...gradeLevelsToRemove]
+        );
+      }
+
+      if (gradeLevelsToAddOrUpdate.length > 0) {
+        const valuesPlaceholders = gradeLevelsToAddOrUpdate.map(() => '(?, ?, ?, ?)').join(', ');
+        const flatValues = gradeLevelsToAddOrUpdate.flat();
+        
+        await connection.execute(
+          `INSERT INTO subject_grade_levels (subject_id, grade_level_id, is_required, units)
+           VALUES ${valuesPlaceholders}
+           ON DUPLICATE KEY UPDATE is_required = VALUES(is_required), units = VALUES(units)`,
+          flatValues
+        );
+      }
     }
 
     const oldSubject = existing[0];
     await logActivity(userId, `Updated subject ID ${subjectId}: ${oldSubject.subject_name} (${oldSubject.subject_code})`);
 
     await connection.commit();
-    return result;
+    
+    return { 
+      affectedRows: 1,
+      changes: {
+        subject: subjectFields.length > 0,
+        gradeLevels: gradeLevelChanges
+      }
+    };
   } catch (err) {
     if (connection) await connection.rollback();
+    console.error('Update Subject Model Error:', err);
     throw err;
   } finally {
     if (connection) await connection.release();
   }
 };
 
-const deleteSubjectModel = async (subjectId, userId) => {
-  let connection;
-  try {
-    connection = await db.getConnection();
-    await connection.beginTransaction();
 
-    // Check if subject exists
-    const [existing] = await connection.execute(
-      'SELECT subject_id, subject_name, subject_code FROM subjects WHERE subject_id = ?',
-      [parseInt(subjectId)]
-    );
-    if (existing.length === 0) {
-      throw new Error('Subject not found');
-    }
-
-    const [result] = await connection.execute(
-      'DELETE FROM subjects WHERE subject_id = ?',
-      [parseInt(subjectId)]
-    );
-
-    if (result.affectedRows === 0) {
-      throw new Error('Failed to delete subject');
-    }
-
-    const deletedSubject = existing[0];
-    await logActivity(userId, `Deleted subject ID ${subjectId}: ${deletedSubject.subject_name} (${deletedSubject.subject_code})`);
-
-    await connection.commit();
-    return result;
-  } catch (err) {
-    if (connection) await connection.rollback();
-    throw err;
-  } finally {
-    if (connection) await connection.release();
-  }
-};
-
-const searchSubjectsModel = async (searchQuery, gradeLevel = null) => {
+const searchSubjectsModel = async (searchQuery, gradeLevelId = null) => {
   let connection;
   try {
     connection = await db.getConnection();
     
     let query = `
-      SELECT subject_id, subject_code, subject_name, description, grade_level, 
-             created_at, updated_at
-      FROM subjects
-      WHERE (subject_name LIKE ? OR subject_code LIKE ? OR description LIKE ?)
+      SELECT DISTINCT
+        s.subject_id, 
+        s.subject_code, 
+        s.subject_name, 
+        s.description, 
+        s.created_at, 
+        s.updated_at
+      FROM subjects s
+      LEFT JOIN subject_grade_levels sgl ON s.subject_id = sgl.subject_id
+      WHERE (s.subject_name LIKE ? OR s.subject_code LIKE ? OR s.description LIKE ?)
     `;
     let queryParams = [`%${searchQuery}%`, `%${searchQuery}%`, `%${searchQuery}%`];
 
-    if (gradeLevel) {
-      query += ` AND grade_level = ?`;
-      queryParams.push(gradeLevel);
+    if (gradeLevelId) {
+      query += ` AND sgl.grade_level_id = ?`;
+      queryParams.push(parseInt(gradeLevelId));
     }
 
-    query += ` ORDER BY 
-      CASE 
-        WHEN subject_name LIKE ? THEN 1
-        WHEN subject_code LIKE ? THEN 2
-        WHEN description LIKE ? THEN 3
-        ELSE 4
-      END,
-      grade_level ASC, subject_name ASC
+    query += `
+      ORDER BY 
+        CASE 
+          WHEN s.subject_name LIKE ? THEN 1
+          WHEN s.subject_code LIKE ? THEN 2
+          WHEN s.description LIKE ? THEN 3
+          ELSE 4
+        END,
+        s.subject_name ASC
       LIMIT 50`;
     
     queryParams.push(`${searchQuery}%`, `${searchQuery}%`, `%${searchQuery}%`);
 
     const [rows] = await connection.execute(query, queryParams);
-    return rows;
+    
+    if (rows.length === 0) {
+      return [];
+    }
+
+    const subjectIds = rows.map(subject => subject.subject_id);
+    
+    const placeholders = subjectIds.map(() => '?').join(', ');
+    let gradeLevelsQuery = `
+      SELECT 
+        sgl.subject_id,
+        sgl.grade_level_id,
+        sgl.is_required,
+        sgl.units,
+        gl.grade_code,
+        gl.grade_name
+      FROM subject_grade_levels sgl
+      LEFT JOIN grade_levels gl ON sgl.grade_level_id = gl.grade_level_id
+      WHERE sgl.subject_id IN (${placeholders})
+      ORDER BY sgl.subject_id, gl.grade_order
+    `;
+    
+    const [gradeLevelsRows] = await connection.execute(gradeLevelsQuery, subjectIds);
+    
+    const gradeLevelsBySubject = {};
+    gradeLevelsRows.forEach(row => {
+      if (!gradeLevelsBySubject[row.subject_id]) {
+        gradeLevelsBySubject[row.subject_id] = [];
+      }
+      
+      gradeLevelsBySubject[row.subject_id].push({
+        grade_level_id: row.grade_level_id,
+        is_required: Boolean(row.is_required),
+        units: row.units,
+        grade_code: row.grade_code,
+        grade_name: row.grade_name
+      });
+    });
+    
+    const processedSubjects = rows.map(subject => ({
+      ...subject,
+      grade_levels: gradeLevelsBySubject[subject.subject_id] || []
+    }));
+    
+    return processedSubjects;
   } catch (err) {
-    throw err;
+    console.error('Search Subjects Model Error:', err);
+    throw new Error('Failed to search subjects');
   } finally {
     if (connection) await connection.release();
   }
 };
 
-const getSubjectsByGradeLevelModel = async (gradeLevel, limit, offset) => {
-  let connection;
-  try {
-    connection = await db.getConnection();
-    
-    const [rows] = await connection.execute(
-      `SELECT subject_id, subject_code, subject_name, description, grade_level, 
-              created_at, updated_at
-       FROM subjects
-       WHERE grade_level = ?
-       ORDER BY subject_name ASC
-       LIMIT ? OFFSET ?`,
-      [gradeLevel, parseInt(limit), parseInt(offset)]
-    );
-
-    const [totalRows] = await connection.execute(
-      `SELECT COUNT(*) as total FROM subjects WHERE grade_level = ?`,
-      [gradeLevel]
-    );
-    
-    return { subjects: rows, total: totalRows[0].total };
-  } catch (err) {
-    throw err;
-  } finally {
-    if (connection) await connection.release();
-  }
-};
 
 const checkSubjectCodeExistsModel = async (subjectCode, excludeId = null) => {
   let connection;
@@ -266,8 +446,6 @@ module.exports = {
   getAllSubjectsModel,
   getSubjectByIdModel,
   updateSubjectModel,
-  deleteSubjectModel,
   searchSubjectsModel,
-  getSubjectsByGradeLevelModel,
   checkSubjectCodeExistsModel
 };
