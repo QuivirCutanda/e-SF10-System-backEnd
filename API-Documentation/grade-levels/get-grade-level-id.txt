@@ -1,0 +1,32 @@
+--------------------------------------------------
+## get-grade-level-id
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        GET
+    -EndPoint
+              http://localhost:3001/esf10/grade-levels/:grade_level_id
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+Example response (200ok)
+-------------------------------------------------
+{
+    "success": true,
+    "data": {
+        "grade_level_id": 1,
+        "grade_code": "G7",
+        "grade_name": "Grade 1",
+        "grade_order": 7,
+        "created_at": "2025-08-27T01:41:27.000Z"
+    },
+    "timestamp": "2025-08-27T02:01:37.072Z"
+}

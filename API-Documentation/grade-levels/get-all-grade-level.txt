@@ -1,0 +1,70 @@
+--------------------------------------------------
+## get-all-grade-level
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        GET
+    -EndPoint
+             http://localhost:3001/esf10/grade-levels
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+Example response (200ok)
+-------------------------------------------------
+{
+    "success": true,
+    "data": [
+        {
+            "grade_level_id": 2,
+            "grade_code": "G2",
+            "grade_name": "Grade 2",
+            "grade_order": 2,
+            "created_at": "2025-08-27T01:41:49.000Z"
+        },
+        {
+            "grade_level_id": 3,
+            "grade_code": "G3",
+            "grade_name": "Grade 3",
+            "grade_order": 3,
+            "created_at": "2025-08-27T01:42:08.000Z"
+        },
+        {
+            "grade_level_id": 4,
+            "grade_code": "G4",
+            "grade_name": "Grade 4",
+            "grade_order": 4,
+            "created_at": "2025-08-27T01:42:17.000Z"
+        },
+        {
+            "grade_level_id": 5,
+            "grade_code": "G5",
+            "grade_name": "Grade 5",
+            "grade_order": 5,
+            "created_at": "2025-08-27T01:42:24.000Z"
+        },
+        {
+            "grade_level_id": 6,
+            "grade_code": "G6",
+            "grade_name": "Grade 6",
+            "grade_order": 6,
+            "created_at": "2025-08-27T01:42:32.000Z"
+        },
+        {
+            "grade_level_id": 1,
+            "grade_code": "G7",
+            "grade_name": "Grade 1",
+            "grade_order": 7,
+            "created_at": "2025-08-27T01:41:27.000Z"
+        }
+    ],
+    "count": 6,
+    "timestamp": "2025-08-27T02:00:57.518Z"
+}
