@@ -68,7 +68,6 @@ exports.createEnrollment = async (req, res) => {
   const { student_id, school_year_id, grade_level_id, section_id, curriculum_id, enrollment_date, status } = req.body;
   const userId = req.user?.user_id;
 
-  // === VALIDATION ===
   const validateId = (id, name) => {
     if (!id || !Number.isInteger(id) || id <= 0) {
       return `${name} is required and must be a positive integer`;
