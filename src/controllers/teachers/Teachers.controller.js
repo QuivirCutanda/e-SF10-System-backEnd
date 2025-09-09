@@ -127,7 +127,7 @@ exports.createTeacher = async (req, res) => {
       first_name: first_name.trim(),
       middle_name: middle_name ? middle_name.trim() : null,
       last_name: last_name.trim(),
-      extension_name: extension_name.trim(),
+      extension_name: extension_name ? extension_name.trim() : null,
       email: email.trim(),
       password: hashedPassword, 
       teacher_address: teacher_address.trim(),
@@ -143,6 +143,7 @@ exports.createTeacher = async (req, res) => {
     });
   } catch (error) {
     console.error('Create Teacher Error:', error);
+
     if (error.message.includes('Email already exists')) {
       return res.status(409).json({
         success: false,
@@ -150,6 +151,7 @@ exports.createTeacher = async (req, res) => {
         timestamp: new Date().toISOString()
       });
     }
+
     return res.status(500).json({
       success: false,
       error: 'Server error while creating teacher',
@@ -158,6 +160,7 @@ exports.createTeacher = async (req, res) => {
     });
   }
 };
+
 
 
 exports.updateTeacher = async (req, res) => {

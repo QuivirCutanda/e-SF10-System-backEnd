@@ -126,8 +126,8 @@ const createNewTeacher = async (teacherData, adminUserId) => {
 
     const [userResult] = await connection.execute(
       `INSERT INTO users 
-       (first_name, middle_name, last_name,extension_name, email, password, created_at) 
-       VALUES (?, ?, ?, ?,?, ?, NOW())`,
+       (first_name, middle_name, last_name, extension_name, email, password, created_at) 
+       VALUES (?, ?, ?, ?, ?, ?, NOW())`,
       [first_name, middle_name, last_name, extension_name, email, password]
     );
     const newUserId = userResult.insertId;
@@ -140,14 +140,23 @@ const createNewTeacher = async (teacherData, adminUserId) => {
     );
     const newTeacherId = teacherResult.insertId;
 
-    const fullName = `${first_name}${
-      middle_name ? " " + middle_name : ""
-    } ${last_name}`;
+    const [teacherRole] = await connection.execute(
+      "SELECT role_id FROM roles WHERE role_name = 'teacher' LIMIT 1"
+    );
+    if (teacherRole.length > 0) {
+      await connection.execute(
+        `INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)
+         ON DUPLICATE KEY UPDATE role_id = VALUES(role_id)`,
+        [newUserId, teacherRole[0].role_id]
+      );
+    }
+
+    const fullName = `${first_name}${middle_name ? " " + middle_name : ""} ${last_name}`;
     await connection.execute(
       "INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())",
       [
         adminUserId,
-        `Created teacher: ${fullName} (user_id=${newUserId}, teacher_id=${newTeacherId})`,
+        `Created teacher: ${fullName} (user_id=${newUserId}, teacher_id=${newTeacherId})`
       ]
     );
 
@@ -164,6 +173,7 @@ const createNewTeacher = async (teacherData, adminUserId) => {
       teacher_address,
       date_of_birth,
       contact_number,
+      role: "teacher"
     };
   } catch (err) {
     if (connection) await connection.rollback();
@@ -172,6 +182,7 @@ const createNewTeacher = async (teacherData, adminUserId) => {
     if (connection) await connection.release();
   }
 };
+
 
 const updateTeacherById = async (teacherId, teacherData, adminUserId) => {
   let connection;
