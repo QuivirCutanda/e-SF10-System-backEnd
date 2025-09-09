@@ -243,25 +243,25 @@ exports.updateTeacherAssignment = async (req, res) => {
   const { id } = req.params;
   const { teacher_id, subject_id, section_id, school_year_id } = req.body;
   const userId = req.user?.user_id;
-  const assignmentId = parseInt(id);
+  const assignmentId = parseInt(id, 10);
 
   if (!assignmentId || assignmentId <= 0) {
-    return res.status(400).json({ success: false, error: 'Assignment ID must be a positive integer' });
+    return res.status(400).json({ success: false, error: "Assignment ID must be a positive integer" });
   }
   if (!teacher_id || !Number.isInteger(teacher_id) || teacher_id <= 0) {
-    return res.status(400).json({ success: false, error: 'Teacher ID must be a positive integer' });
+    return res.status(400).json({ success: false, error: "Teacher ID must be a positive integer" });
   }
   if (!subject_id || !Number.isInteger(subject_id) || subject_id <= 0) {
-    return res.status(400).json({ success: false, error: 'Subject ID must be a positive integer' });
+    return res.status(400).json({ success: false, error: "Subject ID must be a positive integer" });
   }
   if (!section_id || !Number.isInteger(section_id) || section_id <= 0) {
-    return res.status(400).json({ success: false, error: 'Section ID must be a positive integer' });
+    return res.status(400).json({ success: false, error: "Section ID must be a positive integer" });
   }
   if (!school_year_id || !Number.isInteger(school_year_id) || school_year_id <= 0) {
-    return res.status(400).json({ success: false, error: 'School Year ID must be a positive integer' });
+    return res.status(400).json({ success: false, error: "School Year ID must be a positive integer" });
   }
   if (!userId || !Number.isInteger(userId)) {
-    return res.status(400).json({ success: false, error: 'Invalid user ID from authentication token' });
+    return res.status(400).json({ success: false, error: "Invalid user ID from authentication token" });
   }
 
   try {
@@ -273,24 +273,23 @@ exports.updateTeacherAssignment = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Teacher assignment updated successfully',
-      data: updatedAssignment
+      message: "Teacher assignment updated successfully",
+      data: updatedAssignment,
     });
-
   } catch (error) {
-    console.error('Update Teacher Assignment Error:', error);
+    console.error("Update Teacher Assignment Error:", error);
 
-    if (error.message.includes('not found')) {
+    if (error.message.includes("not found")) {
       return res.status(404).json({ success: false, error: error.message });
     }
-    if (error.message.includes('already exists')) {
+    if (error.message.includes("already exists")) {
       return res.status(409).json({ success: false, error: error.message });
     }
-    if (error.message.includes('not active')) {
+    if (error.message.includes("not active")) {
       return res.status(400).json({ success: false, error: error.message });
     }
 
-    return res.status(500).json({ success: false, error: 'Server error', details: error.message });
+    return res.status(500).json({ success: false, error: "Server error", details: error.message });
   }
 };
 

@@ -293,37 +293,40 @@ const updateTeacherAssignmentById = async (assignmentId, assignmentData, userId)
     const { teacher_id, subject_id, section_id, school_year_id } = assignmentData;
 
     const [existingAssignment] = await connection.execute(
-      'SELECT assignment_id FROM teacher_assignments WHERE assignment_id = ?',
+      "SELECT assignment_id FROM teacher_assignments WHERE assignment_id = ?",
       [assignmentId]
     );
     if (existingAssignment.length === 0) {
-      throw new Error('Assignment not found');
+      throw new Error("Assignment not found");
     }
 
     const [teacher] = await connection.execute(
-      'SELECT teacher_id, first_name, last_name, is_active FROM teachers WHERE teacher_id = ?',
+      `SELECT t.teacher_id, t.is_active, u.first_name, u.last_name
+       FROM teachers t
+       JOIN users u ON t.user_id = u.user_id
+       WHERE t.teacher_id = ?`,
       [teacher_id]
     );
-    if (teacher.length === 0) throw new Error('Teacher not found');
-    if (!teacher[0].is_active) throw new Error('Teacher is not active');
+    if (teacher.length === 0) throw new Error("Teacher not found");
+    if (!teacher[0].is_active) throw new Error("Teacher is not active");
 
     const [subject] = await connection.execute(
-      'SELECT subject_id, subject_name FROM subjects WHERE subject_id = ?',
+      "SELECT subject_id, subject_name FROM subjects WHERE subject_id = ?",
       [subject_id]
     );
-    if (subject.length === 0) throw new Error('Subject not found');
+    if (subject.length === 0) throw new Error("Subject not found");
 
     const [section] = await connection.execute(
-      'SELECT section_id, section_name FROM sections WHERE section_id = ?',
+      "SELECT section_id, section_name FROM sections WHERE section_id = ?",
       [section_id]
     );
-    if (section.length === 0) throw new Error('Section not found');
+    if (section.length === 0) throw new Error("Section not found");
 
     const [schoolYear] = await connection.execute(
-      'SELECT school_year_id, start_year, end_year FROM school_years WHERE school_year_id = ?',
+      "SELECT school_year_id, start_year, end_year FROM school_years WHERE school_year_id = ?",
       [school_year_id]
     );
-    if (schoolYear.length === 0) throw new Error('School year not found');
+    if (schoolYear.length === 0) throw new Error("School year not found");
 
     const [duplicateAssignment] = await connection.execute(
       `SELECT assignment_id 
@@ -333,7 +336,7 @@ const updateTeacherAssignmentById = async (assignmentId, assignmentData, userId)
       [teacher_id, subject_id, section_id, school_year_id, assignmentId]
     );
     if (duplicateAssignment.length > 0) {
-      throw new Error('Assignment already exists');
+      throw new Error("Assignment already exists");
     }
 
     const [result] = await connection.execute(
@@ -342,29 +345,29 @@ const updateTeacherAssignmentById = async (assignmentId, assignmentData, userId)
        WHERE assignment_id = ?`,
       [teacher_id, subject_id, section_id, school_year_id, assignmentId]
     );
-    if (result.affectedRows === 0) throw new Error('Assignment not found');
+    if (result.affectedRows === 0) throw new Error("Assignment not found");
 
     await connection.execute(
       `INSERT INTO activity_logs (user_id, action, log_timestamp) 
        VALUES (?, ?, NOW())`,
       [
         userId,
-        `Updated teacher assignment ID ${assignmentId}: ${teacher[0].first_name} ${teacher[0].last_name} assigned to ${subject[0].subject_name} in ${section[0].section_name} for ${schoolYear[0].start_year}-${schoolYear[0].end_year}`
+        `Updated teacher assignment ID ${assignmentId}: ${teacher[0].first_name} ${teacher[0].last_name} assigned to ${subject[0].subject_name} in ${section[0].section_name} for ${schoolYear[0].start_year}-${schoolYear[0].end_year}`,
       ]
     );
 
     await connection.commit();
 
     return await fetchTeacherAssignmentById(assignmentId);
-
   } catch (err) {
     if (connection) await connection.rollback();
-    console.error('Error in updateTeacherAssignmentById:', err);
+    console.error("Error in updateTeacherAssignmentById:", err);
     throw new Error(err.message);
   } finally {
     if (connection) await connection.release();
   }
 };
+
 
 
 const deleteTeacherAssignmentById = async (assignmentId, userId) => {

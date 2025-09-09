@@ -481,8 +481,10 @@ WHERE permission_name IN (
     'manage_backups', 'view_logs', 'manage_school_settings'
 );
 
+
 INSERT INTO `users` (`user_id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `created_at`, `updated_at`) VALUES
 (1, 'Quivir', 'Anora', 'Cutanda', 'admin@gmail.com', '$2b$10$KIoy.uCwCLY2xtZqi6NV9.aLD5KibZ2YeyRHsCr8a9j7FltbO.PfW', '2025-06-07 00:21:29', '2025-06-07 00:21:29');
+
 INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
 (1, 1);
 INSERT INTO teachers (user_id, teacher_address, date_of_birth, contact_number, is_active, created_at, updated_at)
