@@ -1,4 +1,4 @@
-const db = require('../../config/db');
+const db = require("../../config/db");
 
 const fetchAllTeachers = async () => {
   try {
@@ -21,28 +21,30 @@ const fetchAllTeachers = async () => {
        ORDER BY u.last_name, u.first_name`
     );
 
-    return rows.map(row => ({
+    return rows.map((row) => ({
       teacher_id: row.teacher_id,
       user_id: row.user_id,
       first_name: row.first_name,
       middle_name: row.middle_name,
       last_name: row.last_name,
-      full_name: `${row.first_name}${row.middle_name ? ' ' + row.middle_name : ''} ${row.last_name}`,
+      full_name: `${row.first_name}${
+        row.middle_name ? " " + row.middle_name : ""
+      } ${row.last_name}`,
       teacher_address: row.teacher_address,
-      date_of_birth: row.date_of_birth ? row.date_of_birth.toISOString().split("T")[0] : null, // normalize YYYY-MM-DD
+      date_of_birth: row.date_of_birth
+        ? row.date_of_birth.toISOString().split("T")[0]
+        : null, // normalize YYYY-MM-DD
       email: row.email,
       contact_number: row.contact_number,
       is_active: Boolean(row.is_active),
       created_at: row.created_at,
-      updated_at: row.updated_at
+      updated_at: row.updated_at,
     }));
   } catch (err) {
     console.error("Error in fetchAllTeachers:", err);
     throw new Error(`Error fetching teachers: ${err.message}`);
   }
 };
-
-
 
 const fetchTeacherById = async (teacherId) => {
   try {
@@ -77,14 +79,18 @@ const fetchTeacherById = async (teacherId) => {
       first_name: row.first_name,
       middle_name: row.middle_name,
       last_name: row.last_name,
-      full_name: `${row.first_name}${row.middle_name ? ' ' + row.middle_name : ''} ${row.last_name}`,
+      full_name: `${row.first_name}${
+        row.middle_name ? " " + row.middle_name : ""
+      } ${row.last_name}`,
       teacher_address: row.teacher_address,
-      date_of_birth: row.date_of_birth ? row.date_of_birth.toISOString().split("T")[0] : null,
+      date_of_birth: row.date_of_birth
+        ? row.date_of_birth.toISOString().split("T")[0]
+        : null,
       email: row.email,
       contact_number: row.contact_number,
       is_active: Boolean(row.is_active),
       created_at: row.created_at,
-      updated_at: row.updated_at
+      updated_at: row.updated_at,
     };
   } catch (err) {
     console.error("Error in fetchTeacherById:", err);
@@ -92,37 +98,37 @@ const fetchTeacherById = async (teacherId) => {
   }
 };
 
-
 const createNewTeacher = async (teacherData, adminUserId) => {
   let connection;
   try {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    const { 
-      first_name, 
-      middle_name, 
-      last_name, 
-      email, 
-      password, 
-      teacher_address, 
-      date_of_birth, 
-      contact_number 
+    const {
+      first_name,
+      middle_name,
+      last_name,
+      extension_name,
+      email,
+      password,
+      teacher_address,
+      date_of_birth,
+      contact_number,
     } = teacherData;
 
     const [existingUser] = await connection.execute(
-      'SELECT user_id FROM users WHERE email = ?',
+      "SELECT user_id FROM users WHERE email = ?",
       [email]
     );
     if (existingUser.length > 0) {
-      throw new Error('Email already exists');
+      throw new Error("Email already exists");
     }
 
     const [userResult] = await connection.execute(
       `INSERT INTO users 
-       (first_name, middle_name, last_name, email, password, created_at) 
-       VALUES (?, ?, ?, ?, ?, NOW())`,
-      [first_name, middle_name, last_name, email, password] 
+       (first_name, middle_name, last_name,extension_name, email, password, created_at) 
+       VALUES (?, ?, ?, ?,?, ?, NOW())`,
+      [first_name, middle_name, last_name, extension_name, email, password]
     );
     const newUserId = userResult.insertId;
 
@@ -134,10 +140,15 @@ const createNewTeacher = async (teacherData, adminUserId) => {
     );
     const newTeacherId = teacherResult.insertId;
 
-    const fullName = `${first_name}${middle_name ? ' ' + middle_name : ''} ${last_name}`;
+    const fullName = `${first_name}${
+      middle_name ? " " + middle_name : ""
+    } ${last_name}`;
     await connection.execute(
-      'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',
-      [adminUserId, `Created teacher: ${fullName} (user_id=${newUserId}, teacher_id=${newTeacherId})`]
+      "INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())",
+      [
+        adminUserId,
+        `Created teacher: ${fullName} (user_id=${newUserId}, teacher_id=${newTeacherId})`,
+      ]
     );
 
     await connection.commit();
@@ -148,10 +159,11 @@ const createNewTeacher = async (teacherData, adminUserId) => {
       first_name,
       middle_name,
       last_name,
+      extension_name,
       email,
       teacher_address,
       date_of_birth,
-      contact_number
+      contact_number,
     };
   } catch (err) {
     if (connection) await connection.rollback();
@@ -161,52 +173,59 @@ const createNewTeacher = async (teacherData, adminUserId) => {
   }
 };
 
-
 const updateTeacherById = async (teacherId, teacherData, adminUserId) => {
   let connection;
   try {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    const { 
-      first_name, 
-      middle_name, 
-      last_name, 
-      email, 
-      teacher_address, 
-      date_of_birth, 
-      contact_number, 
-      is_active 
+    const {
+      first_name,
+      middle_name,
+      last_name,
+      extension_name,
+      email,
+      teacher_address,
+      date_of_birth,
+      contact_number,
+      is_active,
     } = teacherData;
 
     const [existingTeacher] = await connection.execute(
-      `SELECT t.teacher_id, t.user_id, u.first_name, u.middle_name, u.last_name 
-       FROM teachers t
-       INNER JOIN users u ON t.user_id = u.user_id
-       WHERE t.teacher_id = ?`,
+      `SELECT 
+      t.teacher_id, 
+      t.user_id, 
+      u.first_name, 
+      u.middle_name, 
+      u.last_name, 
+      u.extension_name
+   FROM teachers t
+   INNER JOIN users u ON t.user_id = u.user_id
+   WHERE t.teacher_id = ?`,
       [teacherId]
     );
+
     if (existingTeacher.length === 0) {
-      throw new Error('Teacher not found');
+      throw new Error("Teacher not found");
     }
 
     const userId = existingTeacher[0].user_id;
 
     if (email) {
       const [duplicateEmail] = await connection.execute(
-        'SELECT user_id FROM users WHERE email = ? AND user_id != ?',
+        "SELECT user_id FROM users WHERE email = ? AND user_id != ?",
         [email, userId]
       );
       if (duplicateEmail.length > 0) {
-        throw new Error('Email already exists');
+        throw new Error("Email already exists");
       }
     }
 
     await connection.execute(
       `UPDATE users 
-       SET first_name = ?, middle_name = ?, last_name = ?, email = ?, updated_at = CURRENT_TIMESTAMP
+       SET first_name = ?, middle_name = ?, last_name = ?,extension_name = ?, email = ?, updated_at = CURRENT_TIMESTAMP
        WHERE user_id = ?`,
-      [first_name, middle_name, last_name, email, userId]
+      [first_name, middle_name, last_name, extension_name, email, userId]
     );
 
     await connection.execute(
@@ -217,19 +236,26 @@ const updateTeacherById = async (teacherId, teacherData, adminUserId) => {
       [teacher_address, date_of_birth, contact_number, is_active, teacherId]
     );
 
-    const oldFullName = `${existingTeacher[0].first_name}${existingTeacher[0].middle_name ? ' ' + existingTeacher[0].middle_name : ''} ${existingTeacher[0].last_name}`;
-    const newFullName = `${first_name}${middle_name ? ' ' + middle_name : ''} ${last_name}`;
+    const oldFullName = `${existingTeacher[0].first_name}${
+      existingTeacher[0].middle_name ? " " + existingTeacher[0].middle_name : ""
+    } ${existingTeacher[0].last_name}`;
+    const newFullName = `${first_name}${
+      middle_name ? " " + middle_name : ""
+    } ${last_name}`;
 
     await connection.execute(
-      'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',
-      [adminUserId, `Updated teacher ID ${teacherId}: from "${oldFullName}" to "${newFullName}"`]
+      "INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())",
+      [
+        adminUserId,
+        `Updated teacher ID ${teacherId}: from "${oldFullName}" to "${newFullName}"`,
+      ]
     );
 
     await connection.commit();
 
     const [updated] = await connection.execute(
       `SELECT 
-          t.teacher_id, u.user_id, u.first_name, u.middle_name, u.last_name, u.email,
+          t.teacher_id, u.user_id, u.first_name, u.middle_name, u.last_name, u.extension_name, u.email,
           t.teacher_address, t.date_of_birth, t.contact_number, t.is_active,
           t.created_at, t.updated_at
        FROM teachers t
@@ -241,13 +267,12 @@ const updateTeacherById = async (teacherId, teacherData, adminUserId) => {
     return updated[0] || null;
   } catch (err) {
     if (connection) await connection.rollback();
-    console.error('Error in updateTeacherById:', err);
+    console.error("Error in updateTeacherById:", err);
     throw new Error(err.message);
   } finally {
     if (connection) await connection.release();
   }
 };
-
 
 const toggleTeacherStatusById = async (teacherId, userId) => {
   let connection;
@@ -262,46 +287,59 @@ const toggleTeacherStatusById = async (teacherId, userId) => {
       [teacherId]
     );
     if (existingTeacher.length === 0) {
-      throw new Error('Teacher not found');
+      throw new Error("Teacher not found");
     }
 
     const currentStatus = Boolean(existingTeacher[0].is_active);
     const newStatus = !currentStatus;
 
     const [result] = await connection.execute(
-      'UPDATE teachers SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE teacher_id = ?',
+      "UPDATE teachers SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE teacher_id = ?",
       [newStatus, teacherId]
     );
 
     if (result.affectedRows === 0) {
-      throw new Error('Teacher not found');
+      throw new Error("Teacher not found");
     }
 
-    const fullName = `${existingTeacher[0].first_name}${existingTeacher[0].middle_name ? ' ' + existingTeacher[0].middle_name : ''} ${existingTeacher[0].last_name}${existingTeacher[0].extension_name ? ' ' + existingTeacher[0].extension_name : ''}`;
-    const statusAction = newStatus ? 'activated' : 'deactivated';
-    
-    console.log(`Teacher ${statusAction}: teacher_id=${teacherId}, name=${fullName}`);
+    const fullName = `${existingTeacher[0].first_name}${
+      existingTeacher[0].middle_name ? " " + existingTeacher[0].middle_name : ""
+    } ${existingTeacher[0].last_name}${
+      existingTeacher[0].extension_name
+        ? " " + existingTeacher[0].extension_name
+        : ""
+    }`;
+    const statusAction = newStatus ? "activated" : "deactivated";
+
+    console.log(
+      `Teacher ${statusAction}: teacher_id=${teacherId}, name=${fullName}`
+    );
 
     await connection.execute(
-      'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',
-      [userId, `${statusAction.charAt(0).toUpperCase() + statusAction.slice(1)} teacher: ${fullName}`]
+      "INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())",
+      [
+        userId,
+        `${
+          statusAction.charAt(0).toUpperCase() + statusAction.slice(1)
+        } teacher: ${fullName}`,
+      ]
     );
 
     await connection.commit();
     return await fetchTeacherById(teacherId);
   } catch (err) {
     if (connection) await connection.rollback();
-    console.error('Error in toggleTeacherStatusById:', err);
+    console.error("Error in toggleTeacherStatusById:", err);
     throw new Error(err.message);
   } finally {
     if (connection) await connection.release();
   }
 };
 
-module.exports = { 
-  fetchAllTeachers, 
-  fetchTeacherById, 
-  createNewTeacher, 
-  updateTeacherById, 
-  toggleTeacherStatusById 
+module.exports = {
+  fetchAllTeachers,
+  fetchTeacherById,
+  createNewTeacher,
+  updateTeacherById,
+  toggleTeacherStatusById,
 };
