@@ -11,23 +11,23 @@ const {
 } = require('../controllers/enrollments/Enrollments.controller');
 
 router.get('/', authenticate, 
-    // authorizePermission('view_enrollments', 'manage_enrollments'), 
+    authorizePermission('view_enrollments', 'manage_enrollments'), 
     getAllEnrollments);
 
 router.get('/:id', authenticate, 
-    // authorizePermission('view_enrollments', 'manage_enrollments'), 
+    authorizePermission('view_enrollments', 'manage_enrollments'), 
     getEnrollmentById);
 
 router.post('/create', authenticate, 
-    // authorizePermission('manage_enrollments'), 
+    authorizePermission('manage_enrollments'), 
     createEnrollment);
 
 router.put('/update/:id', authenticate, 
-    // authorizePermission('manage_enrollments'), 
+    authorizePermission('manage_enrollments'), 
     updateEnrollment);
 
 router.delete('/delete/:id', authenticate, 
-    // authorizePermission('manage_enrollments'), 
+    authorizePermission('manage_enrollments'), 
     deleteEnrollment);
 
 module.exports = router;

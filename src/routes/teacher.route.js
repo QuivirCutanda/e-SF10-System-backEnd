@@ -11,24 +11,24 @@ toggleTeacherStatus
 } = require('../controllers/teachers/Teachers.controller');
 
 router.get('/', authenticate, 
-    // authorizePermission('view_teachers', 'manage_teachers'), 
+    authorizePermission('view_teachers', 'manage_teachers'), 
     getAllTeachers);
 
 router.get('/:id', authenticate, 
-    // authorizePermission('view_teachers', 'manage_teachers'), 
+    authorizePermission('view_teachers', 'manage_teachers'), 
     getTeacherById);
 
 router.post('/create', authenticate, 
-    // authorizePermission('manage_teachers'), 
+    authorizePermission('manage_teachers'), 
     createTeacher);
 
 router.put('/update/:id', authenticate, 
-    // authorizePermission('manage_teachers'), 
+    authorizePermission('manage_teachers'), 
     updateTeacher);
 
     
 router.patch('/toggle-status/:id', authenticate, 
-    // authorizePermission('manage_teachers'), 
+    authorizePermission('manage_teachers'), 
     toggleTeacherStatus);
 
 

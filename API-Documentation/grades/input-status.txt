@@ -1,0 +1,23 @@
+--------------------------------------------------
+##input-status
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+      http://localhost:3001/esf10/grades/input-status/:teacher_id
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "teacher_id": 1,
+    "can_input": false,
+    "timestamp": "2025-09-09T08:55:20.767Z"
+}

@@ -1,0 +1,1324 @@
+--------------------------------------------------
+## view-all-grades
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/esf10/grades/
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "data": [
+        {
+            "grade_id": 34,
+            "enrollment_id": 6,
+            "student": {
+                "student_id": 6,
+                "lrn": "123456789017",
+                "name": "Carmen Flores Garcia",
+                "first_name": "Carmen",
+                "middle_name": "Flores",
+                "last_name": "Garcia"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 7,
+                "section_name": "Jacinto"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "83.00"
+        },
+        {
+            "grade_id": 35,
+            "enrollment_id": 6,
+            "student": {
+                "student_id": 6,
+                "lrn": "123456789017",
+                "name": "Carmen Flores Garcia",
+                "first_name": "Carmen",
+                "middle_name": "Flores",
+                "last_name": "Garcia"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 7,
+                "section_name": "Jacinto"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "79.75"
+        },
+        {
+            "grade_id": 33,
+            "enrollment_id": 6,
+            "student": {
+                "student_id": 6,
+                "lrn": "123456789017",
+                "name": "Carmen Flores Garcia",
+                "first_name": "Carmen",
+                "middle_name": "Flores",
+                "last_name": "Garcia"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 7,
+                "section_name": "Jacinto"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "81.50"
+        },
+        {
+            "grade_id": 36,
+            "enrollment_id": 6,
+            "student": {
+                "student_id": 6,
+                "lrn": "123456789017",
+                "name": "Carmen Flores Garcia",
+                "first_name": "Carmen",
+                "middle_name": "Flores",
+                "last_name": "Garcia"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 7,
+                "section_name": "Jacinto"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "82.25"
+        },
+        {
+            "grade_id": 46,
+            "enrollment_id": 9,
+            "student": {
+                "student_id": 9,
+                "lrn": "123456789020",
+                "name": "Roberto Castillo Lopez",
+                "first_name": "Roberto",
+                "middle_name": "Castillo",
+                "last_name": "Lopez"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 8,
+                "section_name": "Mabini"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "79.50"
+        },
+        {
+            "grade_id": 47,
+            "enrollment_id": 9,
+            "student": {
+                "student_id": 9,
+                "lrn": "123456789020",
+                "name": "Roberto Castillo Lopez",
+                "first_name": "Roberto",
+                "middle_name": "Castillo",
+                "last_name": "Lopez"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 8,
+                "section_name": "Mabini"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "75.75"
+        },
+        {
+            "grade_id": 45,
+            "enrollment_id": 9,
+            "student": {
+                "student_id": 9,
+                "lrn": "123456789020",
+                "name": "Roberto Castillo Lopez",
+                "first_name": "Roberto",
+                "middle_name": "Castillo",
+                "last_name": "Lopez"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 8,
+                "section_name": "Mabini"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "77.25"
+        },
+        {
+            "grade_id": 48,
+            "enrollment_id": 9,
+            "student": {
+                "student_id": 9,
+                "lrn": "123456789020",
+                "name": "Roberto Castillo Lopez",
+                "first_name": "Roberto",
+                "middle_name": "Castillo",
+                "last_name": "Lopez"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 8,
+                "section_name": "Mabini"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "78.00"
+        },
+        {
+            "grade_id": 50,
+            "enrollment_id": 10,
+            "student": {
+                "student_id": 10,
+                "lrn": "123456789021",
+                "name": "Sofia Ramos Gonzalez",
+                "first_name": "Sofia",
+                "middle_name": "Ramos",
+                "last_name": "Gonzalez"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 10,
+                "section_name": "Bonifacio"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "87.25"
+        },
+        {
+            "grade_id": 51,
+            "enrollment_id": 10,
+            "student": {
+                "student_id": 10,
+                "lrn": "123456789021",
+                "name": "Sofia Ramos Gonzalez",
+                "first_name": "Sofia",
+                "middle_name": "Ramos",
+                "last_name": "Gonzalez"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 10,
+                "section_name": "Bonifacio"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "83.50"
+        },
+        {
+            "grade_id": 49,
+            "enrollment_id": 10,
+            "student": {
+                "student_id": 10,
+                "lrn": "123456789021",
+                "name": "Sofia Ramos Gonzalez",
+                "first_name": "Sofia",
+                "middle_name": "Ramos",
+                "last_name": "Gonzalez"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 10,
+                "section_name": "Bonifacio"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "85.00"
+        },
+        {
+            "grade_id": 52,
+            "enrollment_id": 10,
+            "student": {
+                "student_id": 10,
+                "lrn": "123456789021",
+                "name": "Sofia Ramos Gonzalez",
+                "first_name": "Sofia",
+                "middle_name": "Ramos",
+                "last_name": "Gonzalez"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 10,
+                "section_name": "Bonifacio"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "86.00"
+        },
+        {
+            "grade_id": 18,
+            "enrollment_id": 3,
+            "student": {
+                "student_id": 3,
+                "lrn": "123456789014",
+                "name": "Pedro Mendoza Santos",
+                "first_name": "Pedro",
+                "middle_name": "Mendoza",
+                "last_name": "Santos"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 9,
+                "section_name": "Rizal"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "80.25"
+        },
+        {
+            "grade_id": 22,
+            "enrollment_id": 3,
+            "student": {
+                "student_id": 3,
+                "lrn": "123456789014",
+                "name": "Pedro Mendoza Santos",
+                "first_name": "Pedro",
+                "middle_name": "Mendoza",
+                "last_name": "Santos"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 9,
+                "section_name": "Rizal"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "82.75"
+        },
+        {
+            "grade_id": 19,
+            "enrollment_id": 3,
+            "student": {
+                "student_id": 3,
+                "lrn": "123456789014",
+                "name": "Pedro Mendoza Santos",
+                "first_name": "Pedro",
+                "middle_name": "Mendoza",
+                "last_name": "Santos"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 9,
+                "section_name": "Rizal"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "76.75"
+        },
+        {
+            "grade_id": 23,
+            "enrollment_id": 3,
+            "student": {
+                "student_id": 3,
+                "lrn": "123456789014",
+                "name": "Pedro Mendoza Santos",
+                "first_name": "Pedro",
+                "middle_name": "Mendoza",
+                "last_name": "Santos"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 9,
+                "section_name": "Rizal"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "78.25"
+        },
+        {
+            "grade_id": 17,
+            "enrollment_id": 3,
+            "student": {
+                "student_id": 3,
+                "lrn": "123456789014",
+                "name": "Pedro Mendoza Santos",
+                "first_name": "Pedro",
+                "middle_name": "Mendoza",
+                "last_name": "Santos"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 9,
+                "section_name": "Rizal"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "78.50"
+        },
+        {
+            "grade_id": 21,
+            "enrollment_id": 3,
+            "student": {
+                "student_id": 3,
+                "lrn": "123456789014",
+                "name": "Pedro Mendoza Santos",
+                "first_name": "Pedro",
+                "middle_name": "Mendoza",
+                "last_name": "Santos"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 9,
+                "section_name": "Rizal"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "80.00"
+        },
+        {
+            "grade_id": 20,
+            "enrollment_id": 3,
+            "student": {
+                "student_id": 3,
+                "lrn": "123456789014",
+                "name": "Pedro Mendoza Santos",
+                "first_name": "Pedro",
+                "middle_name": "Mendoza",
+                "last_name": "Santos"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 9,
+                "section_name": "Rizal"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "79.50"
+        },
+        {
+            "grade_id": 24,
+            "enrollment_id": 3,
+            "student": {
+                "student_id": 3,
+                "lrn": "123456789014",
+                "name": "Pedro Mendoza Santos",
+                "first_name": "Pedro",
+                "middle_name": "Mendoza",
+                "last_name": "Santos"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 9,
+                "section_name": "Rizal"
+            },
+            "grade_level": "Grade 5",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "81.00"
+        },
+        {
+            "grade_id": 38,
+            "enrollment_id": 7,
+            "student": {
+                "student_id": 7,
+                "lrn": "123456789018",
+                "name": "Miguel Torres Villanueva",
+                "first_name": "Miguel",
+                "middle_name": "Torres",
+                "last_name": "Villanueva"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 12,
+                "section_name": "Lapu-Lapu"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "91.50"
+        },
+        {
+            "grade_id": 39,
+            "enrollment_id": 7,
+            "student": {
+                "student_id": 7,
+                "lrn": "123456789018",
+                "name": "Miguel Torres Villanueva",
+                "first_name": "Miguel",
+                "middle_name": "Torres",
+                "last_name": "Villanueva"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 12,
+                "section_name": "Lapu-Lapu"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "87.25"
+        },
+        {
+            "grade_id": 37,
+            "enrollment_id": 7,
+            "student": {
+                "student_id": 7,
+                "lrn": "123456789018",
+                "name": "Miguel Torres Villanueva",
+                "first_name": "Miguel",
+                "middle_name": "Torres",
+                "last_name": "Villanueva"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 12,
+                "section_name": "Lapu-Lapu"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "89.00"
+        },
+        {
+            "grade_id": 40,
+            "enrollment_id": 7,
+            "student": {
+                "student_id": 7,
+                "lrn": "123456789018",
+                "name": "Miguel Torres Villanueva",
+                "first_name": "Miguel",
+                "middle_name": "Torres",
+                "last_name": "Villanueva"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 12,
+                "section_name": "Lapu-Lapu"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "90.00"
+        },
+        {
+            "grade_id": 26,
+            "enrollment_id": 4,
+            "student": {
+                "student_id": 4,
+                "lrn": "123456789015",
+                "name": "Ana Rodriguez Bautista",
+                "first_name": "Ana",
+                "middle_name": "Rodriguez",
+                "last_name": "Bautista"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "88.75"
+        },
+        {
+            "grade_id": 27,
+            "enrollment_id": 4,
+            "student": {
+                "student_id": 4,
+                "lrn": "123456789015",
+                "name": "Ana Rodriguez Bautista",
+                "first_name": "Ana",
+                "middle_name": "Rodriguez",
+                "last_name": "Bautista"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "84.50"
+        },
+        {
+            "grade_id": 25,
+            "enrollment_id": 4,
+            "student": {
+                "student_id": 4,
+                "lrn": "123456789015",
+                "name": "Ana Rodriguez Bautista",
+                "first_name": "Ana",
+                "middle_name": "Rodriguez",
+                "last_name": "Bautista"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "86.25"
+        },
+        {
+            "grade_id": 28,
+            "enrollment_id": 4,
+            "student": {
+                "student_id": 4,
+                "lrn": "123456789015",
+                "name": "Ana Rodriguez Bautista",
+                "first_name": "Ana",
+                "middle_name": "Rodriguez",
+                "last_name": "Bautista"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "87.00"
+        },
+        {
+            "grade_id": 2,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "88.00"
+        },
+        {
+            "grade_id": 6,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "89.50"
+        },
+        {
+            "grade_id": 3,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "82.75"
+        },
+        {
+            "grade_id": 7,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "84.00"
+        },
+        {
+            "grade_id": 1,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "85.50"
+        },
+        {
+            "grade_id": 5,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "87.00"
+        },
+        {
+            "grade_id": 4,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "87.25"
+        },
+        {
+            "grade_id": 8,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "88.75"
+        },
+        {
+            "grade_id": 44,
+            "enrollment_id": 8,
+            "student": {
+                "student_id": 8,
+                "lrn": "123456789019",
+                "name": "Luz Morales Fernandez",
+                "first_name": "Luz",
+                "middle_name": "Morales",
+                "last_name": "Fernandez"
+            },
+            "subject": {
+                "subject_id": 10,
+                "subject_code": "COMP",
+                "subject_name": "Computer Education"
+            },
+            "section": {
+                "section_id": 14,
+                "section_name": "Einstein"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "89.00"
+        },
+        {
+            "grade_id": 42,
+            "enrollment_id": 8,
+            "student": {
+                "student_id": 8,
+                "lrn": "123456789019",
+                "name": "Luz Morales Fernandez",
+                "first_name": "Luz",
+                "middle_name": "Morales",
+                "last_name": "Fernandez"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 14,
+                "section_name": "Einstein"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "90.25"
+        },
+        {
+            "grade_id": 41,
+            "enrollment_id": 8,
+            "student": {
+                "student_id": 8,
+                "lrn": "123456789019",
+                "name": "Luz Morales Fernandez",
+                "first_name": "Luz",
+                "middle_name": "Morales",
+                "last_name": "Fernandez"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 14,
+                "section_name": "Einstein"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "88.75"
+        },
+        {
+            "grade_id": 43,
+            "enrollment_id": 8,
+            "student": {
+                "student_id": 8,
+                "lrn": "123456789019",
+                "name": "Luz Morales Fernandez",
+                "first_name": "Luz",
+                "middle_name": "Morales",
+                "last_name": "Fernandez"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 14,
+                "section_name": "Einstein"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "87.50"
+        },
+        {
+            "grade_id": 32,
+            "enrollment_id": 5,
+            "student": {
+                "student_id": 5,
+                "lrn": "123456789016",
+                "name": "Jose Dela Cruz Martinez",
+                "first_name": "Jose",
+                "middle_name": "Dela Cruz",
+                "last_name": "Martinez"
+            },
+            "subject": {
+                "subject_id": 10,
+                "subject_code": "COMP",
+                "subject_name": "Computer Education"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "84.00"
+        },
+        {
+            "grade_id": 30,
+            "enrollment_id": 5,
+            "student": {
+                "student_id": 5,
+                "lrn": "123456789016",
+                "name": "Jose Dela Cruz Martinez",
+                "first_name": "Jose",
+                "middle_name": "Dela Cruz",
+                "last_name": "Martinez"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "85.25"
+        },
+        {
+            "grade_id": 29,
+            "enrollment_id": 5,
+            "student": {
+                "student_id": 5,
+                "lrn": "123456789016",
+                "name": "Jose Dela Cruz Martinez",
+                "first_name": "Jose",
+                "middle_name": "Dela Cruz",
+                "last_name": "Martinez"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "83.75"
+        },
+        {
+            "grade_id": 31,
+            "enrollment_id": 5,
+            "student": {
+                "student_id": 5,
+                "lrn": "123456789016",
+                "name": "Jose Dela Cruz Martinez",
+                "first_name": "Jose",
+                "middle_name": "Dela Cruz",
+                "last_name": "Martinez"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "82.50"
+        },
+        {
+            "grade_id": 12,
+            "enrollment_id": 2,
+            "student": {
+                "student_id": 2,
+                "lrn": "123456789013",
+                "name": "Maria Garcia Reyes",
+                "first_name": "Maria",
+                "middle_name": "Garcia",
+                "last_name": "Reyes"
+            },
+            "subject": {
+                "subject_id": 10,
+                "subject_code": "COMP",
+                "subject_name": "Computer Education"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "89.75"
+        },
+        {
+            "grade_id": 16,
+            "enrollment_id": 2,
+            "student": {
+                "student_id": 2,
+                "lrn": "123456789013",
+                "name": "Maria Garcia Reyes",
+                "first_name": "Maria",
+                "middle_name": "Garcia",
+                "last_name": "Reyes"
+            },
+            "subject": {
+                "subject_id": 10,
+                "subject_code": "COMP",
+                "subject_name": "Computer Education"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "90.25"
+        },
+        {
+            "grade_id": 10,
+            "enrollment_id": 2,
+            "student": {
+                "student_id": 2,
+                "lrn": "123456789013",
+                "name": "Maria Garcia Reyes",
+                "first_name": "Maria",
+                "middle_name": "Garcia",
+                "last_name": "Reyes"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "94.50"
+        },
+        {
+            "grade_id": 14,
+            "enrollment_id": 2,
+            "student": {
+                "student_id": 2,
+                "lrn": "123456789013",
+                "name": "Maria Garcia Reyes",
+                "first_name": "Maria",
+                "middle_name": "Garcia",
+                "last_name": "Reyes"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "95.00"
+        },
+        {
+            "grade_id": 9,
+            "enrollment_id": 2,
+            "student": {
+                "student_id": 2,
+                "lrn": "123456789013",
+                "name": "Maria Garcia Reyes",
+                "first_name": "Maria",
+                "middle_name": "Garcia",
+                "last_name": "Reyes"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "92.00"
+        },
+        {
+            "grade_id": 13,
+            "enrollment_id": 2,
+            "student": {
+                "student_id": 2,
+                "lrn": "123456789013",
+                "name": "Maria Garcia Reyes",
+                "first_name": "Maria",
+                "middle_name": "Garcia",
+                "last_name": "Reyes"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "93.25"
+        },
+        {
+            "grade_id": 11,
+            "enrollment_id": 2,
+            "student": {
+                "student_id": 2,
+                "lrn": "123456789013",
+                "name": "Maria Garcia Reyes",
+                "first_name": "Maria",
+                "middle_name": "Garcia",
+                "last_name": "Reyes"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "91.25"
+        },
+        {
+            "grade_id": 15,
+            "enrollment_id": 2,
+            "student": {
+                "student_id": 2,
+                "lrn": "123456789013",
+                "name": "Maria Garcia Reyes",
+                "first_name": "Maria",
+                "middle_name": "Garcia",
+                "last_name": "Reyes"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 13,
+                "section_name": "Magat"
+            },
+            "grade_level": "Grade 7",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "92.50"
+        }
+    ],
+    "count": 52,
+    "timestamp": "2025-09-09T08:53:22.694Z"
+}

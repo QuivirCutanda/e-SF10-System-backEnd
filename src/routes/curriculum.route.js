@@ -63,60 +63,60 @@ const validateSubjectRemoval = [
 
 // Routes
 router.post('/create-curriculum', authenticate, 
-  // authorizePermission('manage_curriculum'), 
+  authorizePermission('manage_curriculum'), 
   validateCurriculum, 
   createCurriculum);
 
 router.get('/view-all-curriculums', authenticate, 
-  // authorizePermission('view_curriculum', 'manage_curriculum'), 
+  authorizePermission('view_curriculum', 'manage_curriculum'), 
   validatePagination, 
   getAllCurriculums);
 
 router.get('/view-curriculum/:id', authenticate, 
-  // authorizePermission('view_curriculum', 'manage_curriculum'), 
+  authorizePermission('view_curriculum', 'manage_curriculum'), 
   validateCurriculumId, 
   getCurriculumById);
 
 router.put('/update-curriculum/:id', authenticate, 
-  // authorizePermission('manage_curriculum'), 
+  authorizePermission('manage_curriculum'), 
   validateCurriculumId, 
   validateCurriculumUpdate, 
   updateCurriculum);
 
 router.get('/search-curriculums', authenticate, 
-  // authorizePermission('view_curriculum', 'manage_curriculum'), 
+  authorizePermission('view_curriculum', 'manage_curriculum'), 
   validateCurriculumSearch, 
   searchCurriculums);
 
 router.get('/by-school-year/:school_year_id', authenticate, 
-  // authorizePermission('view_curriculum', 'manage_curriculum'), 
+  authorizePermission('view_curriculum', 'manage_curriculum'), 
   validateSchoolYearParam, 
   validatePagination, 
   getCurriculumsBySchoolYear);
 
 router.get('/active-curriculums', authenticate, 
-  // authorizePermission('view_curriculum', 'manage_curriculum'), 
+  authorizePermission('view_curriculum', 'manage_curriculum'), 
   validatePagination, 
   getActiveCurriculums);
 
 router.patch('/toggle-status/:id', authenticate, 
-  // authorizePermission('manage_curriculum'), 
+  authorizePermission('manage_curriculum'), 
   validateCurriculumId, 
   toggleCurriculumStatus);
 
 router.get('/curriculum-subjects/:id', authenticate, 
-  // authorizePermission('view_curriculum', 'manage_curriculum'), 
+  authorizePermission('view_curriculum', 'manage_curriculum'), 
   validateCurriculumId, 
   getCurriculumSubjects);
 
 router.post('/add-subjects/:id', authenticate, 
-  // authorizePermission('manage_curriculum'), 
+  authorizePermission('manage_curriculum'), 
   validateCurriculumId, 
   validateCurriculumSubjects, 
   addSubjectToCurriculum);
 
 router.delete('/remove-subject/:curriculum_id/:subject_id', authenticate, 
-  // authorizePermission('manage_curriculum'), 
+  authorizePermission('manage_curriculum'), 
   validateSubjectRemoval, 
   removeSubjectFromCurriculum);
 

@@ -1,0 +1,25 @@
+--------------------------------------------------
+## toggleGradeInput
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        POST
+    -EndPoint
+        http://localhost:3001/esf10/grades/toggle-input/:teacher_id
+
+    -Body:none
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "message": "Grade input disabled for ALL assignments of this teacher",
+    "newStatus": false,
+    "timestamp": "2025-09-09T08:46:28.218Z"
+}

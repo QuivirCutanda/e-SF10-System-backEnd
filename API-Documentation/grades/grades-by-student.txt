@@ -1,0 +1,224 @@
+--------------------------------------------------
+## grades-by-student
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/esf10/grades/student/:student_id
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "data": [
+        {
+            "grade_id": 2,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "88.00"
+        },
+        {
+            "grade_id": 6,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "89.50"
+        },
+        {
+            "grade_id": 3,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "82.75"
+        },
+        {
+            "grade_id": 7,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "84.00"
+        },
+        {
+            "grade_id": 1,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "85.50"
+        },
+        {
+            "grade_id": 5,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "87.00"
+        },
+        {
+            "grade_id": 4,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "87.25"
+        },
+        {
+            "grade_id": 8,
+            "enrollment_id": 1,
+            "student": {
+                "student_id": 1,
+                "lrn": "123456789012",
+                "name": "Juan Santos Cruz",
+                "first_name": "Juan",
+                "middle_name": "Santos",
+                "last_name": "Cruz"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 11,
+                "section_name": "Luna"
+            },
+            "grade_level": "Grade 6",
+            "school_year": "2023-2024",
+            "grading_period": "2nd",
+            "grade": "88.75"
+        }
+    ],
+    "count": 8,
+    "timestamp": "2025-09-09T08:52:28.254Z"
+}

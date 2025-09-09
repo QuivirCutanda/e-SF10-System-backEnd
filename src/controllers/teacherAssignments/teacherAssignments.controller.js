@@ -246,134 +246,54 @@ exports.updateTeacherAssignment = async (req, res) => {
   const assignmentId = parseInt(id);
 
   if (!assignmentId || assignmentId <= 0) {
-    return res.status(400).json({
-      success: false,
-      error: 'Assignment ID must be a positive integer',
-      timestamp: new Date().toISOString()
-    });
+    return res.status(400).json({ success: false, error: 'Assignment ID must be a positive integer' });
   }
-
   if (!teacher_id || !Number.isInteger(teacher_id) || teacher_id <= 0) {
-    return res.status(400).json({
-      success: false,
-      error: 'Teacher ID is required and must be a positive integer',
-      timestamp: new Date().toISOString()
-    });
+    return res.status(400).json({ success: false, error: 'Teacher ID must be a positive integer' });
   }
-
   if (!subject_id || !Number.isInteger(subject_id) || subject_id <= 0) {
-    return res.status(400).json({
-      success: false,
-      error: 'Subject ID is required and must be a positive integer',
-      timestamp: new Date().toISOString()
-    });
+    return res.status(400).json({ success: false, error: 'Subject ID must be a positive integer' });
   }
-
   if (!section_id || !Number.isInteger(section_id) || section_id <= 0) {
-    return res.status(400).json({
-      success: false,
-      error: 'Section ID is required and must be a positive integer',
-      timestamp: new Date().toISOString()
-    });
+    return res.status(400).json({ success: false, error: 'Section ID must be a positive integer' });
   }
-
   if (!school_year_id || !Number.isInteger(school_year_id) || school_year_id <= 0) {
-    return res.status(400).json({
-      success: false,
-      error: 'School year ID is required and must be a positive integer',
-      timestamp: new Date().toISOString()
-    });
+    return res.status(400).json({ success: false, error: 'School Year ID must be a positive integer' });
   }
-
   if (!userId || !Number.isInteger(userId)) {
-    return res.status(400).json({
-      success: false,
-      error: 'Invalid user ID from authentication token',
-      timestamp: new Date().toISOString()
-    });
+    return res.status(400).json({ success: false, error: 'Invalid user ID from authentication token' });
   }
 
   try {
-    const updatedAssignment = await updateTeacherAssignmentById(assignmentId, {
-      teacher_id,
-      subject_id,
-      section_id,
-      school_year_id
-    }, userId);
-
-    if (!updatedAssignment) {
-      return res.status(404).json({
-        success: false,
-        error: 'Teacher assignment not found',
-        timestamp: new Date().toISOString()
-      });
-    }
+    const updatedAssignment = await updateTeacherAssignmentById(
+      assignmentId,
+      { teacher_id, subject_id, section_id, school_year_id },
+      userId
+    );
 
     return res.status(200).json({
       success: true,
       message: 'Teacher assignment updated successfully',
-      data: updatedAssignment,
-      timestamp: new Date().toISOString()
+      data: updatedAssignment
     });
+
   } catch (error) {
     console.error('Update Teacher Assignment Error:', error);
-    if (error.message.includes('Assignment not found')) {
-      return res.status(404).json({
-        success: false,
-        error: 'Teacher assignment not found',
-        timestamp: new Date().toISOString()
-      });
+
+    if (error.message.includes('not found')) {
+      return res.status(404).json({ success: false, error: error.message });
     }
-    if (error.message.includes('Teacher not found')) {
-      return res.status(404).json({
-        success: false,
-        error: 'Teacher not found',
-        timestamp: new Date().toISOString()
-      });
+    if (error.message.includes('already exists')) {
+      return res.status(409).json({ success: false, error: error.message });
     }
-    if (error.message.includes('Subject not found')) {
-      return res.status(404).json({
-        success: false,
-        error: 'Subject not found',
-        timestamp: new Date().toISOString()
-      });
+    if (error.message.includes('not active')) {
+      return res.status(400).json({ success: false, error: error.message });
     }
-    if (error.message.includes('Section not found')) {
-      return res.status(404).json({
-        success: false,
-        error: 'Section not found',
-        timestamp: new Date().toISOString()
-      });
-    }
-    if (error.message.includes('School year not found')) {
-      return res.status(404).json({
-        success: false,
-        error: 'School year not found',
-        timestamp: new Date().toISOString()
-      });
-    }
-    if (error.message.includes('Assignment already exists')) {
-      return res.status(409).json({
-        success: false,
-        error: 'Teacher assignment already exists for this combination',
-        timestamp: new Date().toISOString()
-      });
-    }
-    if (error.message.includes('Teacher is not active')) {
-      return res.status(400).json({
-        success: false,
-        error: 'Cannot assign inactive teacher',
-        timestamp: new Date().toISOString()
-      });
-    }
-    return res.status(500).json({
-      success: false,
-      error: 'Server error while updating teacher assignment',
-      details: error.message,
-      timestamp: new Date().toISOString()
-    });
+
+    return res.status(500).json({ success: false, error: 'Server error', details: error.message });
   }
 };
+
 
 exports.deleteTeacherAssignment = async (req, res) => {
   const { id } = req.params;

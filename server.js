@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const path = require("path"); // Added for static file serving
+const path = require("path"); 
 const db = require("./src/config/db");
 
 const authRoutes = require("./src/routes/authRoutes");
@@ -26,7 +26,7 @@ const teacherRoutes = require("./src/routes/teacher.route");
 const teacherAssignmentRoutes = require("./src/routes/teacherAssignment.route");
 const classScheduleRoutes = require("./src/routes/classSchedule.route");
 const enrollmentRoutes = require("./src/routes/enrollment.route");
-
+const gradesRoutes = require("./src/routes/grades.route");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -62,6 +62,7 @@ app.use("/esf10/teachers/", teacherRoutes);
 app.use("/esf10/teacher-assignments/", teacherAssignmentRoutes);
 app.use("/esf10/class-schedules/", classScheduleRoutes);
 app.use("/esf10/enrollments/", enrollmentRoutes);
+app.use("/esf10/grades/", gradesRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
