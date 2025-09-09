@@ -21,12 +21,13 @@ Example requist
   "first_name": "Michael",
   "middle_name": "A.",
   "last_name": "Doblas",
-  "extension_name": "",
+  "email": "michael.doblas@example.com",
+  "password": "SecurePass123!", 
   "teacher_address": "789 Main Street, Quezon City",
   "date_of_birth": "1985-05-12",
-  "email": "michael.delacruz@example.com",
   "contact_number": "09171234567"
 }
+
 
 
 --------------------------------------------------
@@ -38,19 +39,15 @@ Response    (201 created)
     "success": true,
     "message": "Teacher created successfully",
     "data": {
-        "teacher_id": 3,
-        "first_name": "Michael",
+        "teacher_id": 2,
+        "user_id": 3,
+        "first_name": "Michaesl",
         "middle_name": "A.",
-        "last_name": "Doblas",
-        "extension_name": null,
-        "full_name": "Michael A. Doblas",
+        "last_name": "Doblass",
+        "email": "michael.doblass@example.com",
         "teacher_address": "789 Main Street, Quezon City",
-        "date_of_birth": "1985-05-11T16:00:00.000Z",
-        "email": "michael.delacruz@example.com",
-        "contact_number": "09171234567",
-        "is_active": true,
-        "created_at": "2025-08-27T12:23:16.000Z",
-        "updated_at": "2025-08-27T12:23:16.000Z"
+        "date_of_birth": "1985-05-12T00:00:00.000Z",
+        "contact_number": "09171234567"
     },
-    "timestamp": "2025-08-27T12:23:16.960Z"
+    "timestamp": "2025-09-09T05:37:30.746Z"
 }

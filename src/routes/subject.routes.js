@@ -51,7 +51,7 @@ const validateGradeLevel = [
 router.post(
   '/create-subject',
   authenticate,
-//   authorizePermission('manage_subjects'),
+  authorizePermission('manage_subjects'),
   validateSubject,
   createSubject
 );
@@ -59,7 +59,7 @@ router.post(
 router.get(
   '/view-all-subjects',
   authenticate,
-//   authorizePermission('view_subjects', 'manage_subjects'),
+  authorizePermission('view_subjects', 'manage_subjects'),
   validatePagination,
   getAllSubjects
 );
@@ -67,7 +67,7 @@ router.get(
 router.get(
   '/view-subject/:id',
   authenticate,
-//   authorizePermission('view_subjects', 'manage_subjects'),
+  authorizePermission('view_subjects', 'manage_subjects'),
   validateSubjectId,
   getSubjectById
 );
@@ -75,7 +75,7 @@ router.get(
 router.put(
   '/update-subject/:id',
   authenticate,
-//   authorizePermission('manage_subjects'),
+  authorizePermission('manage_subjects'),
   validateSubjectId,
   validateSubjectUpdate,
   updateSubject
@@ -85,7 +85,7 @@ router.put(
 router.get(
   '/search-subjects',
   authenticate,
-//   authorizePermission('view_subjects', 'manage_subjects'),
+  authorizePermission('view_subjects', 'manage_subjects'),
   validateSubjectSearch,
   searchSubjects
 );

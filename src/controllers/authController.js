@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const { createUser, assignRoleToUser, getUserByEmail, getPermissionsByUserId, getRoleByUserId, updateUserById, deleteUserById, getUserById, modifyUserPermissions, checkRoleExists } = require('../models/User');
 const { generateToken } = require('../utils/generateToken');
 
-// Register user with role
 const registerUser = async (req, res) => {
   const {
     first_name,
@@ -14,13 +13,11 @@ const registerUser = async (req, res) => {
   } = req.body;
 
   try {
-    // Check for existing user
     const existingUser = await getUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ message: 'Email already in use' });
     }
 
-    // Check if role exists before creating user
     const roleExists = await checkRoleExists(role);
     if (!roleExists) {
       return res.status(400).json({ 
@@ -28,10 +25,8 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const result = await createUser({
       first_name,
       middle_name,
@@ -40,16 +35,13 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    // Assign role to user
     const roleResult = await assignRoleToUser(result.insertId, role);
     if (!roleResult) {
       return res.status(400).json({ message: 'Role assignment failed. Please try again.' });
     }
 
-    // Get user permissions
     const permissions = await getPermissionsByUserId(result.insertId);
 
-    // Return success response
     res.status(201).json({
       message: 'User registered successfully',
       user: {
@@ -67,7 +59,6 @@ const registerUser = async (req, res) => {
   }
 };
 
-// Register admin
 const registerAdmin = async (req, res) => {
   const {
     first_name,
@@ -125,7 +116,6 @@ const registerAdmin = async (req, res) => {
   }
 };
 
-// Login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -168,7 +158,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-// Update user
 const updateUser = async (req, res) => {
   const { userId } = req.params;
   const {
@@ -225,7 +214,6 @@ const updateUser = async (req, res) => {
   }
 };
 
-// Delete user
 const deleteUser = async (req, res) => {
   const { userId } = req.params;
 
@@ -243,7 +231,6 @@ const deleteUser = async (req, res) => {
   }
 };
 
-// Get user info
 const getUserInfo = async (req, res) => {
   const { userId } = req.params;
 
@@ -281,7 +268,6 @@ const getUserInfo = async (req, res) => {
   }
 };
 
-// Update user password
 const updateUserPassword = async (req, res) => {
   const { userId } = req.params;
   const { currentPassword, newPassword } = req.body;

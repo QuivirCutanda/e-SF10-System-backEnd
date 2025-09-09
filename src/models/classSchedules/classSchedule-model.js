@@ -7,12 +7,13 @@ const fetchAllClassSchedules = async () => {
       `SELECT cs.schedule_id, cs.subject_id, cs.teacher_id, cs.section_id, cs.school_year_id, 
               cs.day_of_week, cs.start_time, cs.end_time,
               sub.subject_name, 
-              CONCAT(t.first_name, ' ', t.last_name) AS teacher_name,
+              CONCAT(u.first_name, ' ', u.last_name) AS teacher_name,
               sec.section_name,
               CONCAT(sy.start_year, '-', sy.end_year) AS school_year
        FROM class_schedule cs
        JOIN subjects sub ON cs.subject_id = sub.subject_id
        JOIN teachers t ON cs.teacher_id = t.teacher_id
+       JOIN users u ON t.user_id = u.user_id  -- Changed to join with users table
        JOIN sections sec ON cs.section_id = sec.section_id
        JOIN school_years sy ON cs.school_year_id = sy.school_year_id
        ORDER BY sy.start_year DESC, sec.section_name, cs.day_of_week, cs.start_time`
@@ -44,12 +45,13 @@ const fetchClassScheduleById = async (scheduleId) => {
       `SELECT cs.schedule_id, cs.subject_id, cs.teacher_id, cs.section_id, cs.school_year_id, 
               cs.day_of_week, cs.start_time, cs.end_time,
               sub.subject_name, 
-              CONCAT(t.first_name, ' ', t.last_name) AS teacher_name,
+              CONCAT(u.first_name, ' ', u.last_name) AS teacher_name,  -- Changed to u.first_name/u.last_name
               sec.section_name,
               CONCAT(sy.start_year, '-', sy.end_year) AS school_year
        FROM class_schedule cs
        JOIN subjects sub ON cs.subject_id = sub.subject_id
        JOIN teachers t ON cs.teacher_id = t.teacher_id
+       JOIN users u ON t.user_id = u.user_id  -- Added join to users table
        JOIN sections sec ON cs.section_id = sec.section_id
        JOIN school_years sy ON cs.school_year_id = sy.school_year_id
        WHERE cs.schedule_id = ?`,
@@ -98,9 +100,12 @@ const createNewClassSchedule = async (scheduleData, userId) => {
       throw new Error('Subject not found');
     }
 
-    // Check if teacher exists
+    // Check if teacher exists - FIXED: Join with users table to get name
     const [teacher] = await connection.execute(
-      'SELECT teacher_id, CONCAT(first_name, \' \', last_name) AS teacher_name FROM teachers WHERE teacher_id = ?',
+      `SELECT t.teacher_id, CONCAT(u.first_name, ' ', u.last_name) AS teacher_name 
+       FROM teachers t 
+       JOIN users u ON t.user_id = u.user_id 
+       WHERE t.teacher_id = ?`,
       [teacher_id]
     );
     if (teacher.length === 0) {
@@ -190,7 +195,6 @@ const updateClassScheduleById = async (scheduleId, scheduleData, userId) => {
 
     const { subject_id, teacher_id, section_id, school_year_id, day_of_week, start_time, end_time } = scheduleData;
 
-    // Check if class schedule exists
     const [existingSchedule] = await connection.execute(
       'SELECT schedule_id, subject_id, teacher_id, section_id, school_year_id, day_of_week, start_time, end_time FROM class_schedule WHERE schedule_id = ?',
       [scheduleId]
@@ -199,7 +203,6 @@ const updateClassScheduleById = async (scheduleId, scheduleData, userId) => {
       throw new Error('Class schedule not found');
     }
 
-    // Check if subject exists
     const [subject] = await connection.execute(
       'SELECT subject_id, subject_name FROM subjects WHERE subject_id = ?',
       [subject_id]
@@ -208,16 +211,17 @@ const updateClassScheduleById = async (scheduleId, scheduleData, userId) => {
       throw new Error('Subject not found');
     }
 
-    // Check if teacher exists
     const [teacher] = await connection.execute(
-      'SELECT teacher_id, CONCAT(first_name, \' \', last_name) AS teacher_name FROM teachers WHERE teacher_id = ?',
+      `SELECT t.teacher_id, CONCAT(u.first_name, ' ', u.last_name) AS teacher_name 
+       FROM teachers t 
+       JOIN users u ON t.user_id = u.user_id 
+       WHERE t.teacher_id = ?`,
       [teacher_id]
     );
     if (teacher.length === 0) {
       throw new Error('Teacher not found');
     }
 
-    // Check if section exists
     const [section] = await connection.execute(
       'SELECT section_id, section_name FROM sections WHERE section_id = ?',
       [section_id]
@@ -226,7 +230,6 @@ const updateClassScheduleById = async (scheduleId, scheduleData, userId) => {
       throw new Error('Section not found');
     }
 
-    // Check if school year exists
     const [schoolYear] = await connection.execute(
       'SELECT school_year_id, start_year, end_year FROM school_years WHERE school_year_id = ?',
       [school_year_id]
@@ -235,7 +238,6 @@ const updateClassScheduleById = async (scheduleId, scheduleData, userId) => {
       throw new Error('School year not found');
     }
 
-    // Check if teacher is assigned to the subject in the section for the school year
     const [assignment] = await connection.execute(
       'SELECT assignment_id FROM teacher_assignments WHERE teacher_id = ? AND subject_id = ? AND section_id = ? AND school_year_id = ?',
       [teacher_id, subject_id, section_id, school_year_id]
@@ -244,7 +246,6 @@ const updateClassScheduleById = async (scheduleId, scheduleData, userId) => {
       throw new Error('Teacher not assigned to this subject in this section for this school year');
     }
 
-    // Check for teacher schedule conflict (excluding self)
     const [teacherConflicts] = await connection.execute(
       `SELECT schedule_id FROM class_schedule 
        WHERE teacher_id = ? AND day_of_week = ? 
@@ -256,7 +257,6 @@ const updateClassScheduleById = async (scheduleId, scheduleData, userId) => {
       throw new Error('Schedule conflict for teacher');
     }
 
-    // Check for section schedule conflict (excluding self)
     const [sectionConflicts] = await connection.execute(
       `SELECT schedule_id FROM class_schedule 
        WHERE section_id = ? AND day_of_week = ? 
@@ -268,7 +268,6 @@ const updateClassScheduleById = async (scheduleId, scheduleData, userId) => {
       throw new Error('Schedule conflict for section');
     }
 
-    // Update class schedule
     const [result] = await connection.execute(
       'UPDATE class_schedule SET subject_id = ?, teacher_id = ?, section_id = ?, school_year_id = ?, day_of_week = ?, start_time = ?, end_time = ? WHERE schedule_id = ?',
       [subject_id, teacher_id, section_id, school_year_id, day_of_week, start_time, end_time, scheduleId]
@@ -280,7 +279,6 @@ const updateClassScheduleById = async (scheduleId, scheduleData, userId) => {
 
     console.log(`Class schedule updated: schedule_id=${scheduleId}, day_of_week=${day_of_week}`);
 
-    // Log activity
     await connection.execute(
       'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',
       [userId, `Updated class schedule ID ${scheduleId} for subject ${subject[0].subject_name} taught by ${teacher[0].teacher_name} in section ${section[0].section_name} on ${day_of_week} from ${start_time} to ${end_time} in school year ${schoolYear[0].start_year}-${schoolYear[0].end_year}`]
@@ -303,7 +301,6 @@ const deleteClassScheduleById = async (scheduleId, userId) => {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    // Check if class schedule exists and fetch details for logging
     const [existingSchedule] = await connection.execute(
       `SELECT cs.schedule_id, cs.day_of_week, cs.start_time, cs.end_time,
               sub.subject_name, 
@@ -322,7 +319,6 @@ const deleteClassScheduleById = async (scheduleId, userId) => {
       throw new Error('Class schedule not found');
     }
 
-    // Delete class schedule
     const [result] = await connection.execute(
       'DELETE FROM class_schedule WHERE schedule_id = ?',
       [scheduleId]
@@ -334,7 +330,6 @@ const deleteClassScheduleById = async (scheduleId, userId) => {
 
     console.log(`Class schedule deleted: schedule_id=${scheduleId}`);
 
-    // Log activity
     const logAction = `Deleted class schedule for subject ${existingSchedule[0].subject_name} taught by ${existingSchedule[0].teacher_name} in section ${existingSchedule[0].section_name} on ${existingSchedule[0].day_of_week} from ${existingSchedule[0].start_time} to ${existingSchedule[0].end_time} in school year ${existingSchedule[0].school_year}`;
     await connection.execute(
       'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',

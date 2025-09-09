@@ -9,6 +9,7 @@ CREATE TABLE users (
     first_name VARCHAR(100) NOT NULL,
     middle_name VARCHAR(100),
     last_name VARCHAR(100) NOT NULL,
+    extension_name VARCHAR(50),
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -196,17 +197,14 @@ CREATE TABLE sections (
 -- Teachers Table
 CREATE TABLE teachers (
     teacher_id INT PRIMARY KEY AUTO_INCREMENT,
-    first_name VARCHAR(100) NOT NULL,
-    middle_name VARCHAR(100),
-    last_name VARCHAR(100) NOT NULL,
-    extension_name VARCHAR(50),
+    user_id INT UNIQUE NOT NULL,   
     teacher_address VARCHAR(255) NOT NULL,
     date_of_birth DATE NOT NULL,
-    email VARCHAR(100) UNIQUE,
     contact_number VARCHAR(20),
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 -- Subjects Table
@@ -219,7 +217,7 @@ CREATE TABLE subjects (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- subject_grade_levels     Table
+-- subject_grade_levels Table
 CREATE TABLE subject_grade_levels (
     subject_id INT NOT NULL,
     grade_level_id INT NOT NULL,
@@ -278,7 +276,6 @@ CREATE TABLE enrollment (
     INDEX idx_enrollment_sy (school_year_id)
 );
 
-
 -- Teacher Assignments Table
 CREATE TABLE teacher_assignments (
     assignment_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -294,6 +291,14 @@ CREATE TABLE teacher_assignments (
     INDEX idx_teacher_assignments_teacher (teacher_id),
     INDEX idx_teacher_assignments_subject (subject_id),
     INDEX idx_teacher_assignments_section (section_id)
+);
+
+-- Grades input control Table
+CREATE TABLE grade_input_control (
+    teacher_id INT PRIMARY KEY,
+    input_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id) ON DELETE CASCADE
 );
 
 -- Class Schedule Table
@@ -327,19 +332,19 @@ CREATE TABLE student_grades (
     INDEX idx_student_grades_subject (subject_id)
 );
 
+-- ================================
+-- DATA INITIALIZATION
+-- ================================
 
--- Initialize Roles
 INSERT INTO roles (role_name) VALUES 
 ('admin'),
 ('registrar'),
 ('teacher'),
-('student'),
 ('school_head'),
 ('parent_guardian'),
 ('it_support')
 ON DUPLICATE KEY UPDATE role_name = VALUES(role_name);
 
--- Initialize Permissions
 INSERT INTO permissions (permission_name) VALUES 
 ('register_student'),
 ('search_student'),
@@ -347,13 +352,17 @@ INSERT INTO permissions (permission_name) VALUES
 ('edit_student_info'),
 ('delete_student'),
 ('view_ecards'),
+
 ('upload_documents'),
 ('download_documents'),
 ('delete_documents'),
+
 ('lock_records'),
 ('unlock_records'),
+
 ('approve_transfers'),
 ('request_transfers'),
+
 ('manage_users'),
 ('manage_roles'),
 ('manage_permissions'),
@@ -362,20 +371,50 @@ INSERT INTO permissions (permission_name) VALUES
 ('view_logs'),
 ('export_data'),
 ('import_data'),
-('view_reports')
+('view_reports'),
+
+('view_teachers'),
+('manage_teachers'),
+
+('view_teacher_assignments'),
+('manage_teacher_assignments'),
+
+('view_subjects'),
+('manage_subjects'),
+
+('view_sections'),
+('manage_sections'),
+
+('view_school_years'),
+('manage_school_years'),
+
+('view_grades'),
+('manage_grades'),
+('manage_grade_input'),
+
+('view_grade_levels'),
+('manage_grade_levels'),
+
+('view_enrollments'),
+('manage_enrollments'),
+
+('view_class_schedules'),
+('manage_class_schedules'),
+
+('view_curriculum'),
+('manage_curriculum')
+
 ON DUPLICATE KEY UPDATE permission_name = VALUES(permission_name);
 
--- Clear Existing Role Permissions (to ensure clean state)
 DELETE FROM role_permissions;
 
--- Assign Permissions to Admin Role (All Permissions)
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT 
     (SELECT role_id FROM roles WHERE role_name = 'admin'),
     permission_id
 FROM permissions;
 
--- Assign Permissions to Registrar Role
+-- REGISTRAR ROLE - Student management, records, transfers, some admin functions
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT 
     (SELECT role_id FROM roles WHERE role_name = 'registrar'),
@@ -386,52 +425,52 @@ WHERE permission_name IN (
     'delete_student', 'view_ecards', 'upload_documents', 'download_documents',
     'delete_documents', 'lock_records', 'unlock_records', 'approve_transfers',
     'request_transfers', 'manage_users', 'manage_backups', 'view_logs',
-    'export_data', 'import_data', 'view_reports'
+    'export_data', 'import_data', 'view_reports', 'view_enrollments', 
+    'manage_enrollments', 'view_sections', 'view_grade_levels',
+    'view_school_years', 'view_subjects', 'view_teachers'
 );
 
--- Assign Permissions to Teacher Role
+-- TEACHER ROLE - Teaching related permissions
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT 
     (SELECT role_id FROM roles WHERE role_name = 'teacher'),
     permission_id
 FROM permissions 
 WHERE permission_name IN (
-    'search_student', 'view_student_info', 'view_ecards',
-    'upload_documents', 'download_documents', 'lock_records','register_student','delete_documents'
+    'search_student', 'view_student_info', 'view_ecards', 'upload_documents', 
+    'download_documents', 'lock_records', 'register_student', 'delete_documents',
+    'view_grades', 'manage_grades', 'view_teacher_assignments', 'view_subjects',
+    'view_sections', 'view_enrollments', 'view_class_schedules', 'view_curriculum',
+    'view_grade_levels', 'view_school_years', 'view_teachers'
 );
 
--- Assign Permissions to Student Role
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT 
-    (SELECT role_id FROM roles WHERE role_name = 'student'),
-    permission_id
-FROM permissions 
-WHERE permission_name IN (
-    'view_student_info', 'view_ecards', 'request_transfers','edit_student_info'
-);
-
--- Assign Permissions to School Head Role
+-- SCHOOL HEAD ROLE - Administrative oversight, reports, approvals
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT 
     (SELECT role_id FROM roles WHERE role_name = 'school_head'),
     permission_id
 FROM permissions 
 WHERE permission_name IN (
-    'search_student', 'view_student_info', 'view_ecards',
-    'download_documents', 'approve_transfers', 'view_logs', 'view_reports','manage_school_settings','delete_documents','upload_documents','lock_records','register_student'
+    'search_student', 'view_student_info', 'view_ecards', 'download_documents',
+    'approve_transfers', 'view_logs', 'view_reports', 'manage_school_settings',
+    'delete_documents', 'upload_documents', 'lock_records', 'register_student',
+    'view_teachers', 'view_teacher_assignments', 'view_subjects', 'view_sections',
+    'view_school_years', 'view_grades', 'view_enrollments', 'view_class_schedules',
+    'view_curriculum', 'view_grade_levels', 'export_data', 'manage_grade_input',
+    'view_reports'
 );
 
--- Assign Permissions to Parent/Guardian Role
+-- PARENT/GUARDIAN ROLE - Limited view access for their children
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT 
     (SELECT role_id FROM roles WHERE role_name = 'parent_guardian'),
     permission_id
 FROM permissions 
 WHERE permission_name IN (
-    'view_student_info', 'view_ecards'
+    'view_student_info', 'view_ecards', 'view_grades'
 );
 
--- Assign Permissions to IT Support Role
+-- IT SUPPORT ROLE - Technical management
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT 
     (SELECT role_id FROM roles WHERE role_name = 'it_support'),
@@ -439,48 +478,105 @@ SELECT
 FROM permissions 
 WHERE permission_name IN (
     'manage_users', 'manage_roles', 'manage_permissions',
-    'manage_backups', 'view_logs'
+    'manage_backups', 'view_logs', 'manage_school_settings'
 );
 
--- Validation Queries
--- Verify Roles
-SELECT role_id, role_name FROM roles ORDER BY role_name;
+INSERT INTO `users` (`user_id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `created_at`, `updated_at`) VALUES
+(1, 'Quivir', 'Anora', 'Cutanda', 'admin@gmail.com', '$2b$10$KIoy.uCwCLY2xtZqi6NV9.aLD5KibZ2YeyRHsCr8a9j7FltbO.PfW', '2025-06-07 00:21:29', '2025-06-07 00:21:29');
+INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
+(1, 1);
+INSERT INTO teachers (user_id, teacher_address, date_of_birth, contact_number, is_active, created_at, updated_at)
+VALUES (
+    1, -- Admin user ID
+    'Default Teacher Address, City, Province', 
+    '1990-01-01', 
+    '09123456789', 
+    TRUE, 
+    NOW(), 
+    NOW()
+);
 
--- Verify Permissions
-SELECT permission_id, permission_name FROM permissions ORDER BY permission_name;
+INSERT INTO user_roles (user_id, role_id) 
+SELECT 1, role_id 
+FROM roles 
+WHERE role_name = 'teacher'
+ON DUPLICATE KEY UPDATE user_id = VALUES(user_id);
 
--- Verify Role Permissions for Student
-SELECT r.role_name, p.permission_name
+-- Insert School Defaults
+INSERT INTO `school_defaults` (`school_id`, `school_name`, `school_address`, `region`, `division`, `district`, `school_head`, `school_logo`, `contact_number`, `email`, `website`, `updated_by`, `created_at`, `updated_at`) VALUES
+(1234567890, 'School Name Here', 'School Address', 'School Region', 'School Division', 'School District', 'School Head Name', '/school_logos/school-logo.png', '09989888990', 'school@example.com', 'www.example.com', 1, '2025-06-07 00:45:01', '2025-06-07 00:45:01');
+
+
+
+
+-- ================================
+-- VALIDATION QUERIES
+-- ================================
+SELECT 'ROLES:' as section, role_id, role_name FROM roles ORDER BY role_name;
+SELECT 'PERMISSIONS COUNT:' as section, COUNT(*) as total_permissions FROM permissions;
+SELECT 'ADMIN PERMISSIONS:' as section, COUNT(*) as admin_permission_count
 FROM role_permissions rp
 JOIN roles r ON rp.role_id = r.role_id
-JOIN permissions p ON rp.permission_id = p.permission_id
-WHERE r.role_name = 'student'
-ORDER BY p.permission_name;
-
--- Verify Role Permissions for Teacher
-SELECT r.role_name, p.permission_name
+WHERE r.role_name = 'admin';
+SELECT 
+    'PERMISSION COMPARISON:' as section,
+    (SELECT COUNT(*) FROM permissions) as total_permissions,
+    (SELECT COUNT(*) FROM role_permissions rp JOIN roles r ON rp.role_id = r.role_id WHERE r.role_name = 'admin') as admin_permissions,
+    CASE 
+        WHEN (SELECT COUNT(*) FROM permissions) = (SELECT COUNT(*) FROM role_permissions rp JOIN roles r ON rp.role_id = r.role_id WHERE r.role_name = 'admin')
+        THEN 'ADMIN HAS ALL PERMISSIONS ✓'
+        ELSE 'ADMIN MISSING PERMISSIONS ✗'
+    END as status;
+SELECT 'TEACHER PERMISSIONS:' as section, p.permission_name
 FROM role_permissions rp
 JOIN roles r ON rp.role_id = r.role_id
 JOIN permissions p ON rp.permission_id = p.permission_id
 WHERE r.role_name = 'teacher'
 ORDER BY p.permission_name;
-
--- Verify Role Permissions for Admin
-SELECT r.role_name, p.permission_name
+SELECT 'REGISTRAR PERMISSIONS:' as section, p.permission_name
 FROM role_permissions rp
 JOIN roles r ON rp.role_id = r.role_id
 JOIN permissions p ON rp.permission_id = p.permission_id
-WHERE r.role_name = 'admin'
+WHERE r.role_name = 'registrar'
 ORDER BY p.permission_name;
+SELECT 'SCHOOL HEAD PERMISSIONS:' as section, p.permission_name
+FROM role_permissions rp
+JOIN roles r ON rp.role_id = r.role_id
+JOIN permissions p ON rp.permission_id = p.permission_id
+WHERE r.role_name = 'school_head'
+ORDER BY p.permission_name;
+SELECT 'ADMIN USER:' as section, u.first_name, u.last_name, u.email
+FROM users u
+WHERE u.user_id = 1;
+SELECT 'ADMIN USER ROLES:' as section, r.role_name
+FROM user_roles ur
+JOIN roles r ON ur.role_id = r.role_id
+WHERE ur.user_id = 1
+ORDER BY r.role_name;
+SELECT 'DEFAULT TEACHER:' as section, 
+       t.teacher_id, 
+       CONCAT(u.first_name, ' ', u.last_name) as teacher_name,
+       t.teacher_address,
+       t.contact_number,
+       t.is_active,
+       t.created_at
+FROM teachers t
+JOIN users u ON t.user_id = u.user_id
+WHERE t.user_id = 1;
+SELECT 'NEW PERMISSIONS ADDED:' as section, permission_name
+FROM permissions
+WHERE permission_name IN (
+    'view_teachers', 'manage_teachers', 'view_teacher_assignments', 'manage_teacher_assignments',
+    'view_subjects', 'manage_subjects', 'view_sections', 'manage_sections',
+    'view_school_years', 'manage_school_years', 'view_grades', 'manage_grades', 
+    'manage_grade_input', 'view_grade_levels', 'manage_grade_levels',
+    'view_enrollments', 'manage_enrollments', 'view_class_schedules', 'manage_class_schedules',
+    'view_curriculum', 'manage_curriculum'
+)
+ORDER BY permission_name;
 
-
-
-INSERT INTO `users` (`user_id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `created_at`, `updated_at`) VALUES
-(1, 'Quivir', 'Anora', 'Cutanda', 'admin@gmail.com', '$2b$10$KIoy.uCwCLY2xtZqi6NV9.aLD5KibZ2YeyRHsCr8a9j7FltbO.PfW', '2025-06-07 00:21:29', '2025-06-07 00:21:29');
-
-INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
-(1, 1);
-
-
-INSERT INTO `school_defaults` (`school_id`, `school_name`, `school_address`, `region`, `division`, `district`, `school_head`, `school_logo`, `contact_number`, `email`, `website`, `updated_by`, `created_at`, `updated_at`) VALUES
-(1234567890, 'School Name Here', 'School Address', 'School Region', 'School Division', 'School District', 'School Head Name', '/school_logos/1749257101975-688779572.png', '09989888990', 'school@example.com', 'www.example.com', 1, '2025-06-07 00:45:01', '2025-06-07 00:45:01');
+SELECT '=== PERMISSIONS SETUP SUMMARY ===' as summary;
+SELECT CONCAT('Total Roles: ', COUNT(*)) as summary FROM roles;
+SELECT CONCAT('Total Permissions: ', COUNT(*)) as summary FROM permissions;
+SELECT CONCAT('Admin Permissions: ', COUNT(*)) as summary FROM role_permissions rp JOIN roles r ON rp.role_id = r.role_id WHERE r.role_name = 'admin';
+SELECT CONCAT('Default Teacher Created: ', CASE WHEN COUNT(*) > 0 THEN 'YES' ELSE 'NO' END) as summary FROM teachers WHERE user_id = 1;

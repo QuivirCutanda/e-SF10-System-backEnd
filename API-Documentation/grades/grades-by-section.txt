@@ -1,0 +1,124 @@
+--------------------------------------------------
+## grades-by-section
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+       http://localhost:3001/esf10/grades/teacher/:section_id
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "data": [
+        {
+            "grade_id": 34,
+            "enrollment_id": 6,
+            "student": {
+                "student_id": 6,
+                "lrn": "123456789017",
+                "name": "Carmen Flores Garcia",
+                "first_name": "Carmen",
+                "middle_name": "Flores",
+                "last_name": "Garcia"
+            },
+            "subject": {
+                "subject_id": 2,
+                "subject_code": "ENG",
+                "subject_name": "English"
+            },
+            "section": {
+                "section_id": 7,
+                "section_name": "Jacinto"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "83.00"
+        },
+        {
+            "grade_id": 35,
+            "enrollment_id": 6,
+            "student": {
+                "student_id": 6,
+                "lrn": "123456789017",
+                "name": "Carmen Flores Garcia",
+                "first_name": "Carmen",
+                "middle_name": "Flores",
+                "last_name": "Garcia"
+            },
+            "subject": {
+                "subject_id": 3,
+                "subject_code": "FIL",
+                "subject_name": "Filipino"
+            },
+            "section": {
+                "section_id": 7,
+                "section_name": "Jacinto"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "79.75"
+        },
+        {
+            "grade_id": 33,
+            "enrollment_id": 6,
+            "student": {
+                "student_id": 6,
+                "lrn": "123456789017",
+                "name": "Carmen Flores Garcia",
+                "first_name": "Carmen",
+                "middle_name": "Flores",
+                "last_name": "Garcia"
+            },
+            "subject": {
+                "subject_id": 1,
+                "subject_code": "MATH",
+                "subject_name": "Mathematics"
+            },
+            "section": {
+                "section_id": 7,
+                "section_name": "Jacinto"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "81.50"
+        },
+        {
+            "grade_id": 36,
+            "enrollment_id": 6,
+            "student": {
+                "student_id": 6,
+                "lrn": "123456789017",
+                "name": "Carmen Flores Garcia",
+                "first_name": "Carmen",
+                "middle_name": "Flores",
+                "last_name": "Garcia"
+            },
+            "subject": {
+                "subject_id": 4,
+                "subject_code": "SCI",
+                "subject_name": "Science"
+            },
+            "section": {
+                "section_id": 7,
+                "section_name": "Jacinto"
+            },
+            "grade_level": "Grade 4",
+            "school_year": "2023-2024",
+            "grading_period": "1st",
+            "grade": "82.25"
+        }
+    ],
+    "count": 4,
+    "timestamp": "2025-09-09T08:51:25.637Z"
+}
