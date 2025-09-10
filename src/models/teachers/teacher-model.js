@@ -292,11 +292,14 @@ const toggleTeacherStatusById = async (teacherId, userId) => {
     await connection.beginTransaction();
 
     const [existingTeacher] = await connection.execute(
-      `SELECT teacher_id, first_name, middle_name, last_name, extension_name, is_active
-       FROM teachers
-       WHERE teacher_id = ?`,
+      `SELECT t.teacher_id, t.is_active,
+              u.first_name, u.middle_name, u.last_name, u.extension_name
+       FROM teachers t
+       INNER JOIN users u ON t.user_id = u.user_id
+       WHERE t.teacher_id = ?`,
       [teacherId]
     );
+
     if (existingTeacher.length === 0) {
       throw new Error("Teacher not found");
     }
@@ -319,7 +322,8 @@ const toggleTeacherStatusById = async (teacherId, userId) => {
       existingTeacher[0].extension_name
         ? " " + existingTeacher[0].extension_name
         : ""
-    }`;
+    }`.trim();
+
     const statusAction = newStatus ? "activated" : "deactivated";
 
     console.log(
@@ -330,14 +334,22 @@ const toggleTeacherStatusById = async (teacherId, userId) => {
       "INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())",
       [
         userId,
-        `${
-          statusAction.charAt(0).toUpperCase() + statusAction.slice(1)
-        } teacher: ${fullName}`,
+        `${statusAction.charAt(0).toUpperCase() + statusAction.slice(1)} teacher: ${fullName}`,
       ]
     );
 
     await connection.commit();
-    return await fetchTeacherById(teacherId);
+
+    const [updatedTeacher] = await connection.execute(
+      `SELECT t.teacher_id, t.is_active, t.teacher_address, t.date_of_birth, t.contact_number,
+              u.user_id, u.first_name, u.middle_name, u.last_name, u.extension_name, u.email
+       FROM teachers t
+       INNER JOIN users u ON t.user_id = u.user_id
+       WHERE t.teacher_id = ?`,
+      [teacherId]
+    );
+
+    return updatedTeacher[0] || null;
   } catch (err) {
     if (connection) await connection.rollback();
     console.error("Error in toggleTeacherStatusById:", err);
@@ -346,6 +358,7 @@ const toggleTeacherStatusById = async (teacherId, userId) => {
     if (connection) await connection.release();
   }
 };
+
 
 module.exports = {
   fetchAllTeachers,

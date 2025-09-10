@@ -278,52 +278,52 @@ exports.toggleTeacherStatus = async (req, res) => {
   if (!teacherId || teacherId <= 0) {
     return res.status(400).json({
       success: false,
-      error: 'Teacher ID must be a positive integer',
-      timestamp: new Date().toISOString()
+      error: "Teacher ID must be a positive integer",
+      timestamp: new Date().toISOString(),
     });
   }
 
   if (!userId || !Number.isInteger(userId)) {
     return res.status(400).json({
       success: false,
-      error: 'Invalid user ID from authentication token',
-      timestamp: new Date().toISOString()
+      error: "Invalid user ID from authentication token",
+      timestamp: new Date().toISOString(),
     });
   }
 
   try {
     const result = await toggleTeacherStatusById(teacherId, userId);
-    
+
     if (!result) {
       return res.status(404).json({
         success: false,
-        error: 'Teacher not found',
-        timestamp: new Date().toISOString()
+        error: "Teacher not found",
+        timestamp: new Date().toISOString(),
       });
     }
 
-    const statusMessage = result.is_active ? 'activated' : 'deactivated';
-    
+    const statusMessage = result.is_active ? "activated" : "deactivated";
+
     return res.status(200).json({
       success: true,
       message: `Teacher ${statusMessage} successfully`,
       data: result,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Toggle Teacher Status Error:', error);
-    if (error.message.includes('Teacher not found')) {
+    console.error("Toggle Teacher Status Error:", error);
+    if (error.message.includes("Teacher not found")) {
       return res.status(404).json({
         success: false,
-        error: 'Teacher not found',
-        timestamp: new Date().toISOString()
+        error: "Teacher not found",
+        timestamp: new Date().toISOString(),
       });
     }
     return res.status(500).json({
       success: false,
-      error: 'Server error while updating teacher status',
+      error: "Server error while updating teacher status",
       details: error.message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 };
