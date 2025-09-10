@@ -193,11 +193,18 @@ exports.createOrUpdateGrade = async (req, res) => {
   const { enrollment_id, subject_id, grading_period, grade } = req.body;
   const userId = req.user?.user_id;
 
-  // Validation
+  if (!userId || !Number.isInteger(userId)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid user ID from authentication token',
+      timestamp: new Date().toISOString()
+    });
+  }
+
   if (!enrollment_id || !Number.isInteger(enrollment_id) || enrollment_id <= 0) {
     return res.status(400).json({
       success: false,
-      error: 'Enrollment ID is required and must be a positive integer',
+      error: 'Enrollment ID must be a positive integer',
       timestamp: new Date().toISOString()
     });
   }
@@ -205,7 +212,7 @@ exports.createOrUpdateGrade = async (req, res) => {
   if (!subject_id || !Number.isInteger(subject_id) || subject_id <= 0) {
     return res.status(400).json({
       success: false,
-      error: 'Subject ID is required and must be a positive integer',
+      error: 'Subject ID must be a positive integer',
       timestamp: new Date().toISOString()
     });
   }
@@ -229,23 +236,16 @@ exports.createOrUpdateGrade = async (req, res) => {
     }
   }
 
-  if (!userId || !Number.isInteger(userId)) {
-    return res.status(400).json({
-      success: false,
-      error: 'Invalid user ID from authentication token',
-      timestamp: new Date().toISOString()
-    });
-  }
-
   try {
-    const gradeData = {
-      enrollment_id,
-      subject_id,
-      grading_period,
-      grade: grade !== null && grade !== undefined ? parseFloat(grade) : null
-    };
-
-    const result = await createOrUpdateGradeRecord(gradeData, userId);
+    const result = await createOrUpdateGradeRecord(
+      {
+        enrollment_id,
+        subject_id,
+        grading_period,
+        grade: grade !== null && grade !== undefined ? parseFloat(grade) : null,
+      },
+      userId
+    );
 
     return res.status(result.isNew ? 201 : 200).json({
       success: true,
@@ -255,35 +255,19 @@ exports.createOrUpdateGrade = async (req, res) => {
     });
   } catch (error) {
     console.error('Create/Update Grade Error:', error);
-    if (error.message.includes('Enrollment not found')) {
-      return res.status(404).json({
-        success: false,
-        error: 'Enrollment not found',
-        timestamp: new Date().toISOString()
-      });
-    }
-    if (error.message.includes('Subject not found')) {
-      return res.status(404).json({
-        success: false,
-        error: 'Subject not found',
-        timestamp: new Date().toISOString()
-      });
-    }
-    if (error.message.includes('Grade input is disabled')) {
-      return res.status(403).json({
-        success: false,
-        error: 'Grade input is currently disabled for this assignment',
-        timestamp: new Date().toISOString()
-      });
-    }
-    return res.status(500).json({
+
+    return res.status(
+      error.message.includes('not found') ? 404 :
+      error.message.includes('disabled') ? 403 :
+      error.message.includes('not assigned') ? 403 : 500
+    ).json({
       success: false,
-      error: 'Server error while creating/updating grade',
-      details: error.message,
+      error: error.message,
       timestamp: new Date().toISOString()
     });
   }
 };
+
 
 exports.deleteGrade = async (req, res) => {
   const { gradeId } = req.params;
@@ -357,12 +341,10 @@ exports.toggleGradeInput = async (req, res) => {
   }
 
   try {
-    // Get current input status (default false if not exists)
     const currentStatus = await getTeacherInputStatus(parsedTeacherId);
 
     const newStatus = !currentStatus;
 
-    // Apply new status across all assignments
     await setGradeInputStatusForTeacher(parsedTeacherId, newStatus, userId);
 
     return res.status(200).json({

@@ -7,13 +7,24 @@
         No Auth
     -Headers (add)
         Key:Content-Type
-        Value:application/json
+        Value:application/json  
     -Method
         POST
     -EndPoint
         http://localhost:3001/esf10/grades/create-or-update
 
-    -Body:none
+    -Body:raw
+--------------------------------------------------
+Example requist
+--------------------------------------------------
+{
+  "enrollment_id": 1,
+  "subject_id": 1,
+  "grading_period": "2nd",
+  "grade": 89
+}
+
+
 --------------------------------------------------
 Example response
 -------------------------------------------------
