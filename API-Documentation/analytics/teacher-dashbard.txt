@@ -1,0 +1,274 @@
+--------------------------------------------------
+## teacher-dashbard
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+      http://localhost:3001/esf10/dashboard/teacher/:teacher_id
+
+
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "teacher": {
+        "teacher_id": 1,
+        "first_name": "Michael",
+        "middle_name": "Antonio",
+        "last_name": "Doblas",
+        "email": "admin@gmail.com",
+        "teacher_address": "123 Aurora Blvd, Quezon City",
+        "date_of_birth": "1985-05-11T16:00:00.000Z",
+        "contact_number": "09181234567",
+        "is_active": 1
+    },
+    "stats": {
+        "total_sections": 4,
+        "total_subjects": 3,
+        "total_students": 6
+    },
+    "subjects": [
+        {
+            "subject_id": 1,
+            "subject_name": "Mathematics",
+            "section_id": 11,
+            "section_name": "Luna",
+            "grade_name": "Grade 5",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "subject_id": 1,
+            "subject_name": "Mathematics",
+            "section_id": 12,
+            "section_name": "Lapu-Lapu",
+            "grade_name": "Grade 6",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "subject_id": 2,
+            "subject_name": "English",
+            "section_id": 11,
+            "section_name": "Luna",
+            "grade_name": "Grade 5",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "subject_id": 2,
+            "subject_name": "English",
+            "section_id": 12,
+            "section_name": "Lapu-Lapu",
+            "grade_name": "Grade 6",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "subject_id": 4,
+            "subject_name": "Science",
+            "section_id": 11,
+            "section_name": "Luna",
+            "grade_name": "Grade 5",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "subject_id": 4,
+            "subject_name": "Science",
+            "section_id": 13,
+            "section_name": "Magat",
+            "grade_name": "Grade 6",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "subject_id": 4,
+            "subject_name": "Science",
+            "section_id": 14,
+            "section_name": "Einstein",
+            "grade_name": "Grade 7",
+            "start_year": 2023,
+            "end_year": 2024
+        }
+    ],
+    "sections": [
+        {
+            "section_id": 11,
+            "section_name": "Luna",
+            "grade_name": "Grade 5",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "section_id": 12,
+            "section_name": "Lapu-Lapu",
+            "grade_name": "Grade 6",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "section_id": 13,
+            "section_name": "Magat",
+            "grade_name": "Grade 6",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "section_id": 14,
+            "section_name": "Einstein",
+            "grade_name": "Grade 7",
+            "start_year": 2023,
+            "end_year": 2024
+        }
+    ],
+    "students": [
+        {
+            "student_id": 1,
+            "first_name": "Juan",
+            "last_name": "Cruz",
+            "gender": "Male",
+            "section_name": "Luna",
+            "grade_name": "Grade 6"
+        },
+        {
+            "student_id": 2,
+            "first_name": "Maria",
+            "last_name": "Reyes",
+            "gender": "Female",
+            "section_name": "Magat",
+            "grade_name": "Grade 7"
+        },
+        {
+            "student_id": 4,
+            "first_name": "Ana",
+            "last_name": "Bautista",
+            "gender": "Female",
+            "section_name": "Luna",
+            "grade_name": "Grade 6"
+        },
+        {
+            "student_id": 5,
+            "first_name": "Jose",
+            "last_name": "Martinez",
+            "gender": "Male",
+            "section_name": "Magat",
+            "grade_name": "Grade 7"
+        },
+        {
+            "student_id": 7,
+            "first_name": "Miguel",
+            "last_name": "Villanueva",
+            "gender": "Male",
+            "section_name": "Lapu-Lapu",
+            "grade_name": "Grade 6"
+        },
+        {
+            "student_id": 8,
+            "first_name": "Luz",
+            "last_name": "Fernandez",
+            "gender": "Female",
+            "section_name": "Einstein",
+            "grade_name": "Grade 7"
+        }
+    ],
+    "schedule": [
+        {
+            "schedule_id": 1,
+            "subject_name": "Mathematics",
+            "section_name": "Luna",
+            "day_of_week": "Monday",
+            "start_time": "08:00:00",
+            "end_time": "09:00:00",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "schedule_id": 2,
+            "subject_name": "English",
+            "section_name": "Luna",
+            "day_of_week": "Monday",
+            "start_time": "09:00:00",
+            "end_time": "10:00:00",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "schedule_id": 3,
+            "subject_name": "Mathematics",
+            "section_name": "Lapu-Lapu",
+            "day_of_week": "Tuesday",
+            "start_time": "08:00:00",
+            "end_time": "09:00:00",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "schedule_id": 4,
+            "subject_name": "English",
+            "section_name": "Lapu-Lapu",
+            "day_of_week": "Tuesday",
+            "start_time": "09:00:00",
+            "end_time": "10:00:00",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "schedule_id": 5,
+            "subject_name": "Science",
+            "section_name": "Magat",
+            "day_of_week": "Wednesday",
+            "start_time": "08:00:00",
+            "end_time": "09:00:00",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "schedule_id": 6,
+            "subject_name": "Science",
+            "section_name": "Einstein",
+            "day_of_week": "Thursday",
+            "start_time": "08:00:00",
+            "end_time": "09:00:00",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "schedule_id": 7,
+            "subject_name": "Mathematics",
+            "section_name": "Luna",
+            "day_of_week": "Friday",
+            "start_time": "08:00:00",
+            "end_time": "09:00:00",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "schedule_id": 8,
+            "subject_name": "English",
+            "section_name": "Luna",
+            "day_of_week": "Friday",
+            "start_time": "09:00:00",
+            "end_time": "10:00:00",
+            "start_year": 2023,
+            "end_year": 2024
+        },
+        {
+            "schedule_id": 9,
+            "subject_name": "English",
+            "section_name": "Luna",
+            "day_of_week": "Tuesday",
+            "start_time": "05:43:00",
+            "end_time": "07:43:00",
+            "start_year": 2023,
+            "end_year": 2024
+        }
+    ]
+}

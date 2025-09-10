@@ -1,6 +1,5 @@
 const db = require('../config/db');
 
-// Helper to check if user has a specific permission
 const hasPermission = async (userId, permissionName) => {
   const connection = await db.getConnection();
   try {
@@ -25,7 +24,6 @@ const hasPermission = async (userId, permissionName) => {
   }
 };
 
-// Fetch user info for dashboard
 const getUserDashboardInfo = async (userId) => {
   const connection = await db.getConnection();
   try {
@@ -46,7 +44,6 @@ const getUserDashboardInfo = async (userId) => {
   }
 };
 
-// Fetch student statistics
 const getStudentStats = async (userId) => {
   if (!(await hasPermission(userId, 'view_student_info'))) {
     return null;
@@ -67,7 +64,6 @@ const getStudentStats = async (userId) => {
   }
 };
 
-// Fetch school defaults
 const getSchoolInfo = async (userId) => {
   if (!(await hasPermission(userId, 'manage_school_settings') || await hasPermission(userId, 'view_reports'))) {
     return null;
@@ -87,7 +83,6 @@ const getSchoolInfo = async (userId) => {
   }
 };
 
-// Fetch recent activity logs
 const getRecentLogs = async (userId) => {
   if (!(await hasPermission(userId, 'view_logs'))) {
     return null;
@@ -109,7 +104,6 @@ const getRecentLogs = async (userId) => {
   }
 };
 
-// Fetch latest backup
 const getLatestBackup = async (userId) => {
   if (!(await hasPermission(userId, 'manage_backups'))) {
     return null;
@@ -130,7 +124,6 @@ const getLatestBackup = async (userId) => {
   }
 };
 
-// Fetch recent SF10 records
 const getRecentRecords = async (userId) => {
   if (!(await hasPermission(userId, 'view_ecards') || await hasPermission(userId, 'upload_documents'))) {
     return null;
@@ -154,7 +147,6 @@ const getRecentRecords = async (userId) => {
   }
 };
 
-// Log dashboard access
 const logDashboardAccess = async (userId) => {
   const connection = await db.getConnection();
   try {
@@ -169,8 +161,90 @@ const logDashboardAccess = async (userId) => {
   }
 };
 
+
+const getTeacherDashboardStats = async (teacherId) => {
+  const connection = await db.getConnection();
+  try {
+    const [teacherProfile] = await connection.query(`
+      SELECT t.teacher_id, u.first_name, u.middle_name, u.last_name, u.email,
+             t.teacher_address, t.date_of_birth, t.contact_number, t.is_active
+      FROM teachers t
+      JOIN users u ON t.user_id = u.user_id
+      WHERE t.teacher_id = ?
+    `, [teacherId]);
+
+    const [subjects] = await connection.query(`
+      SELECT subj.subject_id, subj.subject_name, s.section_id, s.section_name, 
+             gl.grade_name, sy.start_year, sy.end_year
+      FROM teacher_assignments ta
+      JOIN subjects subj ON ta.subject_id = subj.subject_id
+      JOIN sections s ON ta.section_id = s.section_id
+      JOIN grade_levels gl ON s.grade_level_id = gl.grade_level_id
+      JOIN school_years sy ON ta.school_year_id = sy.school_year_id
+      WHERE ta.teacher_id = ?
+    `, [teacherId]);
+
+    const [sections] = await connection.query(`
+      SELECT s.section_id, s.section_name, gl.grade_name, sy.start_year, sy.end_year
+      FROM teacher_assignments ta
+      JOIN sections s ON ta.section_id = s.section_id
+      JOIN grade_levels gl ON s.grade_level_id = gl.grade_level_id
+      JOIN school_years sy ON ta.school_year_id = sy.school_year_id
+      WHERE ta.teacher_id = ?
+      GROUP BY s.section_id
+    `, [teacherId]);
+
+    const [students] = await connection.query(`
+      SELECT DISTINCT st.student_id, st.first_name, st.last_name, st.gender, s.section_name, gl.grade_name
+      FROM teacher_assignments ta
+      JOIN sections s ON ta.section_id = s.section_id
+      JOIN enrollment e ON e.section_id = s.section_id AND e.school_year_id = ta.school_year_id
+      JOIN students st ON e.student_id = st.student_id
+      JOIN grade_levels gl ON e.grade_level_id = gl.grade_level_id
+      WHERE ta.teacher_id = ?
+    `, [teacherId]);
+
+    const [schedule] = await connection.query(`
+      SELECT cs.schedule_id, subj.subject_name, s.section_name, cs.day_of_week, cs.start_time, cs.end_time,
+             sy.start_year, sy.end_year
+      FROM class_schedule cs
+      JOIN subjects subj ON cs.subject_id = subj.subject_id
+      JOIN sections s ON cs.section_id = s.section_id
+      JOIN school_years sy ON cs.school_year_id = sy.school_year_id
+      WHERE cs.teacher_id = ?
+    `, [teacherId]);
+
+    const [[stats]] = await connection.query(`
+      SELECT 
+        COUNT(DISTINCT ta.section_id) AS total_sections,
+        COUNT(DISTINCT ta.subject_id) AS total_subjects,
+        COUNT(DISTINCT e.student_id) AS total_students
+      FROM teacher_assignments ta
+      JOIN sections s ON ta.section_id = s.section_id
+      JOIN enrollment e ON e.section_id = s.section_id AND e.school_year_id = ta.school_year_id
+      WHERE ta.teacher_id = ?
+    `, [teacherId]);
+
+    return {
+      teacher: teacherProfile[0] || null,
+      stats: stats || { total_sections: 0, total_subjects: 0, total_students: 0 },
+      subjects,
+      sections,
+      students,
+      schedule
+    };
+  } catch (err) {
+    throw err;
+  } finally {
+    connection.release();
+  }
+};
+
+
+
 module.exports = {
   getUserDashboardInfo,
+  getTeacherDashboardStats,
   getStudentStats,
   getSchoolInfo,
   getRecentLogs,
