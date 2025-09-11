@@ -1,11 +1,9 @@
 const db = require('../config/db');
 
-// Existing model function for all activity logs
 const getAllActivityLogs = async (page, limit) => {
   const offset = (page - 1) * limit;
 
   try {
-    // Query to get activity logs with user details
     const [logs] = await db.execute(
       `SELECT al.log_id, al.user_id, al.action, al.log_timestamp,
               u.first_name, u.middle_name, u.last_name, u.email
@@ -16,7 +14,6 @@ const getAllActivityLogs = async (page, limit) => {
       [limit, offset]
     );
 
-    // Query to get total count of logs
     const [totalResult] = await db.execute(
       `SELECT COUNT(*) AS total FROM activity_logs`
     );
@@ -34,12 +31,10 @@ const getAllActivityLogs = async (page, limit) => {
   }
 };
 
-// New model function for user-specific activity logs
 const getUserActivityLogs = async (userId, page, limit) => {
   const offset = (page - 1) * limit;
 
   try {
-    // Query to get user-specific activity logs with user details
     const [logs] = await db.execute(
       `SELECT al.log_id, al.user_id, al.action, al.log_timestamp,
               u.first_name, u.middle_name, u.last_name, u.email
@@ -51,7 +46,6 @@ const getUserActivityLogs = async (userId, page, limit) => {
       [userId, limit, offset]
     );
 
-    // Query to get total count of user-specific logs
     const [totalResult] = await db.execute(
       `SELECT COUNT(*) AS total FROM activity_logs WHERE user_id = ?`,
       [userId]

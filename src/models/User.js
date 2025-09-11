@@ -226,7 +226,6 @@ const modifyUserPermissions = async (userId, permissionName, isGranted, modified
   try {
     await connection.beginTransaction();
 
-    // Verify user exists
     const [userCheck] = await connection.execute(
       `SELECT 1 FROM users WHERE user_id = ?`,
       [userId]
@@ -235,7 +234,6 @@ const modifyUserPermissions = async (userId, permissionName, isGranted, modified
       throw new Error(`User ID ${userId} does not exist`);
     }
 
-    // Verify permission exists
     const [permissionCheck] = await connection.execute(
       `SELECT permission_id FROM permissions WHERE permission_name = ?`,
       [permissionName]
@@ -245,7 +243,6 @@ const modifyUserPermissions = async (userId, permissionName, isGranted, modified
     }
     const permissionId = permissionCheck[0].permission_id;
 
-    // Insert or update permission override
     const [result] = await connection.execute(
       `INSERT INTO user_permissions (user_id, permission_id, is_granted)
        VALUES (?, ?, ?)
@@ -253,7 +250,6 @@ const modifyUserPermissions = async (userId, permissionName, isGranted, modified
       [userId, permissionId, isGranted, isGranted]
     );
 
-    // Log the action
     await connection.execute(
       `INSERT INTO activity_logs (user_id, action)
        VALUES (?, ?)`,

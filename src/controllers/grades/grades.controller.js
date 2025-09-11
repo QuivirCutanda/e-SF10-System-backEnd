@@ -263,6 +263,7 @@ exports.createOrUpdateGrade = async (req, res) => {
     ).json({
       success: false,
       error: error.message,
+      message:" Teacher not assigned to this subject/section",
       timestamp: new Date().toISOString()
     });
   }

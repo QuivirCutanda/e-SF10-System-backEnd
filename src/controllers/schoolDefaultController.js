@@ -39,7 +39,6 @@ exports.createSchoolDefault = async (req, res) => {
       school_logo
     );
 
-    // Format response to include user info instead of updated_by
     const schoolData = {
       school_id: school.school_id,
       school_name: school.school_name,
@@ -115,7 +114,6 @@ exports.updateSchoolDefault = async (req, res) => {
       school_logo
     );
 
-    // Format response to include user info instead of updated_by
     const schoolData = {
       school_id: school.school_id,
       school_name: school.school_name,
@@ -158,7 +156,6 @@ exports.getSchoolDefault = async (req, res) => {
 
     const school = await SchoolDefaultModel.getSchoolDefault(school_id);
 
-    // Format response to include user info instead of updated_by
     const schoolData = {
       school_id: school.school_id,
       school_name: school.school_name,

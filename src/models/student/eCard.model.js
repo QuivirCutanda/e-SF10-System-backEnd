@@ -12,11 +12,9 @@ const getEcardsByStudentLRN = async (lrn) => {
 
   const [rows] = await db.query(sql, [lrn]);
 
-  // Transform sf10_document_path to a URL
   const baseUrl = process.env.IMAGE_BASE_URL || `http://localhost:${process.env.PORT || 3001}/esf10/images`;
   const transformedRows = rows.map((row) => {
     if (row.sf10_document_path) {
-      // Extract relative path from absolute path
       const baseDir = path.join(__dirname, '../../../data/documents/sf10');
       const relativePath = path.relative(baseDir, row.sf10_document_path).replace(/\\/g, '/');
       row.sf10_document_path = `${baseUrl}/${relativePath}`;

@@ -3,7 +3,7 @@ const Student = require('../../models/student/updateStudent.model');
 const updateStudent = async (req, res) => {
     try {
         const { lrn } = req.params;
-        const userId = req.user.user_id; // From authMiddleware
+        const userId = req.user.user_id; 
         const updateData = req.body;
 
         const updatedStudent = await Student.updateStudent(lrn, updateData, userId);

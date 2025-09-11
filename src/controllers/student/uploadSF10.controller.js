@@ -7,7 +7,6 @@ exports.uploadSF10 = async (req, res) => {
   const file = req.file;
 
   try {
-    // Basic validation
     if (!file) {
       return res.status(400).json({
         success: false,
@@ -19,7 +18,6 @@ exports.uploadSF10 = async (req, res) => {
 
     const { start_year, end_year, grade_level, section } = req.body;
 
-    // Required fields check
     if (!start_year || !end_year || !grade_level) {
       fs.unlinkSync(file.path);
       return res.status(400).json({
@@ -35,7 +33,6 @@ exports.uploadSF10 = async (req, res) => {
       });
     }
 
-    // Year validation
     const startYearNum = parseInt(start_year);
     const endYearNum = parseInt(end_year);
     const currentYear = new Date().getFullYear();
@@ -120,7 +117,6 @@ exports.uploadSF10 = async (req, res) => {
       });
     }
 
-    // Grade level validation
     const gradeLevelNum = parseInt(grade_level);
     if (isNaN(gradeLevelNum) || gradeLevelNum < 1 || gradeLevelNum > 12) {
       fs.unlinkSync(file.path);
@@ -132,7 +128,6 @@ exports.uploadSF10 = async (req, res) => {
       });
     }
 
-    // File processing
     const baseDir = path.join(__dirname, '../../../data/documents/sf10');
     const finalDir = path.join(baseDir, `${start_year}-${end_year}`, `grade-${grade_level}`);
     fs.mkdirSync(finalDir, { recursive: true });
@@ -143,7 +138,6 @@ exports.uploadSF10 = async (req, res) => {
 
     fs.renameSync(file.path, absoluteFilePath);
 
-    // Database record creation
     const userId = req.user.user_id;
     const result = await createSchoolRecord(
       studentId,
@@ -157,7 +151,6 @@ exports.uploadSF10 = async (req, res) => {
       userId
     );
 
-    // Success response
     return res.status(201).json({
       success: true,
       message: "SF10 file uploaded successfully",
@@ -178,7 +171,6 @@ exports.uploadSF10 = async (req, res) => {
   } catch (error) {
     console.error("Upload Error:", error);
 
-    // Clean up file if error occurs
     if (req.file?.path && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }

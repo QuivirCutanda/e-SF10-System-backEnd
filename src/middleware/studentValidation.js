@@ -209,7 +209,7 @@ const validateBulkRegistration = async (req, res, next) => {
                 'date_of_birth', 'gender', 'street', 'city', 'province', 'zip_code',
                 'guardian_name', 'contact_number'
             ],
-            range: 1, // Start reading from row 2
+            range: 1, 
         });
 
         if (jsonData.length === 0) {
@@ -222,7 +222,6 @@ const validateBulkRegistration = async (req, res, next) => {
         const validStudents = [];
 
         for (const [index, student] of jsonData.entries()) {
-            // Validate LRN is 12 digits
             if (!student.lrn || student.lrn.toString().length !== 12 || isNaN(student.lrn)) {
                 skipped.push(`Row ${index + 2}: LRN must be exactly 12 digits`);
                 continue;
@@ -241,7 +240,7 @@ const validateBulkRegistration = async (req, res, next) => {
         }
 
         req.validatedStudents = validStudents;
-        req.skippedRows = skipped; // Attach skipped rows to request for controller
+        req.skippedRows = skipped; 
         next();
     } catch (error) {
         if (req.file && req.file.path) {

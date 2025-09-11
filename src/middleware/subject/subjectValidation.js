@@ -1,6 +1,5 @@
 const { check, param, validationResult } = require('express-validator');
 
-// Validation for creating a new subject
 const validateSubject = [
   check('subject_code')
     .notEmpty()
@@ -41,7 +40,6 @@ const validateSubject = [
   }
 ];
 
-// Validation for updating a subject
 const validateSubjectUpdate = [
   check('subject_code')
     .optional()
@@ -86,7 +84,6 @@ const validateSubjectUpdate = [
       });
     }
 
-    // Check if at least one field is provided for update
     const { subject_code, subject_name, description, grade_level } = req.body;
     if (!subject_code && !subject_name && !description && !grade_level) {
       return res.status(400).json({
@@ -99,7 +96,6 @@ const validateSubjectUpdate = [
   }
 ];
 
-// Validation for subject ID parameter
 const validateSubjectId = [
   param('id')
     .isInt({ min: 1 })

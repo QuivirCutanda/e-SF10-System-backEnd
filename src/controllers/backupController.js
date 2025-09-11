@@ -8,17 +8,14 @@ const createBackupHandler = async (req, res) => {
         const userId = req.user.user_id;
         const result = await createBackup(userId);
 
-        // Set headers for ZIP download to ensure automatic download
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
         res.setHeader('Pragma', 'no-cache');
         res.setHeader('Expires', '0');
 
-        // Stream the ZIP file
         result.stream.pipe(res);
 
-        // Handle stream errors
         result.stream.on('error', (err) => {
             console.error('ZIP stream error:', err);
             if (!res.headersSent) {
@@ -29,12 +26,10 @@ const createBackupHandler = async (req, res) => {
             }
         });
 
-        // Clean up temporary files after streaming
         res.on('finish', () => {
             result.cleanup();
         });
 
-        // Log success
         console.log(`Backup ${result.filename} streamed successfully`);
     } catch (error) {
         console.error('Backup creation failed: ', error);
@@ -84,7 +79,6 @@ const getBackupFileHandler = async (req, res) => {
         const userId = req.user.user_id;
         console.log(`Request to serve backup file: ${filename} by user: ${userId}`);
 
-        // Validate filename against backups table
         const connection = await createConnection({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
@@ -105,12 +99,10 @@ const getBackupFileHandler = async (req, res) => {
             await connection.end();
         }
 
-        // Construct file path
         const backupDir = path.join(__dirname, '../../backups');
         const filePath = path.join(backupDir, filename);
         console.log(`Attempting to serve file from: ${filePath}`);
 
-        // Validate file exists and is readable
         try {
             fs.accessSync(filePath, fs.constants.R_OK);
             console.log(`File is readable: ${filePath}`);
@@ -119,7 +111,6 @@ const getBackupFileHandler = async (req, res) => {
             return res.status(404).json({ message: 'Backup file not found on server or not readable' });
         }
 
-        // Serve the file
         res.setHeader('Content-Type', 'application/sql');
         res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
         console.log(`Serving file: ${filePath}`);

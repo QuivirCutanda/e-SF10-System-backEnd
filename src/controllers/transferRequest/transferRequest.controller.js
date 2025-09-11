@@ -22,7 +22,6 @@ exports.createTransferRequest = async (req, res) => {
   try {
     connection = await db.getConnection();
 
-    // Verify student exists
     const [studentRows] = await connection.execute(
       'SELECT student_id FROM students WHERE student_id = ?',
       [student_id]
@@ -129,7 +128,6 @@ exports.getTransferRequestById = async (req, res) => {
 };
 
 exports.updateTransferRequest = async (req, res) => {
-  // Validate request input
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ success: false, errors: errors.array() });
@@ -140,10 +138,8 @@ exports.updateTransferRequest = async (req, res) => {
   const { request_status } = req.body;
   const userId = req.user?.user_id;
 
-  // Debug log
   console.log('Update Transfer Request - Params:', { transferId, request_status, userId });
 
-  // Validate inputs
   if (isNaN(transferId)) {
     return res.status(400).json({
       success: false,
@@ -159,7 +155,6 @@ exports.updateTransferRequest = async (req, res) => {
     });
   }
 
-  // Validate request_status against ENUM values
   const validStatuses = ['Pending', 'Approved', 'Rejected', 'Deleted'];
   if (!request_status || !validStatuses.includes(request_status)) {
     return res.status(400).json({
@@ -239,7 +234,6 @@ exports.searchSchoolNames = async (req, res) => {
   try {
     connection = await db.getConnection();
     
-    // Search school names from both school_defaults and transfer_requests
     const [schoolRows] = await connection.execute(
       `SELECT DISTINCT school_name AS name FROM school_defaults 
        WHERE school_name LIKE ? 

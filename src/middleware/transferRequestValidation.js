@@ -26,16 +26,14 @@ const validateTransferUpdate = [
     .notEmpty()
     .withMessage('Request status is required')
     .custom((value, { req }) => {
-      console.log('PUT request body:', JSON.stringify(req.body)); // Log entire body
-      console.log('Received request_status:', value); // Log request_status
-      // Normalize input to title case (e.g., 'pending' -> 'Pending')
+      console.log('PUT request body:', JSON.stringify(req.body)); 
+      console.log('Received request_status:', value); 
       const normalizedValue = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-      console.log('Normalized request_status:', normalizedValue); // Log normalized value
+      console.log('Normalized request_status:', normalizedValue); 
       const validStatuses = ['Pending', 'Approved', 'Rejected'];
       if (!validStatuses.includes(normalizedValue)) {
         throw new Error(`Invalid request_status: ${value}. Must be one of ${validStatuses.join(', ')}`);
       }
-      // Update the request body with the normalized value
       req.body.request_status = normalizedValue;
       return true;
     })

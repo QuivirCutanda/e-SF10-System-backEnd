@@ -6,8 +6,8 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = path.join(__dirname, '../../data/school_logos');
     try {
-      fs.mkdirSync(uploadDir, { recursive: true }); // Create directory synchronously
-      console.log('School logos directory created or exists:', uploadDir); // Debug log
+      fs.mkdirSync(uploadDir, { recursive: true }); 
+      console.log('School logos directory created or exists:', uploadDir); 
       cb(null, uploadDir);
     } catch (error) {
       console.error('Error creating school logos directory:', error);
@@ -31,7 +31,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 }, 
   fileFilter: fileFilter
 });
 

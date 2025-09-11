@@ -1,6 +1,5 @@
 const { getAllRolesAndPermissions, createNewRole, getAllRolesAndPermissionsSeparately, updateUserRole } = require('../../models/role-and-permission/role-model');
 
-// View all roles with their associated permissions
 exports.viewRolesAndPermissions = async (req, res) => {
   try {
     const roles = await getAllRolesAndPermissions();
@@ -20,7 +19,6 @@ exports.viewRolesAndPermissions = async (req, res) => {
   }
 };
 
-// View all available roles and all available permissions separately
 exports.viewAllRolesAndPermissions = async (req, res) => {
   try {
     const { roles, permissions } = await getAllRolesAndPermissionsSeparately();
@@ -43,12 +41,10 @@ exports.viewAllRolesAndPermissions = async (req, res) => {
   }
 };
 
-// Create a new role with selected permissions
 exports.createRole = async (req, res) => {
   const { role_name, permission_ids } = req.body;
-  const userId = req.user?.user_id; // Extract user_id from JWT token
+  const userId = req.user?.user_id; 
 
-  // Validate input
   if (!role_name || typeof role_name !== 'string' || role_name.trim().length === 0) {
     return res.status(400).json({
       success: false,
@@ -113,12 +109,10 @@ exports.createRole = async (req, res) => {
   }
 };
 
-// Update user roles
 exports.updateUserRole = async (req, res) => {
   const { user_id, role_ids } = req.body;
-  const requesterId = req.user?.user_id; // Extract user_id from JWT token
+  const requesterId = req.user?.user_id; 
 
-  // Validate input
   if (!user_id || !Number.isInteger(user_id) || user_id <= 0) {
     return res.status(400).json({
       success: false,

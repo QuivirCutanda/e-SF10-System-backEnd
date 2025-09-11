@@ -427,7 +427,8 @@ WHERE permission_name IN (
     'request_transfers', 'manage_users', 'manage_backups', 'view_logs',
     'export_data', 'import_data', 'view_reports', 'view_enrollments', 
     'manage_enrollments', 'view_sections', 'view_grade_levels',
-    'view_school_years', 'view_subjects', 'view_teachers'
+    'view_school_years', 'view_subjects', 'view_teachers','manage_grades','manage_grade_input','manage_grade_levels','manage_sections',
+    'request_transfers','search_student'
 );
 
 -- TEACHER ROLE - Teaching related permissions
@@ -439,9 +440,9 @@ FROM permissions
 WHERE permission_name IN (
     'search_student', 'view_student_info', 'view_ecards', 'upload_documents', 
     'download_documents', 'lock_records', 'register_student', 'delete_documents',
-    'view_grades', 'manage_grades', 'view_teacher_assignments', 'view_subjects',
-    'view_sections', 'view_enrollments', 'view_class_schedules', 'view_curriculum',
-    'view_grade_levels', 'view_school_years', 'view_teachers'
+    'view_grades','view_grades', 'manage_grades', 'view_teacher_assignments', 'view_subjects',
+    'view_sections', 'view_enrollments', 'view_class_schedules', 'view_curriculum','edit_student_info',
+    'view_grade_levels', 'view_school_years', 'view_teachers','manage_curriculum','manage_enrollments'
 );
 
 -- SCHOOL HEAD ROLE - Administrative oversight, reports, approvals

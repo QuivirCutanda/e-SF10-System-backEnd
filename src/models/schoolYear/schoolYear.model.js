@@ -1,17 +1,15 @@
 const db = require('../../config/db');
 
-// Create a new school year
 const createSchoolYearModel = async (schoolYearData) => {
   const { start_year, end_year } = schoolYearData;
   
   try {
     const [result] = await db.execute(
       `INSERT INTO school_years (start_year, end_year, is_active) 
-       VALUES (?, ?, TRUE)`,
+       VALUES (?, ?, FALSE)`,
       [start_year, end_year]
     );
 
-    // Fetch the created school year
     const [schoolYear] = await db.execute(
       `SELECT school_year_id, start_year, end_year, is_active, created_at 
        FROM school_years 
@@ -25,7 +23,6 @@ const createSchoolYearModel = async (schoolYearData) => {
   }
 };
 
-// Get all school years with pagination and search
 const getAllSchoolYearsModel = async (page, limit, search, active) => {
   const offset = (page - 1) * limit;
   
@@ -39,7 +36,6 @@ const getAllSchoolYearsModel = async (page, limit, search, active) => {
     let queryParams = [];
     let countParams = [];
 
-    // Add search filter
     if (search && search.trim() !== '') {
       query += ` AND (CONCAT(start_year, '-', end_year) LIKE ? OR start_year LIKE ? OR end_year LIKE ?)`;
       countQuery += ` AND (CONCAT(start_year, '-', end_year) LIKE ? OR start_year LIKE ? OR end_year LIKE ?)`;
@@ -48,7 +44,6 @@ const getAllSchoolYearsModel = async (page, limit, search, active) => {
       countParams.push(searchParam, searchParam, searchParam);
     }
 
-    // Add active filter
     if (active !== undefined) {
       const isActive = active === 'true' || active === '1';
       query += ` AND is_active = ?`;
@@ -57,11 +52,9 @@ const getAllSchoolYearsModel = async (page, limit, search, active) => {
       countParams.push(isActive);
     }
 
-    // Add ordering and pagination
     query += ` ORDER BY start_year DESC LIMIT ? OFFSET ?`;
     queryParams.push(limit, offset);
 
-    // Execute queries
     const [schoolYears] = await db.execute(query, queryParams);
     const [totalResult] = await db.execute(countQuery, countParams);
     const total = totalResult[0].total;
@@ -78,7 +71,6 @@ const getAllSchoolYearsModel = async (page, limit, search, active) => {
   }
 };
 
-// Get school year by ID
 const getSchoolYearByIdModel = async (schoolYearId) => {
   try {
     const [schoolYear] = await db.execute(
@@ -94,7 +86,6 @@ const getSchoolYearByIdModel = async (schoolYearId) => {
   }
 };
 
-// Update school year
 const updateSchoolYearModel = async (schoolYearId, updateData) => {
   const { start_year, end_year, is_active } = updateData;
   
@@ -106,7 +97,6 @@ const updateSchoolYearModel = async (schoolYearId, updateData) => {
       [start_year, end_year, is_active, schoolYearId]
     );
 
-    // Fetch the updated school year
     const [schoolYear] = await db.execute(
       `SELECT school_year_id, start_year, end_year, is_active, created_at
        FROM school_years 
@@ -120,19 +110,16 @@ const updateSchoolYearModel = async (schoolYearId, updateData) => {
   }
 };
 
-// Set active school year (deactivates all others)
 const setActiveSchoolYearModel = async (schoolYearId) => {
   const connection = await db.getConnection();
   
   try {
     await connection.beginTransaction();
 
-    // Deactivate all school years
     await connection.execute(
       `UPDATE school_years SET is_active = FALSE`
     );
 
-    // Activate the specified school year
     await connection.execute(
       `UPDATE school_years SET is_active = TRUE WHERE school_year_id = ?`,
       [schoolYearId]
@@ -147,7 +134,6 @@ const setActiveSchoolYearModel = async (schoolYearId) => {
   }
 };
 
-// Delete school year
 const deleteSchoolYearModel = async (schoolYearId) => {
   try {
     const [result] = await db.execute(
@@ -165,7 +151,6 @@ const deleteSchoolYearModel = async (schoolYearId) => {
   }
 };
 
-// Check if school year exists
 const checkSchoolYearExists = async (startYear, endYear) => {
   try {
     const [result] = await db.execute(
@@ -181,7 +166,6 @@ const checkSchoolYearExists = async (startYear, endYear) => {
   }
 };
 
-// Get active school year
 const getActiveSchoolYearModel = async () => {
   try {
     const [schoolYear] = await db.execute(

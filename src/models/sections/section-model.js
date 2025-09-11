@@ -66,7 +66,6 @@ const createNewSection = async (sectionData, userId) => {
 
     const { section_name, grade_level_id, school_year_id } = sectionData;
 
-    // Check if grade level exists
     const [gradeLevel] = await connection.execute(
       'SELECT grade_level_id, grade_name FROM grade_levels WHERE grade_level_id = ?',
       [grade_level_id]
@@ -75,7 +74,6 @@ const createNewSection = async (sectionData, userId) => {
       throw new Error('Grade level not found');
     }
 
-    // Check if school year exists
     const [schoolYear] = await connection.execute(
       'SELECT school_year_id, start_year, end_year FROM school_years WHERE school_year_id = ?',
       [school_year_id]
@@ -84,7 +82,6 @@ const createNewSection = async (sectionData, userId) => {
       throw new Error('School year not found');
     }
 
-    // Check for duplicate section
     const [existingSection] = await connection.execute(
       'SELECT section_id FROM sections WHERE section_name = ? AND grade_level_id = ? AND school_year_id = ?',
       [section_name, grade_level_id, school_year_id]
@@ -93,7 +90,6 @@ const createNewSection = async (sectionData, userId) => {
       throw new Error('Section already exists');
     }
 
-    // Insert new section
     const [result] = await connection.execute(
       'INSERT INTO sections (section_name, grade_level_id, school_year_id) VALUES (?, ?, ?)',
       [section_name, grade_level_id, school_year_id]
@@ -102,7 +98,6 @@ const createNewSection = async (sectionData, userId) => {
     const sectionId = result.insertId;
     console.log(`Section created: section_id=${sectionId}, section_name=${section_name}`);
 
-    // Log activity
     await connection.execute(
       'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',
       [userId, `Created section: ${section_name} for grade ${gradeLevel[0].grade_name} in school year ${schoolYear[0].start_year}-${schoolYear[0].end_year}`]
@@ -127,7 +122,6 @@ const updateSectionById = async (sectionId, sectionData, userId) => {
 
     const { section_name, grade_level_id, school_year_id } = sectionData;
 
-    // Check if section exists
     const [existingSection] = await connection.execute(
       'SELECT section_id, section_name, grade_level_id, school_year_id FROM sections WHERE section_id = ?',
       [sectionId]
@@ -136,7 +130,6 @@ const updateSectionById = async (sectionId, sectionData, userId) => {
       throw new Error('Section not found');
     }
 
-    // Check if grade level exists
     const [gradeLevel] = await connection.execute(
       'SELECT grade_level_id, grade_name FROM grade_levels WHERE grade_level_id = ?',
       [grade_level_id]
@@ -145,7 +138,6 @@ const updateSectionById = async (sectionId, sectionData, userId) => {
       throw new Error('Grade level not found');
     }
 
-    // Check if school year exists
     const [schoolYear] = await connection.execute(
       'SELECT school_year_id, start_year, end_year FROM school_years WHERE school_year_id = ?',
       [school_year_id]
@@ -154,7 +146,6 @@ const updateSectionById = async (sectionId, sectionData, userId) => {
       throw new Error('School year not found');
     }
 
-    // Check for duplicate section
     const [duplicateSection] = await connection.execute(
       'SELECT section_id FROM sections WHERE section_name = ? AND grade_level_id = ? AND school_year_id = ? AND section_id != ?',
       [section_name, grade_level_id, school_year_id, sectionId]
@@ -163,7 +154,6 @@ const updateSectionById = async (sectionId, sectionData, userId) => {
       throw new Error('Section already exists');
     }
 
-    // Update section
     const [result] = await connection.execute(
       'UPDATE sections SET section_name = ?, grade_level_id = ?, school_year_id = ? WHERE section_id = ?',
       [section_name, grade_level_id, school_year_id, sectionId]
@@ -175,7 +165,6 @@ const updateSectionById = async (sectionId, sectionData, userId) => {
 
     console.log(`Section updated: section_id=${sectionId}, section_name=${section_name}`);
 
-    // Log activity
     await connection.execute(
       'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',
       [userId, `Updated section ID ${sectionId}: from "${existingSection[0].section_name}" to "${section_name}" for grade ${gradeLevel[0].grade_name} in school year ${schoolYear[0].start_year}-${schoolYear[0].end_year}`]
@@ -198,7 +187,6 @@ const deleteSectionById = async (sectionId, userId) => {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    // Check if section exists
     const [existingSection] = await connection.execute(
       `SELECT s.section_id, s.section_name, s.grade_level_id, s.school_year_id, 
               g.grade_name, sy.start_year, sy.end_year
@@ -212,7 +200,6 @@ const deleteSectionById = async (sectionId, userId) => {
       throw new Error('Section not found');
     }
 
-    // Check if section is used in enrollments
     const [enrollments] = await connection.execute(
       'SELECT COUNT(*) as count FROM enrollment WHERE section_id = ?',
       [sectionId]
@@ -221,7 +208,6 @@ const deleteSectionById = async (sectionId, userId) => {
       throw new Error('Cannot delete section as it is being used in enrollments');
     }
 
-    // Check if section is used in teacher assignments
     const [assignments] = await connection.execute(
       'SELECT COUNT(*) as count FROM teacher_assignments WHERE section_id = ?',
       [sectionId]
@@ -230,7 +216,6 @@ const deleteSectionById = async (sectionId, userId) => {
       throw new Error('Cannot delete section as it is being used in teacher assignments');
     }
 
-    // Delete section
     const [result] = await connection.execute(
       'DELETE FROM sections WHERE section_id = ?',
       [sectionId]
@@ -242,7 +227,6 @@ const deleteSectionById = async (sectionId, userId) => {
 
     console.log(`Section deleted: section_id=${sectionId}, section_name=${existingSection[0].section_name}`);
 
-    // Log activity
     await connection.execute(
       'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',
       [userId, `Deleted section: ${existingSection[0].section_name} for grade ${existingSection[0].grade_name} in school year ${existingSection[0].start_year}-${existingSection[0].end_year}`]

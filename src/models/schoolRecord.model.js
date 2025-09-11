@@ -85,7 +85,6 @@ const deleteSchoolRecord = async (recordId, userId) => {
   try {
     await connection.beginTransaction();
 
-    // Verify record exists and is not deleted
     const [existingRecord] = await connection.execute(
       `SELECT sf10_document_path FROM school_records WHERE record_id = ? AND is_deleted = FALSE`,
       [recordId]
@@ -94,7 +93,6 @@ const deleteSchoolRecord = async (recordId, userId) => {
       throw new Error('School record not found or has been deleted');
     }
 
-    // Soft delete the record
     const [result] = await connection.execute(
       `UPDATE school_records SET is_deleted = TRUE WHERE record_id = ?`,
       [recordId]

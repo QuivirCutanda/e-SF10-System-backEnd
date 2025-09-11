@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const db = require('../../config/db'); // Add this line to import the database connection
+const db = require('../../config/db'); 
 const { updateSchoolRecord } = require('../../models/schoolRecord.model');
 
 exports.updateSF10 = async (req, res) => {
@@ -9,7 +9,6 @@ exports.updateSF10 = async (req, res) => {
   const { start_year, end_year, grade_level, section } = req.body;
 
   try {
-    // Basic validation
     if (!file) {
       return res.status(400).json({
         success: false,
@@ -19,7 +18,6 @@ exports.updateSF10 = async (req, res) => {
       });
     }
 
-    // Year validation
     const startYearNum = parseInt(start_year);
     const endYearNum = parseInt(end_year);
     const currentYear = new Date().getFullYear();
@@ -116,7 +114,6 @@ exports.updateSF10 = async (req, res) => {
       });
     }
 
-    // File processing
     const baseDir = path.join(__dirname, '../../../data/documents/sf10');
     const finalDir = path.join(baseDir, `${start_year}-${end_year}`, section);
     fs.mkdirSync(finalDir, { recursive: true });
@@ -125,7 +122,6 @@ exports.updateSF10 = async (req, res) => {
     const newFilename = `sf10-${recordId}-${Date.now()}${fileExt}`;
     const absoluteFilePath = path.join(finalDir, newFilename);
 
-    // Delete old file if it exists
     const [existingRecord] = await db.execute(
       `SELECT sf10_document_path FROM school_records WHERE record_id = ? AND is_deleted = FALSE`,
       [recordId]
@@ -136,7 +132,6 @@ exports.updateSF10 = async (req, res) => {
 
     fs.renameSync(file.path, absoluteFilePath);
 
-    // Database record update
     const userId = req.user.user_id;
     const result = await updateSchoolRecord(
       recordId,
@@ -150,7 +145,6 @@ exports.updateSF10 = async (req, res) => {
       userId
     );
 
-    // Success response
     return res.status(200).json({
       success: true,
       message: 'SF10 file updated successfully',
@@ -171,7 +165,6 @@ exports.updateSF10 = async (req, res) => {
   } catch (error) {
     console.error('Update SF10 Error:', error);
 
-    // Clean up file if error occurs
     if (req.file?.path && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }

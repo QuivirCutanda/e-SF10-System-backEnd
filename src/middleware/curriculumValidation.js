@@ -1,6 +1,5 @@
 const { check, param, body, validationResult } = require('express-validator');
 
-// Validation for creating a new curriculum
 const validateCurriculum = [
   check('curriculum_name')
     .notEmpty()
@@ -33,7 +32,6 @@ const validateCurriculum = [
         if (!allIntegers) {
           throw new Error('All subject IDs must be positive integers');
         }
-        // Check for duplicates
         const uniqueIds = [...new Set(value)];
         if (uniqueIds.length !== value.length) {
           throw new Error('Subject IDs must be unique');
@@ -54,7 +52,6 @@ const validateCurriculum = [
   }
 ];
 
-// Validation for updating a curriculum
 const validateCurriculumUpdate = [
   check('curriculum_name')
     .optional()
@@ -84,7 +81,6 @@ const validateCurriculumUpdate = [
       });
     }
 
-    // Check if at least one field is provided for update
     const { curriculum_name, school_year_id, is_active } = req.body;
     if (!curriculum_name && !school_year_id && is_active === undefined) {
       return res.status(400).json({
@@ -97,7 +93,6 @@ const validateCurriculumUpdate = [
   }
 ];
 
-// Validation for curriculum ID parameter
 const validateCurriculumId = [
   param('id')
     .isInt({ min: 1 })
@@ -115,7 +110,6 @@ const validateCurriculumId = [
   }
 ];
 
-// Validation for adding/removing subjects to/from curriculum
 const validateCurriculumSubjects = [
   body('subject_ids')
     .notEmpty()
@@ -127,7 +121,6 @@ const validateCurriculumSubjects = [
       if (!allIntegers) {
         throw new Error('All subject IDs must be positive integers');
       }
-      // Check for duplicates
       const uniqueIds = [...new Set(value)];
       if (uniqueIds.length !== value.length) {
         throw new Error('Subject IDs must be unique');
@@ -147,12 +140,9 @@ const validateCurriculumSubjects = [
   }
 ];
 
-// Validation for school year existence
 const validateSchoolYear = [
   check('school_year_id')
     .custom(async (value) => {
-      // This would need to be implemented to check if school year exists
-      // For now, we'll just validate the format
       if (!Number.isInteger(value) || value < 1) {
         throw new Error('Invalid school year ID');
       }

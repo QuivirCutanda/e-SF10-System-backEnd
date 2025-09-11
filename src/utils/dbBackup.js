@@ -5,7 +5,6 @@ const { logActivity } = require("./activityLog");
 const archiver = require("archiver");
 const os = require("os");
 
-// Create a connection pool
 const pool = createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -14,7 +13,7 @@ const pool = createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  connectTimeout: 10000, // 10 seconds
+  connectTimeout: 10000, 
 });
 
 /**
@@ -37,18 +36,15 @@ const createBackup = async (userId) => {
 
   const { DB_HOST, DB_USER, DB_NAME } = process.env;
 
-  // Validate environment variables
   if (!DB_HOST || !DB_USER || !DB_NAME) {
     throw new Error(
       "Database configuration missing: DB_HOST, DB_USER, or DB_NAME not set"
     );
   }
 
-  // Define the absolute path to the data directory
   const dataDir = path.resolve(__dirname, "../../data");
   console.log("Data directory:", dataDir);
 
-  // Validate data directory
   if (!fs.existsSync(dataDir)) {
     console.error(`Data directory does not exist: ${dataDir}`);
     throw new Error(`Backup failed: Data directory ${dataDir} not found`);
@@ -112,7 +108,6 @@ const createBackup = async (userId) => {
     stream.write(`SET FOREIGN_KEY_CHECKS=1;\n`);
     stream.end();
 
-    // Wait for stream to finish writing
     console.log("Waiting for SQL file to finish writing...");
     await new Promise((resolve, reject) => {
       stream.on("finish", () => {
@@ -125,17 +120,15 @@ const createBackup = async (userId) => {
       });
     });
 
-    // Create ZIP archive
     console.log("Creating ZIP archive...");
     const archive = archiver("zip", { zlib: { level: 9 } });
     const zipStream = archive;
 
-    // Handle ZIP stream errors and timeout
     let streamTimeout;
     const timeoutPromise = new Promise((_, reject) => {
       streamTimeout = setTimeout(() => {
         reject(new Error("ZIP stream timed out after 60 seconds"));
-      }, 60000); // 60 seconds timeout
+      }, 300000); 
     });
 
     archive.on("error", (err) => {
@@ -149,15 +142,12 @@ const createBackup = async (userId) => {
       clearTimeout(streamTimeout);
     });
 
-    // Append SQL file
     console.log("Adding SQL file to ZIP...");
     archive.file(tempSqlPath, { name: sqlFilename });
 
-    // Append all files from the specified data directory
     console.log(`Adding files from ${dataDir} to ZIP...`);
     archive.directory(dataDir, "data");
 
-    // Finalize archive
     console.log("Finalizing ZIP archive...");
     await Promise.race([
       new Promise((resolve, reject) => {
@@ -168,7 +158,6 @@ const createBackup = async (userId) => {
       timeoutPromise,
     ]);
 
-    // Log backup in database
     console.log("Logging backup to database...");
     const [result] = await connection.execute(
       "INSERT INTO backups (backup_filename, created_by) VALUES (?,?)",
@@ -192,7 +181,6 @@ const createBackup = async (userId) => {
         }),
     };
   } catch (error) {
-    // Clean up temp file if it exists
     if (fs.existsSync(tempSqlPath)) {
       fs.unlinkSync(tempSqlPath);
       console.log("Cleaned up temp file due to error:", tempSqlPath);

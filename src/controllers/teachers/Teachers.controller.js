@@ -306,7 +306,7 @@ exports.toggleTeacherStatus = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `Teacher ${statusMessage} successfully`,
+      message: `Teacher ${statusMessage} successfully`,      
       data: result,
       timestamp: new Date().toISOString(),
     });

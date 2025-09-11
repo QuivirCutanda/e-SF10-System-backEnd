@@ -98,7 +98,6 @@ const createNewClassSchedule = async (scheduleData, userId) => {
       end_time,
     } = scheduleData;
 
-    // Check if subject exists
     const [subject] = await connection.execute(
       "SELECT subject_id, subject_name FROM subjects WHERE subject_id = ?",
       [subject_id]

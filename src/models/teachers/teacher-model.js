@@ -33,7 +33,7 @@ const fetchAllTeachers = async () => {
       teacher_address: row.teacher_address,
       date_of_birth: row.date_of_birth
         ? row.date_of_birth.toISOString().split("T")[0]
-        : null, // normalize YYYY-MM-DD
+        : null, 
       email: row.email,
       contact_number: row.contact_number,
       is_active: Boolean(row.is_active),

@@ -90,7 +90,6 @@ const updateTransferRequestModel = async (transferId, requestStatus, userId) => 
 
     console.log('updateTransferRequestModel - Params:', { transferId, requestStatus, userId });
 
-    // Validate userId exists in users table
     const [userCheck] = await connection.execute(
       `SELECT user_id FROM users WHERE user_id = ?`,
       [userId]
@@ -99,7 +98,6 @@ const updateTransferRequestModel = async (transferId, requestStatus, userId) => 
       throw new Error('Invalid user ID');
     }
 
-    // Check if transfer request exists and is not deleted
     const [existing] = await connection.execute(
       `SELECT transfer_id, request_status FROM transfer_requests WHERE transfer_id = ? AND request_status != 'Deleted'`,
       [transferId]
@@ -108,7 +106,6 @@ const updateTransferRequestModel = async (transferId, requestStatus, userId) => 
       throw new Error('Transfer request not found or has been deleted');
     }
 
-    // Update transfer request
     const [result] = await connection.execute(
       `UPDATE transfer_requests 
        SET request_status = ?, processed_by = ?, processed_at = CURRENT_TIMESTAMP
@@ -120,12 +117,10 @@ const updateTransferRequestModel = async (transferId, requestStatus, userId) => 
       throw new Error('Failed to update transfer request');
     }
 
-    // Log activity (ensure logActivity is defined and handles errors gracefully)
     try {
       await logActivity(userId, `Updated transfer request ID ${transferId} to status ${requestStatus}`);
     } catch (logError) {
       console.error('Log Activity Error:', logError);
-      // Optionally, decide whether to throw or continue based on your requirements
     }
 
     await connection.commit();

@@ -20,22 +20,20 @@ const addStudent = async (req, res) => {
 const bulkRegisterStudents = async (req, res) => {
     try {
         const userId = req.user.user_id;
-        const jsonData = req.validatedStudents; // Use validated data from middleware
-        const skippedRows = req.skippedRows || []; // Get skipped rows from middleware
+        const jsonData = req.validatedStudents; 
+        const skippedRows = req.skippedRows || []; 
 
         const results = [];
         const errors = [];
-        const skipped = [...skippedRows]; // Include LRN validation skips
+        const skipped = [...skippedRows]; 
 
         for (const [index, student] of jsonData.entries()) {
             try {
-                // Validate required fields
                 if (!student.lrn || !student.first_name || !student.last_name || !student.date_of_birth || !student.gender) {
                     errors.push(`Row ${index + 2}: Missing required fields`);
                     continue;
                 }
 
-                // Check for duplicate LRN in database
                 const [existingLRN] = await db.execute(
                     'SELECT * FROM students WHERE lrn = ?',
                     [student.lrn.toString()]
@@ -46,7 +44,6 @@ const bulkRegisterStudents = async (req, res) => {
                     continue;
                 }
 
-                // Check for duplicate name combination in database
                 const [existingName] = await db.execute(
                     'SELECT * FROM students WHERE first_name = ? AND middle_name = ? AND last_name = ?',
                     [

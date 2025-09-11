@@ -39,13 +39,11 @@ class SchoolDefaultModel {
       ]
     );
 
-    // Log activity
     await db.query(
       'INSERT INTO activity_logs (user_id, action) VALUES (?, ?)',
       [updated_by, `Created school default with ID ${school_id}`]
     );
 
-    // Fetch the created school default with user info
     const [school] = await db.query(
       `SELECT s.*, 
               u.user_id, u.first_name, u.middle_name, u.last_name, u.email
@@ -75,13 +73,11 @@ class SchoolDefaultModel {
       website
     } = data;
 
-    // Check if school exists
     const [existing] = await db.query('SELECT * FROM school_defaults WHERE school_id = ?', [school_id]);
     if (existing.length === 0) {
       throw new Error('School not found');
     }
 
-    // Handle old logo deletion if new logo is provided
     if (school_logo && existing[0].school_logo) {
       const oldLogoPath = path.join(__dirname, '../../data', existing[0].school_logo);
       try {
@@ -124,13 +120,11 @@ class SchoolDefaultModel {
       ]
     );
 
-    // Log activity
     await db.query(
       'INSERT INTO activity_logs (user_id, action) VALUES (?, ?)',
       [updated_by, `Updated school default with ID ${school_id}`]
     );
 
-    // Fetch the updated school default with user info
     const [school] = await db.query(
       `SELECT s.*, 
               u.user_id, u.first_name, u.middle_name, u.last_name, u.email

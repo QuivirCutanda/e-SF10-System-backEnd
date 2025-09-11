@@ -159,6 +159,7 @@ exports.createEnrollment = async (req, res) => {
 
     return res.status(errorMap[error.message] || 500).json({
       success: false,
+      message:error.message,
       error: error.message || "Server error while creating enrollment",
       timestamp: new Date().toISOString(),
     });

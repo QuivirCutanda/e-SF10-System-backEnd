@@ -11,7 +11,8 @@ const {
   removeSubjectFromCurriculumModel,
   getCurriculumSubjectsModel,
   getActiveCurriculumsModel,
-  checkCurriculumNameExistsModel
+  checkCurriculumNameExistsModel,
+  toggleCurriculumStatusModel
 } = require('../../models/curriculum/curriculum.model');
 const { validationResult } = require('express-validator');
 
@@ -32,7 +33,6 @@ exports.createCurriculum = async (req, res) => {
   }
 
   try {
-    // Check if curriculum name already exists for the same school year
     const nameExists = await checkCurriculumNameExistsModel(curriculum_name, school_year_id);
     if (nameExists) {
       return res.status(409).json({
@@ -174,7 +174,6 @@ exports.updateCurriculum = async (req, res) => {
   }
 
   try {
-    // Check for name conflicts if updating name
     if (curriculum_name && school_year_id) {
       const nameExists = await checkCurriculumNameExistsModel(curriculum_name, school_year_id, curriculumId);
       if (nameExists) {
@@ -337,7 +336,6 @@ exports.addSubjectToCurriculum = async (req, res) => {
   }
 
   try {
-    // Fetch curriculum name first
     const [curriculum] = await db.execute(
       'SELECT curriculum_name FROM curriculum WHERE curriculum_id = ?',
       [curriculumId]
@@ -518,11 +516,19 @@ exports.toggleCurriculumStatus = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Curriculum status updated successfully',
+      message: result.message,
       data: result
     });
   } catch (error) {
     console.error('Toggle Curriculum Status Error:', error);
+    
+    if (error.message.includes('cannot be deactivated') || error.message.includes('active curriculum')) {
+      return res.status(400).json({
+        success: false,
+        error: error.message,
+        details: process.env.NODE_ENV === 'development' ? error.message : 'Cannot deactivate the only active curriculum'
+      });
+    }
     
     return res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,

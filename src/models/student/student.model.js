@@ -6,7 +6,6 @@ const createStudent = async (data, userId) => {
   try {
     await connection.beginTransaction();
 
-    // Check for duplicate LRN
     const [existingLrn] = await connection.execute(
       'SELECT lrn FROM students WHERE lrn = ?',
       [data.lrn]
@@ -15,7 +14,6 @@ const createStudent = async (data, userId) => {
       throw new Error('Registration failed: LRN already exists in the database');
     }
 
-    // Check for duplicate name combination
     const [existingName] = await connection.execute(
       'SELECT * FROM students WHERE first_name = ? AND middle_name = ? AND last_name = ?',
       [data.first_name, data.middle_name, data.last_name]

@@ -14,19 +14,18 @@ exports.createSchoolYear = async (req, res) => {
   if (!start_year || !end_year) {
     return res.status(400).json({
       success: false,
-      error: 'Start year and end year are required',
+      message: 'Start year and end year are required',
       timestamp: new Date().toISOString()
     });
   }
 
-  // Validate year format and logic
   const startYearNum = parseInt(start_year);
   const endYearNum = parseInt(end_year);
 
   if (isNaN(startYearNum) || isNaN(endYearNum)) {
     return res.status(400).json({
       success: false,
-      error: 'Start year and end year must be valid numbers',
+      message: 'Start year and end year must be valid numbers',
       timestamp: new Date().toISOString()
     });
   }
@@ -34,7 +33,7 @@ exports.createSchoolYear = async (req, res) => {
   if (startYearNum >= endYearNum) {
     return res.status(400).json({
       success: false,
-      error: 'Start year must be less than end year',
+      message: 'Start year must be less than end year',
       timestamp: new Date().toISOString()
     });
   }
@@ -42,18 +41,17 @@ exports.createSchoolYear = async (req, res) => {
   if (endYearNum - startYearNum !== 1) {
     return res.status(400).json({
       success: false,
-      error: 'School year must span exactly one academic year (e.g., 2023-2024)',
+      message: 'School year must span exactly one academic year (e.g., 2023-2024)',
       timestamp: new Date().toISOString()
     });
   }
 
   try {
-    // Check if school year already exists
     const exists = await checkSchoolYearExists(startYearNum, endYearNum);
     if (exists) {
       return res.status(409).json({
         success: false,
-        error: 'School year already exists',
+        message: 'School year already exists',
         timestamp: new Date().toISOString()
       });
     }
@@ -106,7 +104,6 @@ exports.getAllSchoolYears = async (req, res) => {
   }
 };
 
-// Get school year by ID
 exports.getSchoolYearById = async (req, res) => {
   const schoolYearId = parseInt(req.params.id);
 
@@ -145,7 +142,6 @@ exports.getSchoolYearById = async (req, res) => {
   }
 };
 
-// Update school year
 exports.updateSchoolYear = async (req, res) => {
   const schoolYearId = parseInt(req.params.id);
   const { start_year, end_year, is_active } = req.body;
@@ -158,7 +154,6 @@ exports.updateSchoolYear = async (req, res) => {
     });
   }
 
-  // Validation
   if (!start_year || !end_year) {
     return res.status(400).json({
       success: false,
@@ -167,7 +162,6 @@ exports.updateSchoolYear = async (req, res) => {
     });
   }
 
-  // Validate year format and logic
   const startYearNum = parseInt(start_year);
   const endYearNum = parseInt(end_year);
 
@@ -196,7 +190,6 @@ exports.updateSchoolYear = async (req, res) => {
   }
 
   try {
-    // Check if school year exists
     const existingSchoolYear = await getSchoolYearByIdModel(schoolYearId);
     if (!existingSchoolYear) {
       return res.status(404).json({
@@ -231,7 +224,6 @@ exports.updateSchoolYear = async (req, res) => {
   }
 };
 
-// Set active school year (deactivates others)
 exports.setActiveSchoolYear = async (req, res) => {
   const schoolYearId = parseInt(req.params.id);
 
@@ -244,7 +236,6 @@ exports.setActiveSchoolYear = async (req, res) => {
   }
 
   try {
-    // Check if school year exists
     const existingSchoolYear = await getSchoolYearByIdModel(schoolYearId);
     if (!existingSchoolYear) {
       return res.status(404).json({
@@ -272,7 +263,6 @@ exports.setActiveSchoolYear = async (req, res) => {
   }
 };
 
-// Delete school year
 exports.deleteSchoolYear = async (req, res) => {
   const schoolYearId = parseInt(req.params.id);
 
@@ -285,7 +275,6 @@ exports.deleteSchoolYear = async (req, res) => {
   }
 
   try {
-    // Check if school year exists
     const existingSchoolYear = await getSchoolYearByIdModel(schoolYearId);
     if (!existingSchoolYear) {
       return res.status(404).json({
@@ -305,7 +294,6 @@ exports.deleteSchoolYear = async (req, res) => {
   } catch (error) {
     console.error('Delete School Year Error:', error);
     
-    // Handle foreign key constraint errors
     if (error.message.includes('foreign key constraint') || error.code === 'ER_ROW_IS_REFERENCED_2') {
       return res.status(409).json({
         success: false,

@@ -6,7 +6,6 @@ const authorizePermission = (...requiredPermissions) => async (req, res, next) =
     const userId = req.user.user_id;
     const permissions = await getPermissionsByUserId(userId);
 
-    // Check if user has all required permissions
     const missingPermissions = requiredPermissions.filter(perm => !permissions[perm]);
 
     if (missingPermissions.length > 0) {

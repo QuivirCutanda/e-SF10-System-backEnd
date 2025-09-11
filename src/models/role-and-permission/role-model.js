@@ -1,6 +1,5 @@
 const db = require('../../config/db');
 
-// Get all roles and their associated permissions
 const getAllRolesAndPermissions = async () => {
   try {
     const [rows] = await db.execute(
@@ -36,17 +35,14 @@ const getAllRolesAndPermissions = async () => {
   }
 };
 
-// Get all available roles and all available permissions separately
 const getAllRolesAndPermissionsSeparately = async () => {
   try {
-    // Fetch all roles
     const [roleRows] = await db.execute(
       `SELECT role_id, role_name
        FROM roles
        ORDER BY role_name`
     );
 
-    // Fetch all permissions
     const [permissionRows] = await db.execute(
       `SELECT permission_id, permission_name
        FROM permissions
@@ -69,15 +65,12 @@ const getAllRolesAndPermissionsSeparately = async () => {
   }
 };
 
-// Create a new role with selected permissions
 const createNewRole = async (roleName, permissionIds, userId) => {
   try {
-    // Validate userId
     if (!userId || !Number.isInteger(userId)) {
       throw new Error('Invalid user ID for logging');
     }
 
-    // Check if role name already exists
     const [existingRole] = await db.execute(
       'SELECT role_id FROM roles WHERE role_name = ?',
       [roleName]
@@ -86,7 +79,6 @@ const createNewRole = async (roleName, permissionIds, userId) => {
       throw new Error('Role name already exists');
     }
 
-    // Insert new role
     const [roleResult] = await db.execute(
       'INSERT INTO roles (role_name) VALUES (?)',
       [roleName]
@@ -94,13 +86,10 @@ const createNewRole = async (roleName, permissionIds, userId) => {
     const roleId = roleResult.insertId;
     console.log(`Role created: role_id=${roleId}, role_name=${roleName}`);
 
-    // Validate and insert permissions if provided
     if (permissionIds.length > 0) {
-      // Generate placeholders for IN clause (e.g., ?,?,?)
       const placeholders = permissionIds.map(() => '?').join(',');
       const query = `SELECT permission_id FROM permissions WHERE permission_id IN (${placeholders})`;
 
-      // Flatten permissionIds for query parameters
       const [validPermissions] = await db.execute(query, permissionIds);
       const validPermissionIds = validPermissions.map(p => p.permission_id);
       console.log('Input permission IDs:', permissionIds);
@@ -110,7 +99,6 @@ const createNewRole = async (roleName, permissionIds, userId) => {
         throw new Error('Invalid permission IDs');
       }
 
-      // Insert permissions using INSERT ... SELECT
       const insertQuery = `INSERT INTO role_permissions (role_id, permission_id)
                            SELECT ?, permission_id
                            FROM permissions
@@ -121,14 +109,12 @@ const createNewRole = async (roleName, permissionIds, userId) => {
       console.log('No permissions provided for role_id=', roleId);
     }
 
-    // Log role creation to activity_logs
     const [logResult] = await db.execute(
       'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',
       [userId, `Created role ${roleName} with ID ${roleId}`]
     );
     console.log(`Activity log created: log_id=${logResult.insertId}, user_id=${userId}`);
 
-    // Fetch the created role with its permissions
     const [rows] = await db.execute(
       `SELECT r.role_id, r.role_name, p.permission_id, p.permission_name
        FROM roles r
@@ -138,7 +124,6 @@ const createNewRole = async (roleName, permissionIds, userId) => {
       [roleId]
     );
 
-    // Transform the result
     const role = {
       role_id: roleId,
       role_name: roleName,
@@ -160,16 +145,13 @@ const createNewRole = async (roleName, permissionIds, userId) => {
   }
 };
 
-// Update user roles
 const updateUserRole = async (userId, roleIds, requesterId) => {
   let connection;
   try {
-    // Validate requesterId
     if (!requesterId || !Number.isInteger(requesterId)) {
       throw new Error('Invalid requester ID for logging');
     }
 
-    // Check if user exists
     const [userResult] = await db.execute(
       'SELECT user_id FROM users WHERE user_id = ?',
       [userId]
@@ -178,7 +160,6 @@ const updateUserRole = async (userId, roleIds, requesterId) => {
       throw new Error('User not found');
     }
 
-    // Validate role IDs
     if (roleIds.length > 0) {
       const placeholders = roleIds.map(() => '?').join(',');
       const query = `SELECT role_id FROM roles WHERE role_id IN (${placeholders})`;
@@ -190,19 +171,15 @@ const updateUserRole = async (userId, roleIds, requesterId) => {
       }
     }
 
-    // Get a connection for the transaction
     connection = await db.getConnection();
 
-    // Begin transaction
     await connection.beginTransaction();
 
-    // Delete existing roles for the user
     await connection.execute(
       'DELETE FROM user_roles WHERE user_id = ?',
       [userId]
     );
 
-    // Insert new roles if provided
     if (roleIds.length > 0) {
       const placeholders = roleIds.map(() => '(?, ?)').join(',');
       const values = roleIds.flatMap(roleId => [userId, roleId]);
@@ -213,7 +190,6 @@ const updateUserRole = async (userId, roleIds, requesterId) => {
       console.log(`No roles assigned for user_id=${userId}`);
     }
 
-    // Log role update to activity_logs
     const roleIdsStr = roleIds.length > 0 ? roleIds.join(', ') : 'none';
     const [logResult] = await connection.execute(
       'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',
@@ -221,10 +197,8 @@ const updateUserRole = async (userId, roleIds, requesterId) => {
     );
     console.log(`Activity log created: log_id=${logResult.insertId}, requester_id=${requesterId}`);
 
-    // Commit transaction
     await connection.commit();
 
-    // Fetch the updated user roles
     const [rows] = await connection.execute(
       `SELECT ur.user_id, ur.role_id, r.role_name
        FROM user_roles ur
@@ -233,7 +207,6 @@ const updateUserRole = async (userId, roleIds, requesterId) => {
       [userId]
     );
 
-    // Transform the result
     const userRoles = {
       user_id: userId,
       roles: rows.map(row => ({
@@ -244,14 +217,12 @@ const updateUserRole = async (userId, roleIds, requesterId) => {
 
     return userRoles;
   } catch (err) {
-    // Rollback transaction on error
     if (connection) {
       await connection.rollback();
     }
     console.error('Error in updateUserRole:', err);
     throw new Error(err.message);
   } finally {
-    // Release the connection
     if (connection) {
       connection.release();
     }

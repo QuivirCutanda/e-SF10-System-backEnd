@@ -1,6 +1,5 @@
 const { getAllActivityLogs, getUserActivityLogs } = require('../../models/activityLog.model');
 
-// Existing controller for all activity log
 exports.viewActivityLogs = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -26,7 +25,6 @@ exports.viewActivityLogs = async (req, res) => {
   }
 };
 
-// New controller for user-specific activity logs
 exports.viewUserActivityLogs = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;

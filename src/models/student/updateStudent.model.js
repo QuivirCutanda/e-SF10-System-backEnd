@@ -55,14 +55,12 @@ const updateStudent = async (lrn, updateData, userId) => {
         return null;
     }
 
-    // Log the update action
     const logSql = `
         INSERT INTO activity_logs (user_id, action)
         VALUES (?, ?)
     `;
     await db.query(logSql, [userId, `Updated student info for LRN: ${lrn}`]);
 
-    // Fetch updated student data
     const fetchSql = `
         SELECT 
             student_id, 
