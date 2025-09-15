@@ -7,7 +7,9 @@ const {
   deleteSubjectModel,
   searchSubjectsModel,
   getSubjectsByGradeLevelModel,
-  checkSubjectCodeExistsModel 
+  checkSubjectCodeExistsModel,
+  getAllGradeLevelsModel
+
 } = require('../../models/subject/subject.model');
 const { validationResult } = require('express-validator');
 const { logActivity } = require('../../utils/activityLog');
@@ -118,6 +120,50 @@ exports.getAllSubjects = async (req, res) => {
     if (connection) await connection.release();
   }
 };
+
+
+exports.getAllGradeLevels = async (req, res) => {
+  let { page = 1, limit = 10 } = req.query;
+  page = parseInt(page) > 0 ? parseInt(page) : 1;
+  limit = parseInt(limit) > 0 ? parseInt(limit) : 10;
+  const offset = (page - 1) * limit;
+  let connection;
+
+  try {
+    connection = await db.getConnection();
+
+    const { gradeLevels, total, curriculum } = await getAllGradeLevelsModel(
+      limit,
+      offset
+    );
+
+    return res.status(200).json({
+      success: true,
+      curriculum,
+      data: gradeLevels,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error('Get All Grade Levels Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error retrieving grade levels',
+      details:
+        process.env.NODE_ENV === 'development'
+          ? error.message
+          : 'Please try again later',
+      timestamp: new Date().toISOString(),
+    });
+  } finally {
+    if (connection) await connection.release();
+  }
+};
+
 
 exports.getSubjectById = async (req, res) => {
   const errors = validationResult(req);

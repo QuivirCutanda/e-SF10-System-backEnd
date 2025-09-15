@@ -1,0 +1,120 @@
+--------------------------------------------------
+## view-all-sub-grade-levels
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        GET
+    -EndPoint
+         http://localhost:3001/esf10/subjects/view-all-sub-grade-levels
+--------------------------------------------------
+
+
+*This endpoint is get all subject by grade level who is active curriculum
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "curriculum": {
+        "curriculum_id": 2,
+        "curriculum_name": "k-13",
+        "school_year_id": 3
+    },
+    "data": [
+        {
+            "grade_level_id": 1,
+            "grade_code": "G1",
+            "grade_name": "Grade1",
+            "sections": [
+                {
+                    "section_id": 4,
+                    "section_name": "Section A"
+                }
+            ],
+            "subjects": [
+                {
+                    "subject_id": 1,
+                    "subject_code": "MATH-101",
+                    "subject_name": "Math"
+                }
+            ]
+        },
+        {
+            "grade_level_id": 2,
+            "grade_code": "G2",
+            "grade_name": "Grade2",
+            "sections": [],
+            "subjects": [
+                {
+                    "subject_id": 1,
+                    "subject_code": "MATH-101",
+                    "subject_name": "Math"
+                }
+            ]
+        },
+        {
+            "grade_level_id": 3,
+            "grade_code": "G3",
+            "grade_name": "Garde3",
+            "sections": [],
+            "subjects": [
+                {
+                    "subject_id": 1,
+                    "subject_code": "MATH-101",
+                    "subject_name": "Math"
+                }
+            ]
+        },
+        {
+            "grade_level_id": 4,
+            "grade_code": "G4",
+            "grade_name": "Grade4",
+            "sections": [],
+            "subjects": [
+                {
+                    "subject_id": 1,
+                    "subject_code": "MATH-101",
+                    "subject_name": "Math"
+                }
+            ]
+        },
+        {
+            "grade_level_id": 5,
+            "grade_code": "G5",
+            "grade_name": "grade5",
+            "sections": [],
+            "subjects": [
+                {
+                    "subject_id": 1,
+                    "subject_code": "MATH-101",
+                    "subject_name": "Math"
+                }
+            ]
+        },
+        {
+            "grade_level_id": 7,
+            "grade_code": "G6",
+            "grade_name": "Grade6",
+            "sections": [],
+            "subjects": [
+                {
+                    "subject_id": 1,
+                    "subject_code": "MATH-101",
+                    "subject_name": "Math"
+                }
+            ]
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 6,
+        "totalPages": 1
+    }
+}

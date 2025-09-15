@@ -136,6 +136,113 @@ const getAllSubjectsModel = async (limit, offset, gradeLevelId = null) => {
   }
 };
 
+const getAllGradeLevelsModel = async (limit, offset) => {
+  let connection;
+  try {
+    connection = await db.getConnection();
+
+    const [activeCurr] = await connection.execute(
+      `SELECT c.curriculum_id, c.curriculum_name, c.school_year_id
+       FROM curriculum c
+       WHERE c.is_active = 1
+       LIMIT 1`
+    );
+
+    if (activeCurr.length === 0) {
+      return { gradeLevels: [], total: 0, curriculum: null };
+    }
+
+    const { curriculum_id, curriculum_name, school_year_id } = activeCurr[0];
+
+    const query = `
+      SELECT 
+        gl.grade_level_id,
+        gl.grade_code,
+        gl.grade_name,
+        s.section_id,
+        s.section_name,
+        subj.subject_id,
+        subj.subject_code,
+        subj.subject_name
+      FROM grade_levels gl
+      LEFT JOIN sections s 
+        ON gl.grade_level_id = s.grade_level_id 
+       AND s.school_year_id = ?
+      LEFT JOIN curriculum_subjects cs 
+        ON cs.curriculum_id = ?
+      LEFT JOIN subjects subj 
+        ON cs.subject_id = subj.subject_id
+      LEFT JOIN subject_grade_levels sgl
+        ON subj.subject_id = sgl.subject_id
+       AND gl.grade_level_id = sgl.grade_level_id
+      ORDER BY gl.grade_order, s.section_name, subj.subject_name
+      LIMIT ? OFFSET ?
+    `;
+
+    const [rows] = await connection.execute(query, [
+      school_year_id,
+      curriculum_id,
+      parseInt(limit),
+      parseInt(offset),
+    ]);
+
+    const [countRows] = await connection.execute(
+      `SELECT COUNT(*) as total FROM grade_levels`
+    );
+
+    const gradeLevelsMap = {};
+
+    rows.forEach((row) => {
+      if (!gradeLevelsMap[row.grade_level_id]) {
+        gradeLevelsMap[row.grade_level_id] = {
+          grade_level_id: row.grade_level_id,
+          grade_code: row.grade_code,
+          grade_name: row.grade_name,
+          sections: {},
+          subjects: {},
+        };
+      }
+
+      if (row.section_id) {
+        gradeLevelsMap[row.grade_level_id].sections[row.section_id] = {
+          section_id: row.section_id,
+          section_name: row.section_name,
+        };
+      }
+
+      if (row.subject_id) {
+        gradeLevelsMap[row.grade_level_id].subjects[row.subject_id] = {
+          subject_id: row.subject_id,
+          subject_code: row.subject_code,
+          subject_name: row.subject_name,
+        };
+      }
+    });
+
+    const gradeLevels = Object.values(gradeLevelsMap).map((gl) => ({
+      ...gl,
+      sections: Object.values(gl.sections),
+      subjects: Object.values(gl.subjects),
+    }));
+
+    return {
+      gradeLevels,
+      total: countRows[0].total,
+      curriculum: {
+        curriculum_id,
+        curriculum_name,
+        school_year_id,
+      },
+    };
+  } catch (err) {
+    console.error('Model Error:', err);
+    throw new Error('Failed to retrieve grade levels from database');
+  } finally {
+    if (connection) await connection.release();
+  }
+};
+
+
 const getSubjectByIdModel = async (subjectId) => {
   let connection;
   try {
@@ -453,5 +560,6 @@ module.exports = {
   getSubjectByIdModel,
   updateSubjectModel,
   searchSubjectsModel,
-  checkSubjectCodeExistsModel
+  checkSubjectCodeExistsModel,
+  getAllGradeLevelsModel
 };

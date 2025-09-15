@@ -11,6 +11,7 @@ const {
   getSubjectById, 
   updateSubject, 
   searchSubjects,
+  getAllGradeLevels
 } = require('../controllers/subject/subject.controller');
 
 // Validation middleware for search query
@@ -62,6 +63,14 @@ router.get(
   authorizePermission('view_subjects', 'manage_subjects'),
   validatePagination,
   getAllSubjects
+);
+
+router.get(
+  '/view-all-sub-grade-levels',
+  authenticate,
+  authorizePermission('view_grade_levels', 'manage_grade_levels'),
+  validatePagination,
+  getAllGradeLevels
 );
 
 router.get(
