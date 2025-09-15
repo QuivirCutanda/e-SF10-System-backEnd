@@ -1,7 +1,7 @@
 const db = require('../../config/db');
 const { logActivity } = require('../../utils/activityLog');
 
-const createCurriculumModel = async (curriculumName, schoolYearId, isActive, userId) => {
+const createCurriculumModel = async (curriculumName, schoolYearId, userId) => {
   let connection;
   try {
     connection = await db.getConnection();
@@ -18,7 +18,7 @@ const createCurriculumModel = async (curriculumName, schoolYearId, isActive, use
 
     const [result] = await connection.execute(
       'INSERT INTO curriculum (curriculum_name, school_year_id, is_active) VALUES (?, ?, ?)',
-      [curriculumName, schoolYearId, isActive]
+      [curriculumName, schoolYearId, 0]
     );
 
     await logActivity(userId, `Created curriculum: ${curriculumName} for school year ID ${schoolYearId}`);
@@ -32,6 +32,7 @@ const createCurriculumModel = async (curriculumName, schoolYearId, isActive, use
     if (connection) await connection.release();
   }
 };
+
 
 const getAllCurriculumsModel = async (limit, offset, schoolYearId = null, isActive = null) => {
   let connection;
@@ -115,7 +116,7 @@ const updateCurriculumModel = async (curriculumId, updateData, userId) => {
       'SELECT curriculum_id, curriculum_name FROM curriculum WHERE curriculum_id = ?',
       [curriculumId]
     );
-    
+
     if (existing.length === 0) {
       throw new Error('Curriculum not found');
     }
@@ -124,7 +125,7 @@ const updateCurriculumModel = async (curriculumId, updateData, userId) => {
     const updateValues = [];
 
     Object.entries(updateData).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
+      if (key !== 'is_active' && value !== undefined && value !== null) {
         updateFields.push(`${key} = ?`);
         updateValues.push(value);
       }
@@ -146,7 +147,10 @@ const updateCurriculumModel = async (curriculumId, updateData, userId) => {
       throw new Error('Failed to update curriculum');
     }
 
-    await logActivity(userId, `Updated curriculum ID ${curriculumId}: ${existing[0].curriculum_name}`);
+    await logActivity(
+      userId,
+      `Updated curriculum ID ${curriculumId}: ${existing[0].curriculum_name}`
+    );
 
     await connection.commit();
     return result;
@@ -157,6 +161,7 @@ const updateCurriculumModel = async (curriculumId, updateData, userId) => {
     if (connection) await connection.release();
   }
 };
+
 
 
 const searchCurriculumsModel = async (searchQuery, schoolYearId = null, isActive = null) => {
@@ -240,43 +245,48 @@ const getCurriculumsBySchoolYearModel = async (schoolYearId, limit, offset, isAc
   }
 };
 
-const getActiveCurriculumsModel = async (limit, offset, schoolYearId = null) => {
+const getActiveCurriculumsModel = async () => {
   let connection;
   try {
     connection = await db.getConnection();
-    
-    let query = `
+
+    const [curriculumRows] = await connection.execute(
+      `
       SELECT c.curriculum_id, c.curriculum_name, c.school_year_id, c.is_active,
              c.created_at, c.updated_at,
              CONCAT(sy.start_year, '-', sy.end_year) as school_year_period
       FROM curriculum c
       LEFT JOIN school_years sy ON c.school_year_id = sy.school_year_id
       WHERE c.is_active = TRUE
-    `;
-    let countQuery = 'SELECT COUNT(*) as total FROM curriculum WHERE is_active = TRUE';
-    let queryParams = [];
-    let countParams = [];
+      LIMIT 1
+      `
+    );
 
-    if (schoolYearId) {
-      query += ' AND c.school_year_id = ?';
-      countQuery += ' AND school_year_id = ?';
-      queryParams.push(schoolYearId);
-      countParams.push(schoolYearId);
-    }
+    if (curriculumRows.length === 0) return null;
 
-    query += ' ORDER BY c.created_at DESC LIMIT ? OFFSET ?';
-    queryParams.push(parseInt(limit), parseInt(offset));
+    const curriculum = curriculumRows[0];
 
-    const [rows] = await connection.execute(query, queryParams);
-    const [totalRows] = await connection.execute(countQuery, countParams);
-    
-    return { curriculums: rows, total: totalRows[0].total };
+    const [subjects] = await connection.execute(
+      `
+      SELECT s.subject_id, s.subject_code, s.subject_name, s.description,
+             s.created_at, s.updated_at
+      FROM curriculum_subjects cs
+      JOIN subjects s ON cs.subject_id = s.subject_id
+      WHERE cs.curriculum_id = ?
+      ORDER BY s.subject_name ASC
+      `,
+      [curriculum.curriculum_id]
+    );
+
+    curriculum.subjects = subjects;
+    return curriculum;
   } catch (err) {
     throw err;
   } finally {
     if (connection) await connection.release();
   }
 };
+
 
 
 const addSubjectToCurriculumModel = async (curriculumId, subjectId, userId) => {
@@ -448,70 +458,34 @@ const toggleCurriculumStatusModel = async (curriculumId, userId) => {
       throw new Error('Curriculum not found');
     }
 
-    const currentStatus = curriculum[0].is_active;
     const targetCurriculum = curriculum[0];
 
-    if (currentStatus === 1) {
-      const [activeCurriculums] = await connection.execute(
-        'SELECT COUNT(*) as active_count FROM curriculum WHERE is_active = 1'
-      );
-
-      if (activeCurriculums[0].active_count === 1) {
-        throw new Error('Cannot deactivate the only active curriculum. At least one curriculum must remain active.');
-      }
-
-      await connection.execute(
-        'UPDATE curriculum SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE curriculum_id = ?',
-        [curriculumId]
-      );
-
-      await logActivity(
-        userId, 
-        `Deactivated curriculum: ${targetCurriculum.curriculum_name}`
-      );
-
-      await connection.commit();
-
-      return {
-        curriculum_id: curriculumId,
-        curriculum_name: targetCurriculum.curriculum_name,
-        previous_status: true,
-        new_status: false,
-        message: 'Curriculum deactivated successfully'
-      };
-    } 
-    else {
-      await connection.execute(
-        'UPDATE curriculum SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE curriculum_id != ?',
-        [curriculumId]
-      );
-
-      await connection.execute(
-        'UPDATE curriculum SET is_active = 1, updated_at = CURRENT_TIMESTAMP WHERE curriculum_id = ?',
-        [curriculumId]
-      );
-
-      const [deactivatedCurriculums] = await connection.execute(
-        'SELECT curriculum_name FROM curriculum WHERE curriculum_id != ? AND is_active = 0',
-        [curriculumId]
-      );
-
-      await logActivity(
-        userId, 
-        `Activated curriculum: ${targetCurriculum.curriculum_name}. Automatically deactivated other curriculums: ${deactivatedCurriculums.map(c => c.curriculum_name).join(', ')}`
-      );
-
-      await connection.commit();
-
-      return {
-        curriculum_id: curriculumId,
-        curriculum_name: targetCurriculum.curriculum_name,
-        previous_status: false,
-        new_status: true,
-        deactivated_curriculums: deactivatedCurriculums.map(c => c.curriculum_name),
-        message: 'Curriculum activated successfully.'
-      };
+    if (targetCurriculum.is_active === 1) {
+      throw new Error('Cannot deactivate the only active curriculum. One curriculum must always remain active.');
     }
+
+    await connection.execute(
+      'UPDATE curriculum SET is_active = 0, updated_at = CURRENT_TIMESTAMP'
+    );
+
+    await connection.execute(
+      'UPDATE curriculum SET is_active = 1, updated_at = CURRENT_TIMESTAMP WHERE curriculum_id = ?',
+      [curriculumId]
+    );
+
+    await logActivity(
+      userId,
+      `Activated curriculum: ${targetCurriculum.curriculum_name}. All others automatically deactivated.`
+    );
+
+    await connection.commit();
+
+    return {
+      curriculum_id: curriculumId,
+      curriculum_name: targetCurriculum.curriculum_name,
+      new_status: true,
+      message: 'Curriculum activated successfully. All others were deactivated.'
+    };
 
   } catch (err) {
     if (connection) await connection.rollback();
@@ -520,6 +494,7 @@ const toggleCurriculumStatusModel = async (curriculumId, userId) => {
     if (connection) await connection.release();
   }
 };
+
 
 module.exports = {
   createCurriculumModel,

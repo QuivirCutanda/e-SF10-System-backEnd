@@ -22,7 +22,7 @@ exports.createCurriculum = async (req, res) => {
     return res.status(400).json({ success: false, errors: errors.array() });
   }
 
-  const { curriculum_name, school_year_id, is_active = true } = req.body;
+  const { curriculum_name, school_year_id } = req.body; 
   const userId = req.user?.user_id;
 
   if (!userId) {
@@ -42,16 +42,16 @@ exports.createCurriculum = async (req, res) => {
       });
     }
 
-    const result = await createCurriculumModel(curriculum_name, school_year_id, is_active, userId);
+    const result = await createCurriculumModel(curriculum_name, school_year_id, userId);
 
     return res.status(201).json({
       success: true,
-      message: 'Curriculum created successfully',
+      message: 'Curriculum created successfully (inactive by default)',
       data: {
         curriculum_id: result.insertId,
         curriculum_name,
         school_year_id,
-        is_active,
+        is_active: 0,
       },
     });
   } catch (error) {
@@ -87,6 +87,7 @@ exports.createCurriculum = async (req, res) => {
     });
   }
 };
+
 
 exports.getAllCurriculums = async (req, res) => {
   let { page = 1, limit = 10, school_year_id, is_active } = req.query;
@@ -155,6 +156,7 @@ exports.getCurriculumById = async (req, res) => {
   }
 };
 
+
 exports.updateCurriculum = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -163,7 +165,7 @@ exports.updateCurriculum = async (req, res) => {
 
   const { id } = req.params;
   const curriculumId = parseInt(id, 10);
-  const { curriculum_name, school_year_id, is_active } = req.body;
+  const { curriculum_name, school_year_id } = req.body; 
   const userId = req.user?.user_id;
 
   if (!userId) {
@@ -175,7 +177,11 @@ exports.updateCurriculum = async (req, res) => {
 
   try {
     if (curriculum_name && school_year_id) {
-      const nameExists = await checkCurriculumNameExistsModel(curriculum_name, school_year_id, curriculumId);
+      const nameExists = await checkCurriculumNameExistsModel(
+        curriculum_name,
+        school_year_id,
+        curriculumId
+      );
       if (nameExists) {
         return res.status(409).json({
           success: false,
@@ -185,8 +191,12 @@ exports.updateCurriculum = async (req, res) => {
       }
     }
 
-    const result = await updateCurriculumModel(curriculumId, { curriculum_name, school_year_id, is_active }, userId);
-    
+    const result = await updateCurriculumModel(
+      curriculumId,
+      { curriculum_name, school_year_id }, 
+      userId
+    );
+
     return res.status(200).json({
       success: true,
       message: 'Curriculum updated successfully',
@@ -194,7 +204,7 @@ exports.updateCurriculum = async (req, res) => {
     });
   } catch (error) {
     console.error('Update Curriculum Error:', error);
-    
+
     if (error.code === 'ER_NO_REFERENCED_ROW_2') {
       return res.status(400).json({
         success: false,
@@ -207,7 +217,7 @@ exports.updateCurriculum = async (req, res) => {
     const errorMessage = error.message.includes('not found')
       ? 'Curriculum not found'
       : 'Server error updating curriculum';
-    
+
     return res.status(statusCode).json({
       success: false,
       error: errorMessage,
@@ -280,34 +290,30 @@ exports.getCurriculumsBySchoolYear = async (req, res) => {
 };
 
 exports.getActiveCurriculums = async (req, res) => {
-  let { page = 1, limit = 10, school_year_id } = req.query;
-  page = Math.max(1, parseInt(page)) || 1;
-  limit = Math.max(1, parseInt(limit)) || 10;
-  const offset = (page - 1) * limit;
-
   try {
-    const { curriculums, total } = await getActiveCurriculumsModel(limit, offset, school_year_id);
+    const curriculum = await getActiveCurriculumsModel();
+
+    if (!curriculum) {
+      return res.status(404).json({
+        success: false,
+        error: 'No active curriculum found',
+      });
+    }
 
     return res.status(200).json({
       success: true,
-      data: curriculums,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit)
-      },
-      filters: school_year_id ? { school_year_id } : {}
+      data: curriculum,
     });
   } catch (error) {
-    console.error('Get Active Curriculums Error:', error);
+    console.error('Get Active Curriculum Error:', error);
     return res.status(500).json({
       success: false,
-      error: 'Server error retrieving active curriculums',
+      error: 'Server error retrieving active curriculum',
       details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
     });
   }
 };
+
 
 exports.addSubjectToCurriculum = async (req, res) => {
   const { validationResult } = require('express-validator');
@@ -521,15 +527,14 @@ exports.toggleCurriculumStatus = async (req, res) => {
     });
   } catch (error) {
     console.error('Toggle Curriculum Status Error:', error);
-    
-    if (error.message.includes('cannot be deactivated') || error.message.includes('active curriculum')) {
+
+    if (error.message.includes('Cannot deactivate')) {
       return res.status(400).json({
         success: false,
-        error: error.message,
-        details: process.env.NODE_ENV === 'development' ? error.message : 'Cannot deactivate the only active curriculum'
+        error: error.message
       });
     }
-    
+
     return res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
       error: error.message.includes('not found') ? 'Curriculum not found' : 'Server error toggling curriculum status',
@@ -537,3 +542,4 @@ exports.toggleCurriculumStatus = async (req, res) => {
     });
   }
 };
+
