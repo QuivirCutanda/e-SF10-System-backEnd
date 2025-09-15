@@ -1,0 +1,41 @@
+--------------------------------------------------
+## get-Students-By-Teacher
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+      http://localhost:3001/esf10/grades/students/:teacher_id
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "data": [
+        {
+            "student_id": 1,
+            "lrn": "872635423455",
+            "student_name": "Quivir A Cutanda",
+            "section": {
+                "section_id": 1,
+                "section_name": "Section A"
+            },
+            "grade_level": {
+                "grade_level_id": 1,
+                "grade_name": "Grade1"
+            },
+            "school_year": {
+                "school_year_id": 1,
+                "school_year": "2024-2025"
+            }
+        }
+    ],
+    "count": 1,
+    "timestamp": "2025-09-15T02:28:32.421Z"
+}

@@ -7,7 +7,8 @@ const {
   deleteGradeById,
   setGradeInputStatusForTeacher,
   getGradeInputStatusByTeacher,
-  getTeacherInputStatus
+  getTeacherInputStatus,
+  fetchStudentsByTeacher 
 } = require('../../models/grades-model/grades-model');
 
 exports.getAllGrades = async (req, res) => {
@@ -397,3 +398,25 @@ exports.getGradeInputStatus = async (req, res) => {
   }
 };
 
+exports.getStudentsByTeacher = async (req, res) => {
+  try {
+    const { teacherId } = req.params;
+
+    const students = await fetchStudentsByTeacher(teacherId);
+
+    return res.status(200).json({
+      success: true,
+      data: students,
+      count: students.length,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Get Students By Teacher Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error while fetching students',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+};

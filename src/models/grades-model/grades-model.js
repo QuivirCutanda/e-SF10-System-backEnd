@@ -569,7 +569,60 @@ const getGradeInputStatusByTeacher = async (teacherId) => {
   }
 };
 
+
+const fetchStudentsByTeacher = async (teacherId) => {
+  try {
+    const query = `
+      SELECT DISTINCT
+        st.student_id,
+        st.lrn,
+        CONCAT(st.first_name, ' ', COALESCE(st.middle_name, ''), ' ', st.last_name, ' ', COALESCE(st.extension_name, '')) AS student_name,
+        sec.section_id,
+        sec.section_name,
+        gl.grade_level_id,
+        gl.grade_name,
+        sy.school_year_id,
+        CONCAT(sy.start_year, '-', sy.end_year) AS school_year
+      FROM teacher_assignments ta
+      JOIN sections sec ON ta.section_id = sec.section_id
+      JOIN enrollment e ON sec.section_id = e.section_id
+      JOIN students st ON e.student_id = st.student_id
+      JOIN grade_levels gl ON e.grade_level_id = gl.grade_level_id
+      JOIN school_years sy ON e.school_year_id = sy.school_year_id
+      WHERE ta.teacher_id = ?
+        AND sy.is_active = TRUE
+        AND e.status = 'Enrolled'
+      ORDER BY gl.grade_order ASC, sec.section_name ASC, st.last_name ASC, st.first_name ASC
+    `;
+
+    const [rows] = await db.execute(query, [teacherId]);
+
+    return rows.map((row) => ({
+      student_id: row.student_id,
+      lrn: row.lrn,
+      student_name: row.student_name.trim(),
+      section: {
+        section_id: row.section_id,
+        section_name: row.section_name,
+      },
+      grade_level: {
+        grade_level_id: row.grade_level_id,
+        grade_name: row.grade_name,
+      },
+      school_year: {
+        school_year_id: row.school_year_id,
+        school_year: row.school_year,
+      }
+    }));
+  } catch (err) {
+    console.error('Error in fetchStudentsByTeacher:', err);
+    throw new Error(`Error fetching students by teacher: ${err.message}`);
+  }
+};
+
+
 module.exports = {
+  fetchStudentsByTeacher,
   fetchAllGrades,
   fetchGradesByStudent,
   fetchGradesBySection,
