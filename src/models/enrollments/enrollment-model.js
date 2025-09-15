@@ -148,7 +148,6 @@ const fetchActiveEnrollments = async () => {
 
       WHERE e.status = 'Enrolled'
         AND sy.is_active = TRUE
-        AND c.is_active = TRUE
 
       GROUP BY 
         e.enrollment_id,

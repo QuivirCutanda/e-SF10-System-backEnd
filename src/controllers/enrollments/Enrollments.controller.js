@@ -20,7 +20,7 @@ exports.getAllEnrollments = async (req, res) => {
     console.error('Get All Enrollments Error:', error);
     return res.status(500).json({
       success: false,
-      error: 'Server error while fetching enrollments',
+      message: 'Server error while fetching enrollments',
       details: error.message,
       timestamp: new Date().toISOString()
     });
@@ -42,7 +42,7 @@ exports.getActiveEnrollments = async (req, res) => {
     console.error('Get Active Enrollments Error:', error);
     return res.status(500).json({
       success: false,
-      error: 'Server error while fetching active enrollments',
+      message: 'Server error while fetching active enrollments',
       details: error.message,
       timestamp: new Date().toISOString()
     });
@@ -57,7 +57,7 @@ exports.getEnrollmentById = async (req, res) => {
   if (!enrollmentId || enrollmentId <= 0) {
     return res.status(400).json({
       success: false,
-      error: 'Enrollment ID must be a positive integer',
+      message: 'Enrollment ID must be a positive integer',
       timestamp: new Date().toISOString()
     });
   }
@@ -68,7 +68,7 @@ exports.getEnrollmentById = async (req, res) => {
     if (!enrollment) {
       return res.status(404).json({
         success: false,
-        error: 'Enrollment not found',
+        message: 'Enrollment not found',
         timestamp: new Date().toISOString()
       });
     }
@@ -82,7 +82,7 @@ exports.getEnrollmentById = async (req, res) => {
     console.error('Get Enrollment By ID Error:', error);
     return res.status(500).json({
       success: false,
-      error: 'Server error while fetching enrollment',
+      message: 'Server error while fetching enrollment',
       details: error.message,
       timestamp: new Date().toISOString()
     });
