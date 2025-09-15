@@ -20,9 +20,8 @@ Example requist
 
 {
   "curriculum_name": "Math Curriculum 2025",
-  "school_year_id": 1,
-  "is_active": true
-}
+  "school_year_id": 1
+  }
 
 
 

@@ -22,9 +22,8 @@ Example requist
 
 {
   "curriculum_name": "Science Curriculum 2024",
-  "school_year_id": 1,
-  "is_active": true
-}
+  "school_year_id": 1
+  }
 
 
 --------------------------------------------------
@@ -37,7 +36,6 @@ Example response
     "data": {
         "curriculum_id": 7,
         "curriculum_name": "Science Curriculum 2024",
-        "school_year_id": 1,
-        "is_active": true
+        "school_year_id": 1
     }
 }
