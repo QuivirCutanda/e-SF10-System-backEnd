@@ -226,7 +226,7 @@ exports.createTeacherAssignment = async (req, res) => {
     if (error.message.includes('Teacher is not active')) {
       return res.status(400).json({
         success: false,
-        error: 'Cannot assign inactive teacher',
+        message: 'Cannot assign inactive teacher',
         timestamp: new Date().toISOString()
       });
     }
