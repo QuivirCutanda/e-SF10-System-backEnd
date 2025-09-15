@@ -240,43 +240,48 @@ const getCurriculumsBySchoolYearModel = async (schoolYearId, limit, offset, isAc
   }
 };
 
-const getActiveCurriculumsModel = async (limit, offset, schoolYearId = null) => {
+const getActiveCurriculumsModel = async () => {
   let connection;
   try {
     connection = await db.getConnection();
-    
-    let query = `
+
+    const [curriculumRows] = await connection.execute(
+      `
       SELECT c.curriculum_id, c.curriculum_name, c.school_year_id, c.is_active,
              c.created_at, c.updated_at,
              CONCAT(sy.start_year, '-', sy.end_year) as school_year_period
       FROM curriculum c
       LEFT JOIN school_years sy ON c.school_year_id = sy.school_year_id
       WHERE c.is_active = TRUE
-    `;
-    let countQuery = 'SELECT COUNT(*) as total FROM curriculum WHERE is_active = TRUE';
-    let queryParams = [];
-    let countParams = [];
+      LIMIT 1
+      `
+    );
 
-    if (schoolYearId) {
-      query += ' AND c.school_year_id = ?';
-      countQuery += ' AND school_year_id = ?';
-      queryParams.push(schoolYearId);
-      countParams.push(schoolYearId);
-    }
+    if (curriculumRows.length === 0) return null;
 
-    query += ' ORDER BY c.created_at DESC LIMIT ? OFFSET ?';
-    queryParams.push(parseInt(limit), parseInt(offset));
+    const curriculum = curriculumRows[0];
 
-    const [rows] = await connection.execute(query, queryParams);
-    const [totalRows] = await connection.execute(countQuery, countParams);
-    
-    return { curriculums: rows, total: totalRows[0].total };
+    const [subjects] = await connection.execute(
+      `
+      SELECT s.subject_id, s.subject_code, s.subject_name, s.description,
+             s.created_at, s.updated_at
+      FROM curriculum_subjects cs
+      JOIN subjects s ON cs.subject_id = s.subject_id
+      WHERE cs.curriculum_id = ?
+      ORDER BY s.subject_name ASC
+      `,
+      [curriculum.curriculum_id]
+    );
+
+    curriculum.subjects = subjects;
+    return curriculum;
   } catch (err) {
     throw err;
   } finally {
     if (connection) await connection.release();
   }
 };
+
 
 
 const addSubjectToCurriculumModel = async (curriculumId, subjectId, userId) => {

@@ -3,7 +3,8 @@ const {
   fetchEnrollmentById, 
   createNewEnrollment, 
   updateEnrollmentById, 
-  deleteEnrollmentById 
+  deleteEnrollmentById,
+  fetchActiveEnrollments
 } = require('../../models/enrollments/enrollment-model');
 
 exports.getAllEnrollments = async (req, res) => {
@@ -25,6 +26,29 @@ exports.getAllEnrollments = async (req, res) => {
     });
   }
 };
+
+
+exports.getActiveEnrollments = async (req, res) => {
+  try {
+    const enrollments = await fetchActiveEnrollments();
+
+    return res.status(200).json({
+      success: true,
+      data: enrollments,
+      count: enrollments.length,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Get Active Enrollments Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Server error while fetching active enrollments',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+};
+
 
 exports.getEnrollmentById = async (req, res) => {
   const { id } = req.params;

@@ -280,34 +280,30 @@ exports.getCurriculumsBySchoolYear = async (req, res) => {
 };
 
 exports.getActiveCurriculums = async (req, res) => {
-  let { page = 1, limit = 10, school_year_id } = req.query;
-  page = Math.max(1, parseInt(page)) || 1;
-  limit = Math.max(1, parseInt(limit)) || 10;
-  const offset = (page - 1) * limit;
-
   try {
-    const { curriculums, total } = await getActiveCurriculumsModel(limit, offset, school_year_id);
+    const curriculum = await getActiveCurriculumsModel();
+
+    if (!curriculum) {
+      return res.status(404).json({
+        success: false,
+        error: 'No active curriculum found',
+      });
+    }
 
     return res.status(200).json({
       success: true,
-      data: curriculums,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit)
-      },
-      filters: school_year_id ? { school_year_id } : {}
+      data: curriculum,
     });
   } catch (error) {
-    console.error('Get Active Curriculums Error:', error);
+    console.error('Get Active Curriculum Error:', error);
     return res.status(500).json({
       success: false,
-      error: 'Server error retrieving active curriculums',
+      error: 'Server error retrieving active curriculum',
       details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
     });
   }
 };
+
 
 exports.addSubjectToCurriculum = async (req, res) => {
   const { validationResult } = require('express-validator');
