@@ -12,7 +12,8 @@ const {
   getCurriculumSubjectsModel,
   getActiveCurriculumsModel,
   checkCurriculumNameExistsModel,
-  toggleCurriculumStatusModel
+  toggleCurriculumStatusModel,
+  getActiveCurriculumSubjectsModel
 } = require('../../models/curriculum/curriculum.model');
 const { validationResult } = require('express-validator');
 
@@ -151,6 +152,44 @@ exports.getCurriculumById = async (req, res) => {
     return res.status(500).json({
       success: false,
       error: 'Server error retrieving curriculum',
+      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
+    });
+  }
+};
+
+exports.getActiveCurriculumSubjects = async (req, res) => {
+  let { page = 1, limit = 10, grade_level } = req.query;
+  page = Math.max(1, parseInt(page)) || 1;
+  limit = Math.max(1, parseInt(limit)) || 10;
+  const offset = (page - 1) * limit;
+
+  try {
+    const { subjects, total, curriculum } = await getActiveCurriculumSubjectsModel(limit, offset, grade_level);
+
+    if (!curriculum) {
+      return res.status(404).json({
+        success: false,
+        error: 'No active curriculum found'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      curriculum,
+      data: subjects,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      },
+      filters: grade_level ? { grade_level } : {}
+    });
+  } catch (error) {
+    console.error('Get Active Curriculum Subjects Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error retrieving active curriculum subjects',
       details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
     });
   }

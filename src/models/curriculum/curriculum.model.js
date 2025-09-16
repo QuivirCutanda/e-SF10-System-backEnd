@@ -496,6 +496,78 @@ const toggleCurriculumStatusModel = async (curriculumId, userId) => {
 };
 
 
+const getActiveCurriculumSubjectsModel = async (limit, offset, gradeLevel = null) => {
+  let connection;
+  try {
+    connection = await db.getConnection();
+
+    const [activeCurr] = await connection.execute(
+      `SELECT c.curriculum_id, c.curriculum_name, c.school_year_id
+       FROM curriculum c
+       WHERE c.is_active = 1
+       LIMIT 1`
+    );
+
+    if (activeCurr.length === 0) {
+      return { subjects: [], total: 0, curriculum: null };
+    }
+
+    const { curriculum_id, curriculum_name, school_year_id } = activeCurr[0];
+
+    let query = `
+      SELECT s.subject_id, s.subject_code, s.subject_name, s.description,
+             s.created_at, s.updated_at
+      FROM curriculum_subjects cs
+      JOIN subjects s ON cs.subject_id = s.subject_id
+    `;
+    let countQuery = `
+      SELECT COUNT(*) as total 
+      FROM curriculum_subjects cs
+      JOIN subjects s ON cs.subject_id = s.subject_id
+    `;
+    let queryParams = [];
+    let countParams = [];
+
+    query += ` WHERE cs.curriculum_id = ?`;
+    countQuery += ` WHERE cs.curriculum_id = ?`;
+    queryParams.push(curriculum_id);
+    countParams.push(curriculum_id);
+
+    if (gradeLevel) {
+      query += ` AND EXISTS (
+        SELECT 1 FROM subject_grade_levels sgl
+        WHERE sgl.subject_id = s.subject_id
+          AND sgl.grade_level_id = ?
+      )`;
+      countQuery += ` AND EXISTS (
+        SELECT 1 FROM subject_grade_levels sgl
+        WHERE sgl.subject_id = s.subject_id
+          AND sgl.grade_level_id = ?
+      )`;
+      queryParams.push(gradeLevel);
+      countParams.push(gradeLevel);
+    }
+
+    query += ` ORDER BY s.subject_name ASC LIMIT ? OFFSET ?`;
+    queryParams.push(parseInt(limit), parseInt(offset));
+
+    const [rows] = await connection.execute(query, queryParams);
+    const [totalRows] = await connection.execute(countQuery, countParams);
+
+    return {
+      subjects: rows,
+      total: totalRows[0].total,
+      curriculum: { curriculum_id, curriculum_name, school_year_id }
+    };
+  } catch (err) {
+    throw err;
+  } finally {
+    if (connection) await connection.release();
+  }
+};
+
+
+
 module.exports = {
   createCurriculumModel,
   getAllCurriculumsModel,
@@ -508,5 +580,6 @@ module.exports = {
   removeSubjectFromCurriculumModel,
   getCurriculumSubjectsModel,
   checkCurriculumNameExistsModel,
-  toggleCurriculumStatusModel
+  toggleCurriculumStatusModel,
+  getActiveCurriculumSubjectsModel
 };
