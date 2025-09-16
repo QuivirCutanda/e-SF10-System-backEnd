@@ -136,6 +136,7 @@ const getAllSubjectsModel = async (limit, offset, gradeLevelId = null) => {
   }
 };
 
+
 const getAllGradeLevelsModel = async (limit, offset) => {
   let connection;
   try {
@@ -155,74 +156,104 @@ const getAllGradeLevelsModel = async (limit, offset) => {
     const { curriculum_id, curriculum_name, school_year_id } = activeCurr[0];
 
     const query = `
-      SELECT 
+      SELECT DISTINCT
         gl.grade_level_id,
         gl.grade_code,
         gl.grade_name,
-        s.section_id,
-        s.section_name,
-        subj.subject_id,
-        subj.subject_code,
-        subj.subject_name
+        gl.grade_order
       FROM grade_levels gl
-      LEFT JOIN sections s 
-        ON gl.grade_level_id = s.grade_level_id 
-       AND s.school_year_id = ?
-      LEFT JOIN subject_grade_levels sgl
-        ON gl.grade_level_id = sgl.grade_level_id
-      LEFT JOIN subjects subj
-        ON sgl.subject_id = subj.subject_id
-      LEFT JOIN curriculum_subjects cs
-        ON subj.subject_id = cs.subject_id
-       AND cs.curriculum_id = ?
-      ORDER BY gl.grade_order, s.section_name, subj.subject_name
+      JOIN subject_grade_levels sgl ON gl.grade_level_id = sgl.grade_level_id
+      JOIN subjects s ON sgl.subject_id = s.subject_id
+      JOIN curriculum_subjects cs ON s.subject_id = cs.subject_id
+      WHERE cs.curriculum_id = ?
+      ORDER BY gl.grade_order
       LIMIT ? OFFSET ?
     `;
 
-    const [rows] = await connection.execute(query, [
-      school_year_id,
+    const [gradeLevelRows] = await connection.execute(query, [
       curriculum_id,
       parseInt(limit),
       parseInt(offset),
     ]);
 
     const [countRows] = await connection.execute(
-      `SELECT COUNT(*) as total FROM grade_levels`
+      `SELECT COUNT(DISTINCT gl.grade_level_id) as total 
+       FROM grade_levels gl
+       JOIN subject_grade_levels sgl ON gl.grade_level_id = sgl.grade_level_id
+       JOIN subjects s ON sgl.subject_id = s.subject_id
+       JOIN curriculum_subjects cs ON s.subject_id = cs.subject_id
+       WHERE cs.curriculum_id = ?`,
+      [curriculum_id]
     );
 
-    const gradeLevelsMap = {};
+    if (gradeLevelRows.length === 0) {
+      return {
+        gradeLevels: [],
+        total: 0,
+        curriculum: {
+          curriculum_id,
+          curriculum_name,
+          school_year_id,
+        },
+      };
+    }
 
-    rows.forEach((row) => {
-      if (!gradeLevelsMap[row.grade_level_id]) {
-        gradeLevelsMap[row.grade_level_id] = {
-          grade_level_id: row.grade_level_id,
-          grade_code: row.grade_code,
-          grade_name: row.grade_name,
-          sections: {},
-          subjects: {},
-        };
-      }
+    const gradeLevelIds = gradeLevelRows.map(row => row.grade_level_id);
+    const placeholders = gradeLevelIds.map(() => '?').join(',');
 
-      if (row.section_id) {
-        gradeLevelsMap[row.grade_level_id].sections[row.section_id] = {
-          section_id: row.section_id,
-          section_name: row.section_name,
-        };
-      }
+    const [sectionRows] = await connection.execute(
+      `SELECT s.section_id, s.section_name, s.grade_level_id
+       FROM sections s
+       WHERE s.grade_level_id IN (${placeholders})
+         AND s.school_year_id = ?
+       ORDER BY s.section_name`,
+      [...gradeLevelIds, school_year_id]
+    );
 
-      if (row.subject_id) {
-        gradeLevelsMap[row.grade_level_id].subjects[row.subject_id] = {
-          subject_id: row.subject_id,
-          subject_code: row.subject_code,
-          subject_name: row.subject_name,
-        };
+    const [subjectRows] = await connection.execute(
+      `SELECT DISTINCT
+        s.subject_id,
+        s.subject_code,
+        s.subject_name,
+        sgl.grade_level_id
+       FROM subjects s
+       JOIN curriculum_subjects cs ON s.subject_id = cs.subject_id
+       JOIN subject_grade_levels sgl ON s.subject_id = sgl.subject_id
+       WHERE cs.curriculum_id = ?
+         AND sgl.grade_level_id IN (${placeholders})
+       ORDER BY s.subject_name`,
+      [curriculum_id, ...gradeLevelIds]
+    );
+
+    const sectionsByGrade = {};
+    sectionRows.forEach(section => {
+      if (!sectionsByGrade[section.grade_level_id]) {
+        sectionsByGrade[section.grade_level_id] = [];
       }
+      sectionsByGrade[section.grade_level_id].push({
+        section_id: section.section_id,
+        section_name: section.section_name,
+      });
     });
 
-    const gradeLevels = Object.values(gradeLevelsMap).map((gl) => ({
-      ...gl,
-      sections: Object.values(gl.sections),
-      subjects: Object.values(gl.subjects),
+    const subjectsByGrade = {};
+    subjectRows.forEach(subject => {
+      if (!subjectsByGrade[subject.grade_level_id]) {
+        subjectsByGrade[subject.grade_level_id] = [];
+      }
+      subjectsByGrade[subject.grade_level_id].push({
+        subject_id: subject.subject_id,
+        subject_code: subject.subject_code,
+        subject_name: subject.subject_name,
+      });
+    });
+
+    const gradeLevels = gradeLevelRows.map(gradeLevel => ({
+      grade_level_id: gradeLevel.grade_level_id,
+      grade_code: gradeLevel.grade_code,
+      grade_name: gradeLevel.grade_name,
+      sections: sectionsByGrade[gradeLevel.grade_level_id] || [],
+      subjects: subjectsByGrade[gradeLevel.grade_level_id] || [],
     }));
 
     return {
