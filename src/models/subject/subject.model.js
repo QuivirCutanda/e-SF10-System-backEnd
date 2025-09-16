@@ -168,13 +168,13 @@ const getAllGradeLevelsModel = async (limit, offset) => {
       LEFT JOIN sections s 
         ON gl.grade_level_id = s.grade_level_id 
        AND s.school_year_id = ?
-      LEFT JOIN curriculum_subjects cs 
-        ON cs.curriculum_id = ?
-      LEFT JOIN subjects subj 
-        ON cs.subject_id = subj.subject_id
       LEFT JOIN subject_grade_levels sgl
-        ON subj.subject_id = sgl.subject_id
-       AND gl.grade_level_id = sgl.grade_level_id
+        ON gl.grade_level_id = sgl.grade_level_id
+      LEFT JOIN subjects subj
+        ON sgl.subject_id = subj.subject_id
+      LEFT JOIN curriculum_subjects cs
+        ON subj.subject_id = cs.subject_id
+       AND cs.curriculum_id = ?
       ORDER BY gl.grade_order, s.section_name, subj.subject_name
       LIMIT ? OFFSET ?
     `;
@@ -235,12 +235,13 @@ const getAllGradeLevelsModel = async (limit, offset) => {
       },
     };
   } catch (err) {
-    console.error('Model Error:', err);
-    throw new Error('Failed to retrieve grade levels from database');
+    console.error("Model Error:", err);
+    throw new Error("Failed to retrieve grade levels from database");
   } finally {
     if (connection) await connection.release();
   }
 };
+
 
 
 const getSubjectByIdModel = async (subjectId) => {
