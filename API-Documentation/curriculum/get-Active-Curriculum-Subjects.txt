@@ -11,7 +11,7 @@
     -Method
         GET
     -EndPoint
-            http://localhost:3001/esf10/curriculum/curriculum-subjects/1
+             http://localhost:3001/esf10/curriculum//curriculum-subjects/active/1
             *note: 1 is constant it is represent as active
 --------------------------------------------------
 

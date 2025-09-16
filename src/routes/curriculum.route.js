@@ -147,7 +147,7 @@ router.get(
 );
 
 router.get(
-  "/curriculum-subjects/active",
+  "/curriculum-subjects/active/1",
   authenticate,
   authorizePermission("view_curriculum", "manage_curriculum"),
   getActiveCurriculumSubjects
