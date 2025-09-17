@@ -7,6 +7,8 @@ const {
   fetchTeacherAssignmentsByTeacher,
   fetchTeacherAssignmentsBySection,
   fetchAllTeachersByActiveYear,
+  fetchTeacherAssignmentsByTeacherActiveYear,
+  fetchAllTeachersAssignmentsActiveYear
 } = require('../../models/teacherAssignments/teacherAssignments-model');
 
 exports.getAllTeacherAssignments = async (req, res) => {
@@ -29,6 +31,54 @@ exports.getAllTeacherAssignments = async (req, res) => {
   }
 };
 
+exports.getAllTeachersAssignmentsActiveYear = async (req, res) => {
+  try {
+    const rows = await fetchAllTeachersAssignmentsActiveYear();
+
+    const teachersMap = {};
+    rows.forEach(row => {
+      if (!teachersMap[row.teacher_id]) {
+        teachersMap[row.teacher_id] = {
+          teacher_id: row.teacher_id,
+          user_id: row.user_id,
+          teacher_name: row.teacher_name,
+          school_year_id: row.school_year_id,
+          school_year: row.school_year,
+          assignments: []
+        };
+      }
+      teachersMap[row.teacher_id].assignments.push({
+        assignment_id: row.assignment_id,
+        subject_id: row.subject_id,
+        subject_code: row.subject_code,
+        subject_name: row.subject_name,
+        section_id: row.section_id,
+        section_name: row.section_name,
+        grade_name: row.grade_name
+      });
+    });
+
+    const structuredData = Object.values(teachersMap);
+
+    return res.status(200).json({
+      success: true,
+      data: structuredData,
+      count: structuredData.length,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Get All Teachers Assignments Active Year Error:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Server error while fetching all teacher assignments",
+      details: error.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
+};
+
+
+
 
 exports.getAllTeachersByActiveYear = async (req, res) => {
   try {
@@ -50,6 +100,36 @@ exports.getAllTeachersByActiveYear = async (req, res) => {
   }
 };
 
+exports.getTeacherAssignmentsByTeacherActiveYear = async (req, res) => {
+  const { teacherId } = req.params;
+  const teacherIdInt = parseInt(teacherId);
+
+  if (!teacherIdInt || teacherIdInt <= 0) {
+    return res.status(400).json({
+      success: false,
+      error: "Teacher ID must be a positive integer",
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  try {
+    const assignments = await fetchTeacherAssignmentsByTeacherActiveYear(teacherIdInt);
+    return res.status(200).json({
+      success: true,
+      data: assignments,
+      count: assignments.length,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Get Teacher Assignments By Teacher Active Year Error:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Server error while fetching teacher assignments (active year)",
+      details: error.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
+};
 
 exports.getTeacherAssignmentById = async (req, res) => {
   const { id } = req.params;

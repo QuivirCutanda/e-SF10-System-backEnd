@@ -1,0 +1,42 @@
+--------------------------------------------------
+## get-Teacher-Active-Assignments
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Content-Type
+        Value:application/json
+    -Method
+        GET
+    -EndPoint
+           http://localhost:3001/esf10/teacher-assignments/teacher/:teacher_id/active-year
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+Example response
+-------------------------------------------------
+{
+    "success": true,
+    "data": [
+        {
+            "assignment_id": 1,
+            "teacher_id": 2,
+            "user_id": 2,
+            "teacher_name": "Jemil A Doblas",
+            "subject_id": 3,
+            "subject_code": "ENG",
+            "subject_name": "English",
+            "section_id": 1,
+            "section_name": "Section A",
+            "grade_name": "grade1",
+            "school_year_id": 1,
+            "school_year": "2020-2021"
+        }
+    ],
+    "count": 1,
+    "timestamp": "2025-09-17T03:38:40.350Z"
+}

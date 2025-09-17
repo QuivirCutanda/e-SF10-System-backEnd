@@ -47,6 +47,57 @@ const fetchAllTeacherAssignments = async () => {
   }
 };
 
+
+const fetchAllTeachersAssignmentsActiveYear = async () => {
+  try {
+    const [rows] = await db.execute(
+      `SELECT 
+          ta.assignment_id, 
+          ta.teacher_id, 
+          u.user_id,
+          ta.subject_id, 
+          ta.section_id, 
+          ta.school_year_id,
+          CONCAT(u.first_name, ' ', IFNULL(u.middle_name, ''), ' ', u.last_name) AS teacher_name,
+          sub.subject_code, 
+          sub.subject_name,
+          sec.section_name,
+          g.grade_name,
+          sy.start_year, 
+          sy.end_year
+       FROM teacher_assignments ta
+       JOIN teachers t ON ta.teacher_id = t.teacher_id
+       JOIN users u ON t.user_id = u.user_id
+       JOIN subjects sub ON ta.subject_id = sub.subject_id
+       JOIN sections sec ON ta.section_id = sec.section_id
+       JOIN grade_levels g ON sec.grade_level_id = g.grade_level_id
+       JOIN school_years sy ON ta.school_year_id = sy.school_year_id
+       WHERE sy.is_active = 1
+       ORDER BY t.teacher_id, g.grade_order, sec.section_name, sub.subject_name`
+    );
+
+    return rows.map(row => ({
+      assignment_id: row.assignment_id,
+      teacher_id: row.teacher_id,
+      user_id: row.user_id,
+      teacher_name: row.teacher_name.trim().replace(/\s+/g, " "),
+      subject_id: row.subject_id,
+      subject_code: row.subject_code,
+      subject_name: row.subject_name,
+      section_id: row.section_id,
+      section_name: row.section_name,
+      grade_name: row.grade_name,
+      school_year_id: row.school_year_id,
+      school_year: `${row.start_year}-${row.end_year}`,
+    }));
+  } catch (err) {
+    console.error("Error in fetchAllTeachersAssignmentsActiveYear:", err);
+    throw new Error(`Error fetching all teacher assignments: ${err.message}`);
+  }
+};
+
+
+
 const fetchTeacherAssignmentById = async (assignmentId) => {
   try {
     const [rows] = await db.execute(
@@ -134,6 +185,56 @@ const fetchAllTeachersByActiveYear = async () => {
   }
 };
 
+const fetchTeacherAssignmentsByTeacherActiveYear = async (teacherId) => {
+  try {
+    const [rows] = await db.execute(
+      `SELECT 
+          ta.assignment_id, 
+          ta.teacher_id, 
+          u.user_id,
+          ta.subject_id, 
+          ta.section_id, 
+          ta.school_year_id,
+          CONCAT(u.first_name, ' ', IFNULL(u.middle_name, ''), ' ', u.last_name) AS teacher_name,
+          sub.subject_code, 
+          sub.subject_name,
+          sec.section_name,
+          g.grade_name,
+          sy.start_year, 
+          sy.end_year
+       FROM teacher_assignments ta
+       JOIN teachers t ON ta.teacher_id = t.teacher_id
+       JOIN users u ON t.user_id = u.user_id
+       JOIN subjects sub ON ta.subject_id = sub.subject_id
+       JOIN sections sec ON ta.section_id = sec.section_id
+       JOIN grade_levels g ON sec.grade_level_id = g.grade_level_id
+       JOIN school_years sy ON ta.school_year_id = sy.school_year_id
+       WHERE ta.teacher_id = ? AND sy.is_active = TRUE
+       ORDER BY g.grade_order, sec.section_name, sub.subject_name`,
+      [teacherId]
+    );
+
+    return rows.map((row) => ({
+      assignment_id: row.assignment_id,
+      teacher_id: row.teacher_id,
+      user_id: row.user_id,
+      teacher_name: row.teacher_name.trim().replace(/\s+/g, " "),
+      subject_id: row.subject_id,
+      subject_code: row.subject_code,
+      subject_name: row.subject_name,
+      section_id: row.section_id,
+      section_name: row.section_name,
+      grade_name: row.grade_name,
+      school_year_id: row.school_year_id,
+      school_year: `${row.start_year}-${row.end_year}`,
+    }));
+  } catch (err) {
+    console.error("Error in fetchTeacherAssignmentsByTeacherActiveYear:", err);
+    throw new Error(
+      `Error fetching teacher assignments by teacher (active year): ${err.message}`
+    );
+  }
+};
 
 const fetchTeacherAssignmentsByTeacher = async (teacherId) => {
   try {
@@ -482,4 +583,6 @@ module.exports = {
   fetchTeacherAssignmentsByTeacher,
   fetchTeacherAssignmentsBySection,
   fetchAllTeachersByActiveYear,
+  fetchTeacherAssignmentsByTeacherActiveYear,
+  fetchAllTeachersAssignmentsActiveYear
 };

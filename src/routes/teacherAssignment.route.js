@@ -10,7 +10,8 @@ const {
   getTeacherAssignmentsByTeacher,
   getTeacherAssignmentsBySection,
   getAllTeachersByActiveYear,
-    
+  getTeacherAssignmentsByTeacherActiveYear,
+  getAllTeachersAssignmentsActiveYear
 } = require("../controllers/teacherAssignments/teacherAssignments.controller");
 
 router.get(
@@ -19,6 +20,14 @@ router.get(
   authorizePermission("view_teacher_assignments", "manage_teacher_assignments"),
   getAllTeacherAssignments
 );
+
+router.get(
+  "/all/assignments/active-year",
+  authenticate,
+  authorizePermission("view_teacher_assignments", "manage_teacher_assignments"),
+  getAllTeachersAssignmentsActiveYear
+);
+
 
 router.get(
   "/active-school-year",
@@ -39,6 +48,13 @@ router.get(
   authenticate,
   authorizePermission("view_teacher_assignments", "manage_teacher_assignments"),
   getTeacherAssignmentsByTeacher
+);
+
+router.get(
+  "/teacher/:teacherId/active-year",
+  authenticate,
+  authorizePermission("view_teacher_assignments", "manage_teacher_assignments"),
+  getTeacherAssignmentsByTeacherActiveYear
 );
 
 router.get(
