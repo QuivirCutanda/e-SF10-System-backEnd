@@ -1,0 +1,40 @@
+--------------------------------------------------
+## get-all-active-teacher
+--------------------------------------------------
+
+#Prerequisites
+    -Autorization
+        No Auth
+    -Headers (add)
+        Key:Authorization
+        Value:Bearer paste your generated token here
+    -Method
+        GET
+    -EndPoint
+         http://localhost:3001/esf10/teachers/active
+--------------------------------------------------
+Response    (200 ok)
+--------------------------------------------------
+{
+    "success": true,
+    "data": [
+        {
+            "teacher_id": 2,
+            "user_id": 2,
+            "teacher_name": "Jemil A Doblas",
+            "contact_number": "09098899878",
+            "teacher_address": "secret",
+            "is_active": 1
+        },
+        {
+            "teacher_id": 1,
+            "user_id": 1,
+            "teacher_name": "Quivir Anora Cutanda",
+            "contact_number": "09123456789",
+            "teacher_address": "Default Teacher Address, City, Province",
+            "is_active": 1
+        }
+    ],
+    "count": 2,
+    "timestamp": "2025-09-17T03:23:13.486Z"
+}

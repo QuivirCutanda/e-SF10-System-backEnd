@@ -1,35 +1,56 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authenticate = require('../middleware/authMiddleware');
-const authorizePermission = require('../middleware/authorizePermission');
-const { 
-  getAllTeachers, 
-  getTeacherById, 
-  createTeacher, 
-  updateTeacher, 
-toggleTeacherStatus
-} = require('../controllers/teachers/Teachers.controller');
+const authenticate = require("../middleware/authMiddleware");
+const authorizePermission = require("../middleware/authorizePermission");
+const {
+  getAllTeachers,
+  getTeacherById,
+  createTeacher,
+  updateTeacher,
+  getActiveTeachers,
+  toggleTeacherStatus,
+} = require("../controllers/teachers/Teachers.controller");
 
-router.get('/', authenticate, 
-    authorizePermission('view_teachers', 'manage_teachers'), 
-    getAllTeachers);
+router.get(
+  "/",
+  authenticate,
+  authorizePermission("view_teachers", "manage_teachers"),
+  getAllTeachers
+);
 
-router.get('/:id', authenticate, 
-    authorizePermission('view_teachers', 'manage_teachers'), 
-    getTeacherById);
+router.get(
+  "/active",
+  authenticate,
+  authorizePermission("view_teachers", "manage_teachers"),
+  getActiveTeachers
+);
 
-router.post('/create', authenticate, 
-    authorizePermission('manage_teachers'), 
-    createTeacher);
+router.get(
+  "/:id",
+  authenticate,
+  authorizePermission("view_teachers", "manage_teachers"),
+  getTeacherById
+);
 
-router.put('/update/:id', authenticate, 
-    authorizePermission('manage_teachers'), 
-    updateTeacher);
+router.post(
+  "/create",
+  authenticate,
+  authorizePermission("manage_teachers"),
+  createTeacher
+);
 
-    
-router.patch('/toggle-status/:id', authenticate, 
-    authorizePermission('manage_teachers'), 
-    toggleTeacherStatus);
+router.put(
+  "/update/:id",
+  authenticate,
+  authorizePermission("manage_teachers"),
+  updateTeacher
+);
 
+router.patch(
+  "/toggle-status/:id",
+  authenticate,
+  authorizePermission("manage_teachers"),
+  toggleTeacherStatus
+);
 
 module.exports = router;

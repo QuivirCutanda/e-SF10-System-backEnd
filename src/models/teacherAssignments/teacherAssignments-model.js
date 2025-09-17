@@ -100,6 +100,40 @@ const fetchTeacherAssignmentById = async (assignmentId) => {
   }
 };
 
+const fetchAllTeachersByActiveYear = async () => {
+  try {
+    const [rows] = await db.execute(
+      `SELECT DISTINCT 
+          t.teacher_id,
+          u.user_id,
+          CONCAT(u.first_name, ' ', IFNULL(u.middle_name, ''), ' ', u.last_name) AS teacher_name,
+          t.contact_number,
+          t.teacher_address,
+          sy.school_year_id,
+          CONCAT(sy.start_year, '-', sy.end_year) AS school_year
+       FROM teachers t
+       JOIN users u ON t.user_id = u.user_id
+       JOIN teacher_assignments ta ON t.teacher_id = ta.teacher_id
+       JOIN school_years sy ON ta.school_year_id = sy.school_year_id
+       WHERE sy.is_active = TRUE
+       ORDER BY teacher_name ASC`
+    );
+
+    return rows.map(row => ({
+      teacher_id: row.teacher_id,
+      user_id: row.user_id,
+      teacher_name: row.teacher_name.trim().replace(/\s+/g, ' '),
+      contact_number: row.contact_number,
+      teacher_address: row.teacher_address,
+      school_year_id: row.school_year_id,
+      school_year: row.school_year
+    }));
+  } catch (err) {
+    console.error('Error in fetchAllTeachersByActiveYear:', err);
+    throw new Error(`Error fetching teachers: ${err.message}`);
+  }
+};
+
 
 const fetchTeacherAssignmentsByTeacher = async (teacherId) => {
   try {
@@ -446,5 +480,6 @@ module.exports = {
   updateTeacherAssignmentById, 
   deleteTeacherAssignmentById,
   fetchTeacherAssignmentsByTeacher,
-  fetchTeacherAssignmentsBySection
+  fetchTeacherAssignmentsBySection,
+  fetchAllTeachersByActiveYear,
 };

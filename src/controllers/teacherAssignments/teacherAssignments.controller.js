@@ -5,7 +5,8 @@ const {
   updateTeacherAssignmentById, 
   deleteTeacherAssignmentById,
   fetchTeacherAssignmentsByTeacher,
-  fetchTeacherAssignmentsBySection
+  fetchTeacherAssignmentsBySection,
+  fetchAllTeachersByActiveYear,
 } = require('../../models/teacherAssignments/teacherAssignments-model');
 
 exports.getAllTeacherAssignments = async (req, res) => {
@@ -27,6 +28,28 @@ exports.getAllTeacherAssignments = async (req, res) => {
     });
   }
 };
+
+
+exports.getAllTeachersByActiveYear = async (req, res) => {
+  try {
+    const teachers = await fetchAllTeachersByActiveYear();
+    return res.status(200).json({
+      success: true,
+      data: teachers,
+      count: teachers.length,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Get All Teachers Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Server error while fetching teachers',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+};
+
 
 exports.getTeacherAssignmentById = async (req, res) => {
   const { id } = req.params;

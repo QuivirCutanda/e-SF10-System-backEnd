@@ -46,6 +46,38 @@ const fetchAllTeachers = async () => {
   }
 };
 
+
+const fetchActiveTeachers = async () => {
+  try {
+    const [rows] = await db.execute(
+      `SELECT 
+          t.teacher_id,
+          u.user_id,
+          CONCAT(u.first_name, ' ', IFNULL(u.middle_name, ''), ' ', u.last_name) AS teacher_name,
+          t.contact_number,
+          t.teacher_address,
+          t.is_active
+       FROM teachers t
+       JOIN users u ON t.user_id = u.user_id
+       WHERE t.is_active = TRUE
+       ORDER BY teacher_name ASC`
+    );
+
+    return rows.map(row => ({
+      teacher_id: row.teacher_id,
+      user_id: row.user_id,
+      teacher_name: row.teacher_name.trim().replace(/\s+/g, ' '),
+      contact_number: row.contact_number,
+      teacher_address: row.teacher_address,
+      is_active: row.is_active
+    }));
+  } catch (err) {
+    console.error('Error in fetchActiveTeachers:', err);
+    throw new Error(`Error fetching active teachers: ${err.message}`);
+  }
+};
+
+
 const fetchTeacherById = async (teacherId) => {
   try {
     const [rows] = await db.execute(
@@ -366,4 +398,5 @@ module.exports = {
   createNewTeacher,
   updateTeacherById,
   toggleTeacherStatusById,
+  fetchActiveTeachers
 };

@@ -5,7 +5,8 @@ const {
   fetchTeacherById, 
   createNewTeacher, 
   updateTeacherById, 
-  toggleTeacherStatusById 
+  toggleTeacherStatusById,
+  fetchActiveTeachers
 } = require('../../models/teachers/teacher-model');
 
 exports.getAllTeachers = async (req, res) => {
@@ -28,6 +29,25 @@ exports.getAllTeachers = async (req, res) => {
   }
 };
 
+exports.getActiveTeachers = async (req, res) => {
+  try {
+    const teachers = await fetchActiveTeachers();
+    return res.status(200).json({
+      success: true,
+      data: teachers,
+      count: teachers.length,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Get Active Teachers Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error while fetching active teachers',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+};
 
 exports.getTeacherById = async (req, res) => {
   const { id } = req.params;
