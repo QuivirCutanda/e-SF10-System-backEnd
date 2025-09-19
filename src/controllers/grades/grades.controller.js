@@ -191,6 +191,7 @@ exports.getGradesByTeacher = async (req, res) => {
 };
 
 exports.createOrUpdateGrade = async (req, res) => {
+  
   const { enrollment_id, subject_id, grading_period, grade } = req.body;
   const userId = req.user?.user_id;
 
@@ -264,7 +265,7 @@ exports.createOrUpdateGrade = async (req, res) => {
     ).json({
       success: false,
       error: error.message,
-      message:" Teacher not assigned to this subject/section",
+      message:  error.message,
       timestamp: new Date().toISOString()
     });
   }

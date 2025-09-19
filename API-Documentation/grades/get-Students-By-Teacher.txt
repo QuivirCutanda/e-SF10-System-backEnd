@@ -20,7 +20,7 @@ Response    (200 ok)
     "data": [
         {
             "student_id": 1,
-            "lrn": "872635423455",
+            "lrn": "123456787678",
             "student_name": "Quivir A Cutanda",
             "section": {
                 "section_id": 1,
@@ -28,14 +28,74 @@ Response    (200 ok)
             },
             "grade_level": {
                 "grade_level_id": 1,
-                "grade_name": "Grade1"
+                "grade_name": "grade1",
+                "grade_order": 1
             },
             "school_year": {
                 "school_year_id": 1,
-                "school_year": "2024-2025"
-            }
+                "school_year": "2020-2021"
+            },
+            "subjects": [
+                {
+                    "subject_id": 3,
+                    "subject_code": "ENG",
+                    "subject_name": "English",
+                    "teacher": {
+                        "teacher_id": 2,
+                        "teacher_name": "Jemil A Doblas "
+                    },
+                    "grades": [
+                        {
+                            "grading_period": "1st",
+                            "grade": null
+                        },
+                        {
+                            "grading_period": "2nd",
+                            "grade": null
+                        },
+                        {
+                            "grading_period": "3rd",
+                            "grade": null
+                        },
+                        {
+                            "grading_period": "4th",
+                            "grade": null
+                        }
+                    ],
+                    "subject_average": null
+                },
+                {
+                    "subject_id": 1,
+                    "subject_code": "MATH-101",
+                    "subject_name": "Math",
+                    "teacher": {
+                        "teacher_id": 2,
+                        "teacher_name": "Jemil A Doblas "
+                    },
+                    "grades": [
+                        {
+                            "grading_period": "1st",
+                            "grade": null
+                        },
+                        {
+                            "grading_period": "2nd",
+                            "grade": null
+                        },
+                        {
+                            "grading_period": "3rd",
+                            "grade": null
+                        },
+                        {
+                            "grading_period": "4th",
+                            "grade": null
+                        }
+                    ],
+                    "subject_average": null
+                }
+            ],
+            "general_average": null
         }
     ],
     "count": 1,
-    "timestamp": "2025-09-15T02:28:32.421Z"
+    "timestamp": "2025-09-18T14:16:01.581Z"
 }
