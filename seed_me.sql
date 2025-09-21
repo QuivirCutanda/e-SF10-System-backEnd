@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 21, 2025 at 05:27 PM
+-- Generation Time: Sep 21, 2025 at 05:42 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -156,7 +156,40 @@ INSERT INTO `activity_logs` (`log_id`, `user_id`, `action`, `log_timestamp`) VAL
 (115, 1, 'Updated enrollment ID 2 for student Test Sample in grade Grade2, section Section A, SY 2020-2021', '2025-09-21 04:21:53'),
 (116, 2, 'view_student', '2025-09-21 04:22:47'),
 (117, 2, 'view_student', '2025-09-21 04:22:47'),
-(118, 2, 'view_student', '2025-09-21 04:22:47');
+(118, 2, 'view_student', '2025-09-21 04:22:47'),
+(119, 1, 'Created teacher: Teacher A. Doblass (user_id=3, teacher_id=3)', '2025-09-21 15:35:23'),
+(120, 1, 'Created teacher: Maria L. Santos (user_id=4, teacher_id=4)', '2025-09-21 15:35:42'),
+(121, 1, 'Created teacher: Jose R. Garcia (user_id=5, teacher_id=5)', '2025-09-21 15:35:58'),
+(122, 1, 'Created teacher: Anna M. Reyes (user_id=6, teacher_id=6)', '2025-09-21 15:36:12'),
+(123, 1, 'Created teacher: Mark T. Lopez (user_id=7, teacher_id=7)', '2025-09-21 15:36:58'),
+(124, 1, 'Created teacher: Grace A. Delos Santos (user_id=8, teacher_id=8)', '2025-09-21 15:37:05'),
+(125, 1, 'Created teacher: Michael P. Cruz (user_id=9, teacher_id=9)', '2025-09-21 15:37:13'),
+(126, 1, 'Created teacher: Rita S. Valdez (user_id=10, teacher_id=10)', '2025-09-21 15:37:29'),
+(127, 1, 'Created teacher: Daniel C. Torres (user_id=11, teacher_id=11)', '2025-09-21 15:37:38'),
+(128, 1, 'Created teacher: Liza B. Martinez (user_id=12, teacher_id=12)', '2025-09-21 15:37:47'),
+(129, 1, 'Created teacher: Edwin D. Ramos (user_id=13, teacher_id=13)', '2025-09-21 15:37:55'),
+(130, 1, 'Created teacher: Catherine E. Legaspi (user_id=14, teacher_id=14)', '2025-09-21 15:38:02'),
+(131, 1, 'Created teacher: Ramon F. Paredes (user_id=15, teacher_id=15)', '2025-09-21 15:38:09'),
+(132, 1, 'Created student with ID 3', '2025-09-21 15:39:07'),
+(133, 1, 'Created student with ID 4', '2025-09-21 15:39:15'),
+(134, 1, 'Created student with ID 5', '2025-09-21 15:39:24'),
+(135, 1, 'Created student with ID 6', '2025-09-21 15:39:32'),
+(136, 1, 'Created student with ID 7', '2025-09-21 15:39:52'),
+(137, 1, 'Created student with ID 8', '2025-09-21 15:40:00'),
+(138, 1, 'Created student with ID 9', '2025-09-21 15:40:08'),
+(139, 1, 'Created student with ID 10', '2025-09-21 15:40:16'),
+(140, 1, 'Created student with ID 11', '2025-09-21 15:40:28'),
+(141, 1, 'Created student with ID 12', '2025-09-21 15:40:36'),
+(142, 1, 'Created student with ID 13', '2025-09-21 15:40:43'),
+(143, 1, 'Created student with ID 14', '2025-09-21 15:40:50'),
+(144, 1, 'Created student with ID 15', '2025-09-21 15:40:57'),
+(145, 1, 'Created student with ID 16', '2025-09-21 15:41:05'),
+(146, 1, 'Created student with ID 17', '2025-09-21 15:41:12'),
+(147, 1, 'Created student with ID 18', '2025-09-21 15:41:20'),
+(148, 1, 'Created student with ID 19', '2025-09-21 15:41:30'),
+(149, 1, 'Created student with ID 20', '2025-09-21 15:41:37'),
+(150, 1, 'Created student with ID 21', '2025-09-21 15:41:44'),
+(151, 1, 'Created student with ID 22', '2025-09-21 15:41:51');
 
 -- --------------------------------------------------------
 
@@ -658,7 +691,27 @@ CREATE TABLE `students` (
 
 INSERT INTO `students` (`student_id`, `lrn`, `first_name`, `middle_name`, `last_name`, `extension_name`, `date_of_birth`, `gender`, `street`, `city`, `province`, `zip_code`, `guardian_name`, `contact_number`, `created_at`, `updated_at`) VALUES
 (1, '123456787678', 'Quivir', 'A', 'Cutanda', '', '2025-09-18', 'Male', 'Testing', 'Test', 'Test', '5343', 'Test', '09990988987', '2025-09-18 14:09:52', '2025-09-18 14:09:52'),
-(2, '123454534243', 'Test', 'T', 'Sample', '', '2025-09-21', 'Female', 'test', 'Test', 'Test', '8675', 'Test', '09898889984', '2025-09-21 04:19:44', '2025-09-21 04:19:44');
+(2, '123454534243', 'Test', 'T', 'Sample', '', '2025-09-21', 'Female', 'test', 'Test', 'Test', '8675', 'Test', '09898889984', '2025-09-21 04:19:44', '2025-09-21 04:19:44'),
+(3, '123456789016', 'Sample', 'M', 'Doblas', '', '1998-05-19', 'Male', '123 Main St', 'Manila', 'Metro Manila', '1000', 'Unknown', '09171234567', '2025-09-21 15:39:07', '2025-09-21 15:39:07'),
+(4, '123456789017', 'Anna', 'L', 'Santos', '', '2000-03-12', 'Female', '45 Rizal Ave', 'Quezon City', 'Metro Manila', '1100', 'Maria Santos', '09181234568', '2025-09-21 15:39:15', '2025-09-21 15:39:15'),
+(5, '123456789018', 'Ben', 'C', 'Cruz', 'Jr', '1999-07-25', 'Male', '78 Taft St', 'Pasay', 'Metro Manila', '1300', 'Jose Cruz', '09201234569', '2025-09-21 15:39:24', '2025-09-21 15:39:24'),
+(6, '123456789019', 'Clara', 'P', 'Reyes', '', '2001-01-30', 'Female', '12 Bonifacio Rd', 'Makati', 'Metro Manila', '1200', 'Luz Reyes', '09301234570', '2025-09-21 15:39:32', '2025-09-21 15:39:32'),
+(7, '123456789020', 'David', 'A', 'Garcia', '', '1997-11-08', 'Male', '90 Mabini St', 'Manila', 'Metro Manila', '1000', 'Ana Garcia', '09401234571', '2025-09-21 15:39:52', '2025-09-21 15:39:52'),
+(8, '123456789021', 'Emma', 'R', 'Lopez', '', '2002-04-15', 'Female', '56 Aurora Blvd', 'Quezon City', 'Metro Manila', '1100', 'Pedro Lopez', '09171234572', '2025-09-21 15:40:00', '2025-09-21 15:40:00'),
+(9, '123456789022', 'Francis', 'T', 'Mendoza', '', '1998-09-22', 'Male', '33 Sampaguita Ln', 'Pasig', 'Metro Manila', '1600', 'Teresa Mendoza', '09201234573', '2025-09-21 15:40:08', '2025-09-21 15:40:08'),
+(10, '123456789023', 'Gina', 'S', 'Torres', '', '2000-06-10', 'Female', '101 Quezon St', 'Manila', 'Metro Manila', '1000', 'Carlos Torres', '09301234574', '2025-09-21 15:40:16', '2025-09-21 15:40:16'),
+(11, '123456789024', 'Henry', 'B', 'Ramos', 'III', '1999-02-17', 'Male', '22 Lopez Jaena St', 'Makati', 'Metro Manila', '1200', 'Sofia Ramos', '09401234575', '2025-09-21 15:40:28', '2025-09-21 15:40:28'),
+(12, '123456789025', 'Isabel', 'D', 'Flores', '', '2001-08-03', 'Female', '88 Mabuhay Rd', 'Pasay', 'Metro Manila', '1300', 'Juan Flores', '09171234576', '2025-09-21 15:40:36', '2025-09-21 15:40:36'),
+(13, '123456789026', 'James', 'E', 'Valdez', '', '1997-12-27', 'Male', '14 Rizal Lane', 'Quezon City', 'Metro Manila', '1100', 'Clara Valdez', '09201234577', '2025-09-21 15:40:43', '2025-09-21 15:40:43'),
+(14, '123456789027', 'Karen', 'F', 'Perez', '', '2002-10-05', 'Female', '77 Taft Ave', 'Manila', 'Metro Manila', '1000', 'Luis Perez', '09301234578', '2025-09-21 15:40:50', '2025-09-21 15:40:50'),
+(15, '123456789028', 'Liam', 'G', 'Navarro', '', '1998-04-19', 'Male', '9 Bonifacio St', 'Pasig', 'Metro Manila', '1600', 'Rosa Navarro', '09401234579', '2025-09-21 15:40:57', '2025-09-21 15:40:57'),
+(16, '123456789029', 'Mia', 'H', 'Cabrera', '', '2000-07-14', 'Female', '60 Mabini Blvd', 'Makati', 'Metro Manila', '1200', 'Antonio Cabrera', '09171234580', '2025-09-21 15:41:05', '2025-09-21 15:41:05'),
+(17, '123456789030', 'Noah', 'I', 'Ortega', '', '1999-03-23', 'Male', '150 Quezon Ave', 'Quezon City', 'Metro Manila', '1100', 'Elena Ortega', '09201234581', '2025-09-21 15:41:12', '2025-09-21 15:41:12'),
+(18, '123456789031', 'Olivia', 'J', 'Martinez', '', '2001-05-28', 'Female', '24 Sampaguita St', 'Pasay', 'Metro Manila', '1300', 'Miguel Martinez', '09301234582', '2025-09-21 15:41:20', '2025-09-21 15:41:20'),
+(19, '123456789032', 'Paul', 'K', 'Benitez', '', '1997-09-11', 'Male', '5 Mabuhay Cir', 'Manila', 'Metro Manila', '1000', 'Carmen Benitez', '09401234583', '2025-09-21 15:41:30', '2025-09-21 15:41:30'),
+(20, '123456789033', 'Quinn', 'L', 'Serrano', '', '2002-02-04', 'Female', '33 Rizal Rd', 'Pasig', 'Metro Manila', '1600', 'Victor Serrano', '09171234584', '2025-09-21 15:41:37', '2025-09-21 15:41:37'),
+(21, '123456789034', 'Ryan', 'M', 'Padilla', '', '1998-06-16', 'Male', '11 Aurora St', 'Makati', 'Metro Manila', '1200', 'Lorna Padilla', '09201234585', '2025-09-21 15:41:44', '2025-09-21 15:41:44'),
+(22, '123456789035', 'Sophia', 'N', 'Legaspi', '', '2000-12-09', 'Female', '200 Mabini Ave', 'Quezon City', 'Metro Manila', '1100', 'Rafael Legaspi', '09301234586', '2025-09-21 15:41:51', '2025-09-21 15:41:51');
 
 -- --------------------------------------------------------
 
@@ -765,7 +818,20 @@ CREATE TABLE `teachers` (
 
 INSERT INTO `teachers` (`teacher_id`, `user_id`, `teacher_address`, `date_of_birth`, `contact_number`, `is_active`, `created_at`, `updated_at`) VALUES
 (1, 1, 'Default Teacher Address, City, Province', '1990-01-01', '09123456789', 1, '2025-09-16 07:25:29', '2025-09-17 03:23:02'),
-(2, 2, 'secret', '2025-09-17', '09098899878', 1, '2025-09-17 03:03:41', '2025-09-17 03:03:41');
+(2, 2, 'secret', '2025-09-17', '09098899878', 1, '2025-09-17 03:03:41', '2025-09-17 03:03:41'),
+(3, 3, '789 Main Street, Quezon City', '1985-05-12', '09171234567', 1, '2025-09-21 15:35:23', '2025-09-21 15:35:23'),
+(4, 4, '12 Mabini St, Manila', '1982-03-21', '09171230001', 1, '2025-09-21 15:35:42', '2025-09-21 15:35:42'),
+(5, 5, '45 Rizal Ave, Pasig', '1978-11-05', '09181230002', 1, '2025-09-21 15:35:58', '2025-09-21 15:35:58'),
+(6, 6, '3 Del Pilar St, Makati', '1990-07-14', '09201230003', 1, '2025-09-21 15:36:12', '2025-09-21 15:36:12'),
+(7, 7, '101 Taft Ave, Pasay', '1987-02-28', '09301230004', 1, '2025-09-21 15:36:58', '2025-09-21 15:36:58'),
+(8, 8, '22 J.P. Laurel St, Batangas', '1984-09-09', '09401230005', 1, '2025-09-21 15:37:05', '2025-09-21 15:37:05'),
+(9, 9, '789 Main Street, Quezon City', '1985-05-12', '09171234567', 1, '2025-09-21 15:37:13', '2025-09-21 15:37:13'),
+(10, 10, '56 Aurora Blvd, Cubao', '1992-12-03', '09181230006', 1, '2025-09-21 15:37:29', '2025-09-21 15:37:29'),
+(11, 11, '88 Lopez Jaena St, Cebu City', '1979-06-18', '09201230007', 1, '2025-09-21 15:37:38', '2025-09-21 15:37:38'),
+(12, 12, '14 Mabuhay Rd, Davao', '1988-08-30', '09301230008', 1, '2025-09-21 15:37:47', '2025-09-21 15:37:47'),
+(13, 13, '9 Bonifacio St, Iloilo', '1980-01-22', '09401230009', 1, '2025-09-21 15:37:55', '2025-09-21 15:37:55'),
+(14, 14, '37 Mabini St, Baguio', '1991-04-11', '09171230010', 1, '2025-09-21 15:38:02', '2025-09-21 15:38:02'),
+(15, 15, '200 Rizal St, Lucena', '1976-10-02', '09181230011', 1, '2025-09-21 15:38:09', '2025-09-21 15:38:09');
 
 -- --------------------------------------------------------
 
@@ -835,7 +901,20 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `first_name`, `middle_name`, `last_name`, `extension_name`, `email`, `password`, `created_at`, `updated_at`) VALUES
 (1, 'Quivir', 'Anora', 'Cutanda', NULL, 'admin@gmail.com', '$2b$10$KIoy.uCwCLY2xtZqi6NV9.aLD5KibZ2YeyRHsCr8a9j7FltbO.PfW', '2025-06-06 16:21:29', '2025-06-06 16:21:29'),
-(2, 'Jemil', 'A', 'Doblas', NULL, 'jemil@gmail.com', '$2b$10$BmDYE4vzAkFD5IXsEuC.2uj/68S9iQ/5amnMbQv2sny.0MpaRbIBS', '2025-09-17 03:03:41', '2025-09-17 03:03:41');
+(2, 'Jemil', 'A', 'Doblas', NULL, 'jemil@gmail.com', '$2b$10$BmDYE4vzAkFD5IXsEuC.2uj/68S9iQ/5amnMbQv2sny.0MpaRbIBS', '2025-09-17 03:03:41', '2025-09-17 03:03:41'),
+(3, 'Teacher', 'A.', 'Doblass', NULL, 'michael.doblass@example.com', '$2b$10$XXAj6pIdmJeJfnlHPnUFCu1o8SDqJyMKvaXTXwbcdncs4CjR.SHXC', '2025-09-21 15:35:22', '2025-09-21 15:35:22'),
+(4, 'Maria', 'L.', 'Santos', NULL, 'maria.santos@example.com', '$2b$10$GmHDN05q0gIiCjlzYG6xEeHYBR8X9yhjkjDK9bhOLOZZEn.5qIyoq', '2025-09-21 15:35:42', '2025-09-21 15:35:42'),
+(5, 'Jose', 'R.', 'Garcia', NULL, 'jose.garcia@example.com', '$2b$10$INQmdfD1BTUxyN/dxBxdreM.hj0qy.IdpPpFg0P./c1lgYd4kMXGK', '2025-09-21 15:35:58', '2025-09-21 15:35:58'),
+(6, 'Anna', 'M.', 'Reyes', NULL, 'anna.reyes@example.com', '$2b$10$snvZCvXG2k59udw239NX.uAF5rIgnp5uU/l0x3u3/Gl.L6IsaXbK2', '2025-09-21 15:36:12', '2025-09-21 15:36:12'),
+(7, 'Mark', 'T.', 'Lopez', NULL, 'mark.lopez@example.com', '$2b$10$wT4p0YgagWqHJeHFzJOXjuZn6yRJKsvgApL/ND5aprJf.sR9BNKZO', '2025-09-21 15:36:58', '2025-09-21 15:36:58'),
+(8, 'Grace', 'A.', 'Delos Santos', NULL, 'grace.delossantos@example.com', '$2b$10$SDewfKtpQgMaOHQI8CGnH.cXV93qttZvGKN2aa6HJ6bz7hXOmXYxq', '2025-09-21 15:37:05', '2025-09-21 15:37:05'),
+(9, 'Michael', 'P.', 'Cruz', NULL, 'michael.cruz@example.com', '$2b$10$pyb.Eai4Ow71YN.xLaebbOvWAoo0ST9EM1JVXTxL20QlrCYFM49xe', '2025-09-21 15:37:13', '2025-09-21 15:37:13'),
+(10, 'Rita', 'S.', 'Valdez', NULL, 'rita.valdez@example.com', '$2b$10$0rkCVEVpoEdr3gpU/qiWMOtR1t63kQIHCiogv9qOoQuYl7j.DJjGy', '2025-09-21 15:37:29', '2025-09-21 15:37:29'),
+(11, 'Daniel', 'C.', 'Torres', NULL, 'daniel.torres@example.com', '$2b$10$hVsNrCbYyznB7c049MlJDuW5muD6lvmWUQuDwxFs6sYIrcWEw2n96', '2025-09-21 15:37:38', '2025-09-21 15:37:38'),
+(12, 'Liza', 'B.', 'Martinez', NULL, 'liza.martinez@example.com', '$2b$10$Kedf6AAQ7UjlIWHZ6YkD7uU7allYlv.IiE93urORVoMXJ9F9GxPwy', '2025-09-21 15:37:47', '2025-09-21 15:37:47'),
+(13, 'Edwin', 'D.', 'Ramos', NULL, 'edwin.ramos@example.com', '$2b$10$LWOLHIMesKFHaSC0/gtVNetQ/subPVzCW1jz1jXNhp41qb3W28dcG', '2025-09-21 15:37:55', '2025-09-21 15:37:55'),
+(14, 'Catherine', 'E.', 'Legaspi', NULL, 'catherine.legaspi@example.com', '$2b$10$FD7aZp/kRwqUyDeJ.wXO7OVhTaePEYgZIXni5gZ7VVTezUIEnxr.e', '2025-09-21 15:38:02', '2025-09-21 15:38:02'),
+(15, 'Ramon', 'F.', 'Paredes', NULL, 'ramon.paredes@example.com', '$2b$10$eyhnSoJO5uwPx33irJWhm.L0At49tdmmLkfixXsI6d5nM26sr2Y4O', '2025-09-21 15:38:09', '2025-09-21 15:38:09');
 
 -- --------------------------------------------------------
 
@@ -877,7 +956,20 @@ CREATE TABLE `user_roles` (
 INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES
 (1, 1),
 (1, 3),
-(2, 3);
+(2, 3),
+(3, 3),
+(4, 3),
+(5, 3),
+(6, 3),
+(7, 3),
+(8, 3),
+(9, 3),
+(10, 3),
+(11, 3),
+(12, 3),
+(13, 3),
+(14, 3),
+(15, 3);
 
 --
 -- Indexes for dumped tables
@@ -1095,7 +1187,7 @@ ALTER TABLE `user_roles`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=152;
 
 --
 -- AUTO_INCREMENT for table `backups`
@@ -1167,7 +1259,7 @@ ALTER TABLE `sections`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `student_grades`
@@ -1185,7 +1277,7 @@ ALTER TABLE `subjects`
 -- AUTO_INCREMENT for table `teachers`
 --
 ALTER TABLE `teachers`
-  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `teacher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `teacher_assignments`
@@ -1203,7 +1295,7 @@ ALTER TABLE `transfer_requests`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Constraints for dumped tables
