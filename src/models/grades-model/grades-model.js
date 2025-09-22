@@ -606,6 +606,7 @@ const fetchStudentsByTeacher = async (teacherId) => {
   try {
     const query = `
       SELECT 
+        e.enrollment_id,
         st.student_id,
         st.lrn,
         CONCAT(st.first_name, ' ', COALESCE(st.middle_name, ''), ' ', st.last_name, ' ', COALESCE(st.extension_name, '')) AS student_name,
@@ -642,7 +643,6 @@ const fetchStudentsByTeacher = async (teacherId) => {
     const [rows] = await db.execute(query, [teacherId]);
 
     const allGradingPeriods = ['1st', '2nd', '3rd', '4th'];
-    
     const studentsMap = new Map();
     const subjectGradesMap = new Map();
 
@@ -652,6 +652,7 @@ const fetchStudentsByTeacher = async (teacherId) => {
 
       if (!studentsMap.has(studentKey)) {
         studentsMap.set(studentKey, {
+          enrollment_id: row.enrollment_id,  
           student_id: row.student_id,
           lrn: row.lrn,
           student_name: row.student_name.trim(),
@@ -733,6 +734,7 @@ const fetchStudentsByTeacher = async (teacherId) => {
     throw new Error(`Error fetching students by teacher: ${err.message}`);
   }
 };
+
 
 
 module.exports = {

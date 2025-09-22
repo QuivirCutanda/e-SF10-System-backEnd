@@ -19,30 +19,128 @@ Response    (200 ok)
 --------------------------------------------------
 {
     "student": {
-        "student_id": 1,
-        "lrn": "341234569012",
-        "first_name": "Quivir",
-        "middle_name": "Añora",
-        "last_name": "Cutanda",
-        "date_of_birth": "2002-05-18T16:00:00.000Z",
-        "gender": "Male",
-        "street": "123 Main St",
-        "city": "Manila",
-        "province": "Metro Manila",
-        "zip_code": "1000",
-        "guardian_name": "Unknown",
-        "contact_number": "09171234567"
+        "student_id": 2,
+        "lrn": "123454534243",
+        "first_name": "Test",
+        "middle_name": "T",
+        "last_name": "Sample",
+        "date_of_birth": "2025-09-20T16:00:00.000Z",
+        "gender": "Female",
+        "street": "test",
+        "city": "Test",
+        "province": "Test",
+        "zip_code": "8675",
+        "guardian_name": "Test",
+        "contact_number": "09898889984",
+        "enrollments": [
+            {
+                "enrollment_id": 2,
+                "grade_level": {
+                    "grade_level_id": 2,
+                    "grade_name": "Grade2",
+                    "grade_order": 2
+                },
+                "section": {
+                    "section_id": 4,
+                    "section_name": "Section A"
+                },
+                "school_year": {
+                    "school_year_id": 1,
+                    "school_year": "2020-2021"
+                },
+                "curriculum": {
+                    "curriculum_id": 1,
+                    "curriculum_name": "k-12 (2020-2021)"
+                },
+                "subjects": [
+                    {
+                        "subject_id": 3,
+                        "subject_code": "ENG",
+                        "subject_name": "English",
+                        "teacher": {
+                            "teacher_id": 2,
+                            "teacher_name": "Jemil A Doblas "
+                        },
+                        "grades": [
+                            {
+                                "grading_period": "1st",
+                                "grade": null
+                            },
+                            {
+                                "grading_period": "2nd",
+                                "grade": null
+                            },
+                            {
+                                "grading_period": "3rd",
+                                "grade": null
+                            },
+                            {
+                                "grading_period": "4th",
+                                "grade": null
+                            }
+                        ],
+                        "subject_average": null
+                    },
+                    {
+                        "subject_id": 1,
+                        "subject_code": "MATH-101",
+                        "subject_name": "Math",
+                        "teacher": {
+                            "teacher_id": 2,
+                            "teacher_name": "Jemil A Doblas "
+                        },
+                        "grades": [
+                            {
+                                "grading_period": "1st",
+                                "grade": null
+                            },
+                            {
+                                "grading_period": "2nd",
+                                "grade": null
+                            },
+                            {
+                                "grading_period": "3rd",
+                                "grade": null
+                            },
+                            {
+                                "grading_period": "4th",
+                                "grade": null
+                            }
+                        ],
+                        "subject_average": null
+                    },
+                    {
+                        "subject_id": 2,
+                        "subject_code": "SCIENCE",
+                        "subject_name": "Science",
+                        "teacher": {
+                            "teacher_id": 2,
+                            "teacher_name": "Jemil A Doblas "
+                        },
+                        "grades": [
+                            {
+                                "grading_period": "1st",
+                                "grade": null
+                            },
+                            {
+                                "grading_period": "2nd",
+                                "grade": null
+                            },
+                            {
+                                "grading_period": "3rd",
+                                "grade": null
+                            },
+                            {
+                                "grading_period": "4th",
+                                "grade": null
+                            }
+                        ],
+                        "subject_average": null
+                    }
+                ],
+                "general_average": null
+            }
+        ]
     },
-    "eCards": [
-        {
-            "record_id": 6,
-            "student_id": 1,
-            "start_year": 2024,
-            "end_year": 2025,
-            "grade_level": "12",
-            "section": "emerald",
-            "sf10_document_path": "http://localhost:3001/esf10/images/2024-2025/emerald/sf10-1-1749177130552.pdf",
-            "uploaded_at": "2025-06-06T02:32:10.000Z"
-        }
-    ]
+    "eCards": []
 }

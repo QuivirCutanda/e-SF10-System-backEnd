@@ -28,5 +28,4 @@ router.post('/upload-sf10/:studentId', authenticate, authorizePermission('upload
 router.put('/:lrn/update', authenticate, authorizePermission('edit_student_info'), validateLRN, validateStudentUpdate, updateStudent);
 router.put('/:recordId/update-sf10', authenticate, authorizePermission('upload_documents'), uploadSF10, validateUpdateSF10, updateSF10);
 router.delete('/:recordId/delete-sf10', authenticate, authorizePermission('delete_documents'), validateDeleteSF10, deleteSF10);
-
 module.exports = router;
