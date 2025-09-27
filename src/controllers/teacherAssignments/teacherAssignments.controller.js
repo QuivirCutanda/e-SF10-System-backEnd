@@ -275,6 +275,7 @@ exports.createTeacherAssignment = async (req, res) => {
     });
   }
 
+  
   try {
     const assignment = await createNewTeacherAssignment({
       teacher_id,

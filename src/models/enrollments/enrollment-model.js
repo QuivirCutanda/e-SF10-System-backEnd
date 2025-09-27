@@ -1,7 +1,11 @@
 const db = require('../../config/db');
 
-const fetchAllEnrollments = async () => {
+const fetchAllEnrollments = async (limit, offset) => {
   try {
+    const [[{ total }]] = await db.execute(
+      `SELECT COUNT(*) AS total FROM enrollment`
+    );
+
     const [rows] = await db.execute(
       `SELECT 
         e.enrollment_id,
@@ -18,11 +22,7 @@ const fetchAllEnrollments = async () => {
         sec.section_name,
         CONCAT(sy.start_year, '-', sy.end_year) AS school_year,
         c.curriculum_name,
-
-        -- assigned teachers (from users table, not teachers table)
         GROUP_CONCAT(DISTINCT CONCAT(u.first_name, ' ', COALESCE(u.middle_name, ''), ' ', u.last_name, ' ', COALESCE(u.extension_name, '')) SEPARATOR '|') AS teachers,
-
-        -- enrolled subjects
         GROUP_CONCAT(DISTINCT sub.subject_name ORDER BY sub.subject_name SEPARATOR '|') AS enrolled_subjects
 
        FROM enrollment e
@@ -39,51 +39,42 @@ const fetchAllEnrollments = async () => {
        LEFT JOIN subject_grade_levels sgl ON sub.subject_id = sgl.subject_id AND sgl.grade_level_id = e.grade_level_id
 
        GROUP BY 
-        e.enrollment_id,
-        e.student_id,
-        e.grade_level_id,
-        e.school_year_id,
-        e.section_id,
-        e.curriculum_id,
-        e.enrollment_date,
-        e.status,
-        s.lrn,
-        s.first_name,
-        s.middle_name,
-        s.last_name,
-        s.extension_name,
-        gl.grade_name,
-        sec.section_name,
-        sy.start_year,
-        sy.end_year,
-        c.curriculum_name
-       ORDER BY sy.start_year DESC, gl.grade_order, sec.section_name, s.last_name`
+        e.enrollment_id, e.student_id, e.grade_level_id, e.school_year_id,
+        e.section_id, e.curriculum_id, e.enrollment_date, e.status,
+        s.lrn, s.first_name, s.middle_name, s.last_name, s.extension_name,
+        gl.grade_name, sec.section_name, sy.start_year, sy.end_year, c.curriculum_name
+       ORDER BY sy.start_year DESC, gl.grade_order, sec.section_name, s.last_name
+       LIMIT ? OFFSET ?`,
+      [limit, offset]
     );
 
-    return rows.map(row => ({
-      enrollment_id: row.enrollment_id,
-      student_id: row.student_id,
-      lrn: row.lrn,
-      student_name: row.student_name.trim(),
-      grade_level_id: row.grade_level_id,
-      grade_level_name: row.grade_level_name,
-      school_year_id: row.school_year_id,
-      school_year: row.school_year,
-      section_id: row.section_id,
-      section_name: row.section_name,
-      curriculum_id: row.curriculum_id,
-      curriculum_name: row.curriculum_name,
-      enrollment_date: row.enrollment_date,
-      status: row.status,
-
-      teachers: row.teachers ? row.teachers.split('|').map(t => t.trim()) : [],
-      enrolled_subjects: row.enrolled_subjects ? row.enrolled_subjects.split('|').map(s => s.trim()) : []
-    }));
+    return {
+      total,
+      data: rows.map(row => ({
+        enrollment_id: row.enrollment_id,
+        student_id: row.student_id,
+        lrn: row.lrn,
+        student_name: row.student_name.trim(),
+        grade_level_id: row.grade_level_id,
+        grade_level_name: row.grade_level_name,
+        school_year_id: row.school_year_id,
+        school_year: row.school_year,
+        section_id: row.section_id,
+        section_name: row.section_name,
+        curriculum_id: row.curriculum_id,
+        curriculum_name: row.curriculum_name,
+        enrollment_date: row.enrollment_date,
+        status: row.status,
+        teachers: row.teachers ? row.teachers.split('|').map(t => t.trim()) : [],
+        enrolled_subjects: row.enrolled_subjects ? row.enrolled_subjects.split('|').map(s => s.trim()) : []
+      }))
+    };
   } catch (err) {
     console.error('Error in fetchAllEnrollments:', err);
     throw new Error(`Error fetching enrollments: ${err.message}`);
   }
 };
+
 
 const fetchActiveEnrollments = async () => {
   try {

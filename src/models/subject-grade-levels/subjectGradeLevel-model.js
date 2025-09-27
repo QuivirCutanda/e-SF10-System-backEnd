@@ -89,14 +89,25 @@ const fetchSubjectGradeLevelsByGradeLevel = async (gradeLevelId) => {
 };
 
 const createNewSubjectGradeLevel = async (subjectGradeLevelData, userId) => {
+  let connection;
   try {
+    connection = await db.getConnection();
+
     if (!userId || !Number.isInteger(userId)) {
       throw new Error('Invalid user ID for logging');
     }
 
     const { subject_id, grade_level_id, is_required, units } = subjectGradeLevelData;
 
-    const [subjectExists] = await db.execute(
+    const [activeCurr] = await connection.execute(
+      `SELECT curriculum_id, curriculum_name FROM curriculum WHERE is_active = 1 LIMIT 1`
+    );
+    if (activeCurr.length === 0) {
+      throw new Error('No active curriculum found');
+    }
+    const { curriculum_id, curriculum_name } = activeCurr[0];
+
+    const [subjectExists] = await connection.execute(
       'SELECT subject_id, subject_name, subject_code FROM subjects WHERE subject_id = ?',
       [subject_id]
     );
@@ -104,7 +115,7 @@ const createNewSubjectGradeLevel = async (subjectGradeLevelData, userId) => {
       throw new Error('Subject not found');
     }
 
-    const [gradeLevelExists] = await db.execute(
+    const [gradeLevelExists] = await connection.execute(
       'SELECT grade_level_id, grade_name, grade_code FROM grade_levels WHERE grade_level_id = ?',
       [grade_level_id]
     );
@@ -112,39 +123,55 @@ const createNewSubjectGradeLevel = async (subjectGradeLevelData, userId) => {
       throw new Error('Grade level not found');
     }
 
-    const [existingAssignment] = await db.execute(
-      'SELECT subject_id, grade_level_id FROM subject_grade_levels WHERE subject_id = ? AND grade_level_id = ?',
-      [subject_id, grade_level_id]
+    const [existingAssignment] = await connection.execute(
+      `SELECT subject_id, grade_level_id 
+       FROM curriculum_subject_grade_levels 
+       WHERE curriculum_id = ? AND subject_id = ? AND grade_level_id = ?`,
+      [curriculum_id, subject_id, grade_level_id]
     );
     if (existingAssignment.length > 0) {
       throw new Error('Subject grade level assignment already exists');
     }
 
-    const [result] = await db.execute(
-      'INSERT INTO subject_grade_levels (subject_id, grade_level_id, is_required, units) VALUES (?, ?, ?, ?)',
-      [subject_id, grade_level_id, is_required, units]
+    const [result] = await connection.execute(
+      `INSERT INTO curriculum_subject_grade_levels 
+        (curriculum_id, subject_id, grade_level_id, is_required, units) 
+       VALUES (?, ?, ?, ?, ?)`,
+      [curriculum_id, subject_id, grade_level_id, is_required, units]
     );
-    
-    console.log(`Subject grade level assignment created: subject_id=${subject_id}, grade_level_id=${grade_level_id}`);
+
+    console.log(`Assigned subject_id=${subject_id} to grade_level_id=${grade_level_id} in curriculum_id=${curriculum_id}`);
 
     const subject = subjectExists[0];
     const gradeLevel = gradeLevelExists[0];
     const requiredStatus = is_required ? 'Required' : 'Elective';
     const unitsText = units ? ` (${units} units)` : '';
-    
-    const [logResult] = await db.execute(
+
+    const [logResult] = await connection.execute(
       'INSERT INTO activity_logs (user_id, action, log_timestamp) VALUES (?, ?, NOW())',
-      [userId, `Assigned subject "${subject.subject_name} (${subject.subject_code})" to grade level "${gradeLevel.grade_name} (${gradeLevel.grade_code})" as ${requiredStatus}${unitsText}`]
+      [userId, `Assigned subject "${subject.subject_name} (${subject.subject_code})" to grade level "${gradeLevel.grade_name} (${gradeLevel.grade_code})" in curriculum "${curriculum_name}" as ${requiredStatus}${unitsText}`]
     );
+
     console.log(`Activity log created: log_id=${logResult.insertId}, user_id=${userId}`);
 
-    const createdSubjectGradeLevel = await fetchSubjectGradeLevelById(subject_id, grade_level_id);
-    return createdSubjectGradeLevel;
+    return {
+      curriculum_id,
+      subject_id,
+      grade_level_id,
+      is_required,
+      units,
+      subject,
+      gradeLevel
+    };
+
   } catch (err) {
     console.error('Error in createNewSubjectGradeLevel:', err);
     throw new Error(err.message);
+  } finally {
+    if (connection) await connection.release();
   }
 };
+
 
 const deleteSubjectGradeLevelById = async (subjectId, gradeLevelId, userId) => {
   try {

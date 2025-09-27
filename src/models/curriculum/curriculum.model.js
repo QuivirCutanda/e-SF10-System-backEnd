@@ -289,44 +289,57 @@ const getActiveCurriculumsModel = async () => {
 
 
 
-const addSubjectToCurriculumModel = async (curriculumId, subjectId, userId) => {
+const addSubjectToCurriculumModel = async (curriculumId, subjectId, userId, gradeLevelIds = []) => {
   let connection;
   try {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
     const [curriculum] = await connection.execute(
-      'SELECT curriculum_name FROM curriculum WHERE curriculum_id = ?',
+      "SELECT curriculum_name FROM curriculum WHERE curriculum_id = ?",
       [curriculumId]
     );
-    
-    if (curriculum.length === 0) {
-      throw new Error('Curriculum not found');
-    }
+    if (curriculum.length === 0) throw new Error("Curriculum not found");
 
     const [subject] = await connection.execute(
-      'SELECT subject_name, subject_code FROM subjects WHERE subject_id = ?',
+      "SELECT subject_name, subject_code FROM subjects WHERE subject_id = ?",
       [subjectId]
     );
+    if (subject.length === 0) throw new Error("Subject not found");
 
-    if (subject.length === 0) {
-      throw new Error('Subject not found');
-    }
-
-    const [result] = await connection.execute(
-      'INSERT INTO curriculum_subjects (curriculum_id, subject_id) VALUES (?, ?)',
+    await connection.execute(
+      "INSERT INTO curriculum_subjects (curriculum_id, subject_id) VALUES (?, ?)",
       [curriculumId, subjectId]
     );
 
+    const assignedGrades = [];
+    for (const gradeId of gradeLevelIds) {
+      try {
+        await connection.execute(
+          `INSERT INTO curriculum_subject_grade_levels 
+             (curriculum_id, subject_id, grade_level_id, is_required, units) 
+           VALUES (?, ?, ?, TRUE, NULL)`,
+          [curriculumId, subjectId, gradeId]
+        );
+        assignedGrades.push(gradeId);
+      } catch (err) {
+        if (err.code !== "ER_DUP_ENTRY") throw err;
+      }
+    }
+
     await logActivity(
-      userId, 
-      `Added subject ${subject[0].subject_name} (${subject[0].subject_code}) to curriculum: ${curriculum[0].curriculum_name}`
+      userId,
+      `Added subject ${subject[0].subject_name} (${subject[0].subject_code}) 
+       to curriculum: ${curriculum[0].curriculum_name} 
+       with grade levels: ${assignedGrades.join(", ") || "none"}`
     );
 
     await connection.commit();
+
     return {
       subject_code: subject[0].subject_code,
-      subject_name: subject[0].subject_name
+      subject_name: subject[0].subject_name,
+      grade_levels: assignedGrades,
     };
   } catch (err) {
     if (connection) await connection.rollback();
@@ -335,6 +348,8 @@ const addSubjectToCurriculumModel = async (curriculumId, subjectId, userId) => {
     if (connection) await connection.release();
   }
 };
+
+
 
 
 

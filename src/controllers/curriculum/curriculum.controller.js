@@ -355,48 +355,56 @@ exports.getActiveCurriculums = async (req, res) => {
 
 
 exports.addSubjectToCurriculum = async (req, res) => {
-  const { validationResult } = require('express-validator');
+  const { validationResult } = require("express-validator");
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ success: false, errors: errors.array() });
   }
 
   const { id } = req.params;
-  const { subject_ids } = req.body;
+  const { subject_ids, grade_level_ids } = req.body; 
+
   const curriculumId = parseInt(id);
   const userId = req.user?.user_id;
 
   if (!userId) {
     return res.status(401).json({
       success: false,
-      error: 'Unauthorized: User ID not found in request'
+      error: "Unauthorized: User ID not found in request",
     });
   }
 
   if (!Array.isArray(subject_ids) || subject_ids.length === 0) {
     return res.status(400).json({
       success: false,
-      error: 'subject_ids must be a non-empty array'
+      error: "subject_ids must be a non-empty array",
     });
   }
 
   try {
     const [curriculum] = await db.execute(
-      'SELECT curriculum_name FROM curriculum WHERE curriculum_id = ?',
+      "SELECT curriculum_name FROM curriculum WHERE curriculum_id = ?",
       [curriculumId]
     );
 
     if (curriculum.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Curriculum not found'
+        error: "Curriculum not found",
       });
     }
 
     const curriculumName = curriculum[0].curriculum_name;
 
     const results = await Promise.allSettled(
-      subject_ids.map(subject_id => addSubjectToCurriculumModel(curriculumId, subject_id, userId))
+      subject_ids.map((subject_id) =>
+        addSubjectToCurriculumModel(
+          curriculumId,
+          subject_id,
+          userId,
+          grade_level_ids?.[subject_id] || [] 
+        )
+      )
     );
 
     const successful = [];
@@ -404,22 +412,23 @@ exports.addSubjectToCurriculum = async (req, res) => {
 
     results.forEach((result, index) => {
       const subject_id = subject_ids[index];
-      if (result.status === 'fulfilled') {
-        const { subject_code, subject_name } = result.value;
+      if (result.status === "fulfilled") {
+        const { subject_code, subject_name, grade_levels } = result.value;
         successful.push({
           curriculum_id: curriculumId,
           curriculum_name: curriculumName,
           subject_id,
           subject_code,
-          subject_name
+          subject_name,
+          grade_levels,
         });
       } else {
         const error = result.reason;
         let errorMessage;
-        if (error.code === 'ER_DUP_ENTRY') {
-          errorMessage = 'Subject already exists in this curriculum';
-        } else if (error.code === 'ER_NO_REFERENCED_ROW_2') {
-          errorMessage = 'Invalid subject ID';
+        if (error.code === "ER_DUP_ENTRY") {
+          errorMessage = "Subject already exists in this curriculum";
+        } else if (error.code === "ER_NO_REFERENCED_ROW_2") {
+          errorMessage = "Invalid subject ID or grade level";
         } else {
           errorMessage = error.message;
         }
@@ -427,33 +436,37 @@ exports.addSubjectToCurriculum = async (req, res) => {
           curriculum_id: curriculumId,
           curriculum_name: curriculumName,
           subject_id,
-          error: errorMessage
+          error: errorMessage,
         });
       }
     });
 
     return res.status(201).json({
       success: true,
-      message: 'Subjects processed for curriculum',
+      message: "Subjects processed for curriculum",
       data: {
         successful,
         failed,
         summary: {
           total: subject_ids.length,
           successful: successful.length,
-          failed: failed.length
-        }
-      }
+          failed: failed.length,
+        },
+      },
     });
   } catch (error) {
-    console.error('Add Subjects to Curriculum Error:', error);
+    console.error("Add Subjects to Curriculum Error:", error);
     return res.status(500).json({
       success: false,
-      error: 'Server error adding subjects to curriculum',
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
+      error: "Server error adding subjects to curriculum",
+      details:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Please try again later",
     });
   }
 };
+
 
 exports.removeSubjectFromCurriculum = async (req, res) => {
   const { validationResult } = require('express-validator');

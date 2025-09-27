@@ -9,11 +9,26 @@ const {
 
 exports.getAllEnrollments = async (req, res) => {
   try {
-    const enrollments = await fetchAllEnrollments();
+    let { page = 1, limit = 10 } = req.query;
+    page = parseInt(page, 10);
+    limit = parseInt(limit, 10);
+
+    if (isNaN(page) || page <= 0) page = 1;
+    if (isNaN(limit) || limit <= 0) limit = 10;
+
+    const offset = (page - 1) * limit;
+
+    const { data, total } = await fetchAllEnrollments(limit, offset);
+
     return res.status(200).json({
       success: true,
-      data: enrollments,
-      count: enrollments.length,
+      data,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -26,6 +41,7 @@ exports.getAllEnrollments = async (req, res) => {
     });
   }
 };
+
 
 
 exports.getActiveEnrollments = async (req, res) => {

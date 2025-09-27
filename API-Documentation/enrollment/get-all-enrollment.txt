@@ -25,30 +25,30 @@ Example response (200ok)
         {
             "enrollment_id": 1,
             "student_id": 1,
-            "student_name": "Quivir Cutanda",
+            "lrn": "123456789098",
+            "student_name": "Quivir A Cutanda",
+            "grade_level_id": 1,
+            "grade_level_name": "Grade 1",
             "school_year_id": 1,
-            "school_year": "2024-2025",
-            "section_id": 1,
-            "section_name": "Section B",
-            "curriculum_id": 1,
-            "curriculum_name": "K-12 Curriculum 3035-2026",
-            "enrollment_date": "2025-08-26T16:00:00.000Z",
-            "status": "Enrolled"
-        },
-        {
-            "enrollment_id": 2,
-            "student_id": 2,
-            "student_name": "Jemil Doblas",
-            "school_year_id": 1,
-            "school_year": "2024-2025",
-            "section_id": 1,
-            "section_name": "Section B",
-            "curriculum_id": 1,
-            "curriculum_name": "K-12 Curriculum 3035-2026",
-            "enrollment_date": "2025-08-26T16:00:00.000Z",
-            "status": "Enrolled"
+            "school_year": "2020-2021",
+            "section_id": 2,
+            "section_name": "section B",
+            "curriculum_id": 2,
+            "curriculum_name": "k-12 2021",
+            "enrollment_date": "2025-09-26T16:00:00.000Z",
+            "status": "Enrolled",
+            "teachers": [],
+            "enrolled_subjects": [
+                "Math",
+                "Science"
+            ]
         }
     ],
-    "count": 2,
-    "timestamp": "2025-08-27T23:23:44.059Z"
+    "pagination": {
+        "total": 1,
+        "page": 1,
+        "limit": 10,
+        "totalPages": 1
+    },
+    "timestamp": "2025-09-27T13:33:43.307Z"
 }

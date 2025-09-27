@@ -253,6 +253,22 @@ CREATE TABLE curriculum_subjects (
     INDEX idx_curriculum_subjects_subject (subject_id)
 );
 
+CREATE TABLE curriculum_subject_grade_levels (
+    curriculum_id INT NOT NULL,
+    subject_id INT NOT NULL,
+    grade_level_id INT NOT NULL,
+    is_required BOOLEAN DEFAULT TRUE,
+    units DECIMAL(3,1),
+    PRIMARY KEY (curriculum_id, subject_id, grade_level_id),
+    FOREIGN KEY (curriculum_id) REFERENCES curriculum(curriculum_id) ON DELETE CASCADE,
+    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id) ON DELETE CASCADE,
+    FOREIGN KEY (grade_level_id) REFERENCES grade_levels(grade_level_id) ON DELETE CASCADE,
+    INDEX idx_csgl_curriculum (curriculum_id),
+    INDEX idx_csgl_subject (subject_id),
+    INDEX idx_csgl_grade_level (grade_level_id)
+);
+
+
 -- Enrollment Table
 CREATE TABLE enrollment (
     enrollment_id INT PRIMARY KEY AUTO_INCREMENT,

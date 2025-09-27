@@ -149,20 +149,22 @@ exports.getAllGradeLevels = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get All Grade Levels Error:', error);
+    console.error("Get All Grade Levels Error:", error);
     return res.status(500).json({
       success: false,
-      message: 'Server error retrieving grade levels',
+      message: "Server error retrieving grade levels",
       details:
-        process.env.NODE_ENV === 'development'
+        process.env.NODE_ENV === "development"
           ? error.message
-          : 'Please try again later',
+          : "Please try again later",
       timestamp: new Date().toISOString(),
     });
   } finally {
     if (connection) await connection.release();
   }
 };
+
+
 
 
 exports.getSubjectById = async (req, res) => {

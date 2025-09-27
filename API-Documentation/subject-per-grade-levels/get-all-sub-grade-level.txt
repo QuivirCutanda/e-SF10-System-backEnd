@@ -11,7 +11,7 @@
     -Method
         GET
     -EndPoint
-              http://localhost:3001/esf10/subject-grade-levels/
+              http://localhost:3001/esf10/subject-grade-levels
 --------------------------------------------------
 
 
@@ -21,88 +21,48 @@ Example response (200ok)
 -------------------------------------------------
 {
     "success": true,
+    "curriculum": {
+        "curriculum_id": 2,
+        "curriculum_name": "k-12 2021",
+        "school_year_id": 1
+    },
     "data": [
+        {
+            "grade_level_id": 1,
+            "grade_code": "G1",
+            "grade_name": "Grade 1",
+            "sections": [],
+            "subjects": [
+                {
+                    "subject_id": 1,
+                    "subject_code": "MATH-101",
+                    "subject_name": "Math"
+                },
+                {
+                    "subject_id": 2,
+                    "subject_code": "SCIENCE",
+                    "subject_name": "Science"
+                }
+            ]
+        },
         {
             "grade_level_id": 2,
             "grade_code": "G2",
             "grade_name": "Grade 2",
-            "grade_order": 2,
+            "sections": [],
             "subjects": [
-                {
-                    "subject_id": 8,
-                    "subject_code": "SAMPLE2",
-                    "subject_name": "sample2",
-                    "description": null,
-                    "is_required": false,
-                    "units": "2.0"
-                },
-                {
-                    "subject_id": 9,
-                    "subject_code": "SAMPLE3",
-                    "subject_name": "sample3",
-                    "description": null,
-                    "is_required": true,
-                    "units": "4.0"
-                }
-            ]
-        },
-        {
-            "grade_level_id": 3,
-            "grade_code": "G3",
-            "grade_name": "Grade 3",
-            "grade_order": 3,
-            "subjects": [
-                {
-                    "subject_id": 5,
-                    "subject_code": "FLP",
-                    "subject_name": "FILIPINO",
-                    "description": "This is for Filipino subject",
-                    "is_required": true,
-                    "units": "3.0"
-                },
                 {
                     "subject_id": 1,
-                    "subject_code": "MATH201",
-                    "subject_name": "Advanced Mathematics",
-                    "description": "Covers algebra, calculus, and probability.",
-                    "is_required": true,
-                    "units": "3.0"
-                }
-            ]
-        },
-        {
-            "grade_level_id": 6,
-            "grade_code": "G6",
-            "grade_name": "Grade 6",
-            "grade_order": 6,
-            "subjects": [
-                {
-                    "subject_id": 6,
-                    "subject_code": "ESP",
-                    "subject_name": "ESP",
-                    "description": null,
-                    "is_required": true,
-                    "units": "3.0"
-                },
-                {
-                    "subject_id": 5,
-                    "subject_code": "FLP",
-                    "subject_name": "FILIPINO",
-                    "description": "This is for Filipino subject",
-                    "is_required": true,
-                    "units": "3.0"
-                },
-                {
-                    "subject_id": 1,
-                    "subject_code": "MATH201",
-                    "subject_name": "Advanced Mathematics",
-                    "description": "Covers algebra, calculus, and probability.",
-                    "is_required": true,
-                    "units": "3.0"
+                    "subject_code": "MATH-101",
+                    "subject_name": "Math"
                 }
             ]
         }
     ],
-    "count": 3,
-    "timestamp": "2025-08-27T07:23:59.757Z"
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 2,
+        "totalPages": 1
+    }
 }

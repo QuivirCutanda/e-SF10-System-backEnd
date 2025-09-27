@@ -19,10 +19,21 @@
 --------------------------------------------------
 Example requist
 --------------------------------------------------
+*option 1: assign Subject
 
 {
-  "subject_ids": [3, 4]
+  "subject_ids": [1, 2, 3]
 }
+
+
+*Option 2: assign subject and assign subject into grade level
+
+"grade_level_ids": {
+    "1": [7, 8],
+    "2": [9],
+    "3": [10, 11, 12]
+  }
+
 
 
 
