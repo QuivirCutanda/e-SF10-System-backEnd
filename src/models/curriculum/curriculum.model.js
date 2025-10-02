@@ -1,5 +1,5 @@
-const db = require('../../config/db');
-const { logActivity } = require('../../utils/activityLog');
+const db = require("../../config/db");
+const { logActivity } = require("../../utils/activityLog");
 
 const createCurriculumModel = async (curriculumName, schoolYearId, userId) => {
   let connection;
@@ -8,20 +8,25 @@ const createCurriculumModel = async (curriculumName, schoolYearId, userId) => {
     await connection.beginTransaction();
 
     const [schoolYear] = await connection.execute(
-      'SELECT school_year_id FROM school_years WHERE school_year_id = ?',
+      "SELECT school_year_id FROM school_years WHERE school_year_id = ?",
       [schoolYearId]
     );
-    
+
     if (schoolYear.length === 0) {
-      throw new Error('Invalid school year ID: The specified school year does not exist');
+      throw new Error(
+        "Invalid school year ID: The specified school year does not exist"
+      );
     }
 
     const [result] = await connection.execute(
-      'INSERT INTO curriculum (curriculum_name, school_year_id, is_active) VALUES (?, ?, ?)',
+      "INSERT INTO curriculum (curriculum_name, school_year_id, is_active) VALUES (?, ?, ?)",
       [curriculumName, schoolYearId, 0]
     );
 
-    await logActivity(userId, `Created curriculum: ${curriculumName} for school year ID ${schoolYearId}`);
+    await logActivity(
+      userId,
+      `Created curriculum: ${curriculumName} for school year ID ${schoolYearId}`
+    );
 
     await connection.commit();
     return result;
@@ -33,12 +38,16 @@ const createCurriculumModel = async (curriculumName, schoolYearId, userId) => {
   }
 };
 
-
-const getAllCurriculumsModel = async (limit, offset, schoolYearId = null, isActive = null) => {
+const getAllCurriculumsModel = async (
+  limit,
+  offset,
+  schoolYearId = null,
+  isActive = null
+) => {
   let connection;
   try {
     connection = await db.getConnection();
-    
+
     let query = `
       SELECT c.curriculum_id, c.curriculum_name, c.school_year_id, c.is_active,
              c.created_at, c.updated_at,
@@ -46,36 +55,36 @@ const getAllCurriculumsModel = async (limit, offset, schoolYearId = null, isActi
       FROM curriculum c
       LEFT JOIN school_years sy ON c.school_year_id = sy.school_year_id
     `;
-    let countQuery = 'SELECT COUNT(*) as total FROM curriculum c';
+    let countQuery = "SELECT COUNT(*) as total FROM curriculum c";
     let queryParams = [];
     let countParams = [];
     let whereConditions = [];
 
     if (schoolYearId) {
-      whereConditions.push('c.school_year_id = ?');
+      whereConditions.push("c.school_year_id = ?");
       queryParams.push(schoolYearId);
       countParams.push(schoolYearId);
     }
 
     if (isActive !== null) {
-      const activeValue = isActive === 'true' || isActive === true;
-      whereConditions.push('c.is_active = ?');
+      const activeValue = isActive === "true" || isActive === true;
+      whereConditions.push("c.is_active = ?");
       queryParams.push(activeValue);
       countParams.push(activeValue);
     }
 
     if (whereConditions.length > 0) {
-      const whereClause = ` WHERE ${whereConditions.join(' AND ')}`;
+      const whereClause = ` WHERE ${whereConditions.join(" AND ")}`;
       query += whereClause;
       countQuery += whereClause;
     }
 
-    query += ' ORDER BY c.created_at DESC LIMIT ? OFFSET ?';
+    query += " ORDER BY c.created_at DESC LIMIT ? OFFSET ?";
     queryParams.push(parseInt(limit), parseInt(offset));
 
     const [rows] = await connection.execute(query, queryParams);
     const [totalRows] = await connection.execute(countQuery, countParams);
-    
+
     return { curriculums: rows, total: totalRows[0].total };
   } catch (err) {
     throw err;
@@ -113,38 +122,40 @@ const updateCurriculumModel = async (curriculumId, updateData, userId) => {
     await connection.beginTransaction();
 
     const [existing] = await connection.execute(
-      'SELECT curriculum_id, curriculum_name FROM curriculum WHERE curriculum_id = ?',
+      "SELECT curriculum_id, curriculum_name FROM curriculum WHERE curriculum_id = ?",
       [curriculumId]
     );
 
     if (existing.length === 0) {
-      throw new Error('Curriculum not found');
+      throw new Error("Curriculum not found");
     }
 
     const updateFields = [];
     const updateValues = [];
 
     Object.entries(updateData).forEach(([key, value]) => {
-      if (key !== 'is_active' && value !== undefined && value !== null) {
+      if (key !== "is_active" && value !== undefined && value !== null) {
         updateFields.push(`${key} = ?`);
         updateValues.push(value);
       }
     });
 
     if (updateFields.length === 0) {
-      throw new Error('No valid fields to update');
+      throw new Error("No valid fields to update");
     }
 
-    updateFields.push('updated_at = CURRENT_TIMESTAMP');
+    updateFields.push("updated_at = CURRENT_TIMESTAMP");
     updateValues.push(curriculumId);
 
     const [result] = await connection.execute(
-      `UPDATE curriculum SET ${updateFields.join(', ')} WHERE curriculum_id = ?`,
+      `UPDATE curriculum SET ${updateFields.join(
+        ", "
+      )} WHERE curriculum_id = ?`,
       updateValues
     );
 
     if (result.affectedRows === 0) {
-      throw new Error('Failed to update curriculum');
+      throw new Error("Failed to update curriculum");
     }
 
     await logActivity(
@@ -162,13 +173,15 @@ const updateCurriculumModel = async (curriculumId, updateData, userId) => {
   }
 };
 
-
-
-const searchCurriculumsModel = async (searchQuery, schoolYearId = null, isActive = null) => {
+const searchCurriculumsModel = async (
+  searchQuery,
+  schoolYearId = null,
+  isActive = null
+) => {
   let connection;
   try {
     connection = await db.getConnection();
-    
+
     let query = `
       SELECT c.curriculum_id, c.curriculum_name, c.school_year_id, c.is_active,
              c.created_at, c.updated_at,
@@ -180,13 +193,13 @@ const searchCurriculumsModel = async (searchQuery, schoolYearId = null, isActive
     let queryParams = [`%${searchQuery}%`];
 
     if (schoolYearId) {
-      query += ' AND c.school_year_id = ?';
+      query += " AND c.school_year_id = ?";
       queryParams.push(schoolYearId);
     }
 
     if (isActive !== null) {
-      const activeValue = isActive === 'true' || isActive === true;
-      query += ' AND c.is_active = ?';
+      const activeValue = isActive === "true" || isActive === true;
+      query += " AND c.is_active = ?";
       queryParams.push(activeValue);
     }
 
@@ -194,7 +207,7 @@ const searchCurriculumsModel = async (searchQuery, schoolYearId = null, isActive
       CASE WHEN c.curriculum_name LIKE ? THEN 1 ELSE 2 END,
       c.created_at DESC
       LIMIT 50`;
-    
+
     queryParams.push(`${searchQuery}%`);
 
     const [rows] = await connection.execute(query, queryParams);
@@ -206,11 +219,16 @@ const searchCurriculumsModel = async (searchQuery, schoolYearId = null, isActive
   }
 };
 
-const getCurriculumsBySchoolYearModel = async (schoolYearId, limit, offset, isActive = null) => {
+const getCurriculumsBySchoolYearModel = async (
+  schoolYearId,
+  limit,
+  offset,
+  isActive = null
+) => {
   let connection;
   try {
     connection = await db.getConnection();
-    
+
     let query = `
       SELECT c.curriculum_id, c.curriculum_name, c.school_year_id, c.is_active,
              c.created_at, c.updated_at,
@@ -219,24 +237,25 @@ const getCurriculumsBySchoolYearModel = async (schoolYearId, limit, offset, isAc
       LEFT JOIN school_years sy ON c.school_year_id = sy.school_year_id
       WHERE c.school_year_id = ?
     `;
-    let countQuery = 'SELECT COUNT(*) as total FROM curriculum WHERE school_year_id = ?';
+    let countQuery =
+      "SELECT COUNT(*) as total FROM curriculum WHERE school_year_id = ?";
     let queryParams = [schoolYearId];
     let countParams = [schoolYearId];
 
     if (isActive !== null) {
-      const activeValue = isActive === 'true' || isActive === true;
-      query += ' AND c.is_active = ?';
-      countQuery += ' AND is_active = ?';
+      const activeValue = isActive === "true" || isActive === true;
+      query += " AND c.is_active = ?";
+      countQuery += " AND is_active = ?";
       queryParams.push(activeValue);
       countParams.push(activeValue);
     }
 
-    query += ' ORDER BY c.curriculum_name ASC LIMIT ? OFFSET ?';
+    query += " ORDER BY c.curriculum_name ASC LIMIT ? OFFSET ?";
     queryParams.push(parseInt(limit), parseInt(offset));
 
     const [rows] = await connection.execute(query, queryParams);
     const [totalRows] = await connection.execute(countQuery, countParams);
-    
+
     return { curriculums: rows, total: totalRows[0].total };
   } catch (err) {
     throw err;
@@ -287,73 +306,77 @@ const getActiveCurriculumsModel = async () => {
   }
 };
 
-
-
-const addSubjectToCurriculumModel = async (curriculumId, subjectId, userId, gradeLevelIds = []) => {
+const addSubjectToCurriculumModel = async (
+  curriculumId,
+  subjectId,
+  userId,
+  gradeLevelIds = []
+) => {
   let connection;
   try {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    const [curriculum] = await connection.execute(
+    const [[curriculum]] = await connection.execute(
       "SELECT curriculum_name FROM curriculum WHERE curriculum_id = ?",
       [curriculumId]
     );
-    if (curriculum.length === 0) throw new Error("Curriculum not found");
+    if (!curriculum) throw new Error("Curriculum not found");
 
-    const [subject] = await connection.execute(
+    const [[subject]] = await connection.execute(
       "SELECT subject_name, subject_code FROM subjects WHERE subject_id = ?",
       [subjectId]
     );
-    if (subject.length === 0) throw new Error("Subject not found");
+    if (!subject) throw new Error("Subject not found");
 
     await connection.execute(
-      "INSERT INTO curriculum_subjects (curriculum_id, subject_id) VALUES (?, ?)",
+      "INSERT IGNORE INTO curriculum_subjects (curriculum_id, subject_id) VALUES (?, ?)",
       [curriculumId, subjectId]
     );
 
-    const assignedGrades = [];
-    for (const gradeId of gradeLevelIds) {
-      try {
-        await connection.execute(
-          `INSERT INTO curriculum_subject_grade_levels 
-             (curriculum_id, subject_id, grade_level_id, is_required, units) 
-           VALUES (?, ?, ?, TRUE, NULL)`,
-          [curriculumId, subjectId, gradeId]
-        );
-        assignedGrades.push(gradeId);
-      } catch (err) {
-        if (err.code !== "ER_DUP_ENTRY") throw err;
-      }
+    if (gradeLevelIds.length > 0) {
+      const values = gradeLevelIds.map((gid) => [
+        curriculumId,
+        subjectId,
+        gid,
+        true,
+        null,
+      ]);
+      await connection.query(
+        `INSERT IGNORE INTO curriculum_subject_grade_levels 
+          (curriculum_id, subject_id, grade_level_id, is_required, units) 
+         VALUES ?`,
+        [values]
+      );
     }
 
     await logActivity(
       userId,
-      `Added subject ${subject[0].subject_name} (${subject[0].subject_code}) 
-       to curriculum: ${curriculum[0].curriculum_name} 
-       with grade levels: ${assignedGrades.join(", ") || "none"}`
+      `Added subject ${subject.subject_name} (${subject.subject_code}) 
+       to curriculum: ${curriculum.curriculum_name} 
+       with grade levels: ${gradeLevelIds.join(", ") || "none"}`
     );
 
     await connection.commit();
 
     return {
-      subject_code: subject[0].subject_code,
-      subject_name: subject[0].subject_name,
-      grade_levels: assignedGrades,
+      subject_code: subject.subject_code,
+      subject_name: subject.subject_name,
+      grade_levels: gradeLevelIds,
     };
   } catch (err) {
     if (connection) await connection.rollback();
     throw err;
   } finally {
-    if (connection) await connection.release();
+    if (connection) connection.release();
   }
 };
 
-
-
-
-
-const removeSubjectFromCurriculumModel = async (curriculumId, subjectId, userId) => {
+const removeSubjectFromCurriculumModel = async (
+  curriculumId,
+  subjectId,
+  userId
+) => {
   let connection;
   try {
     connection = await db.getConnection();
@@ -369,21 +392,21 @@ const removeSubjectFromCurriculumModel = async (curriculumId, subjectId, userId)
     );
 
     if (existing.length === 0) {
-      throw new Error('Subject not found in this curriculum');
+      throw new Error("Subject not found in this curriculum");
     }
 
     const [result] = await connection.execute(
-      'DELETE FROM curriculum_subjects WHERE curriculum_id = ? AND subject_id = ?',
+      "DELETE FROM curriculum_subjects WHERE curriculum_id = ? AND subject_id = ?",
       [curriculumId, subjectId]
     );
 
     if (result.affectedRows === 0) {
-      throw new Error('Failed to remove subject from curriculum');
+      throw new Error("Failed to remove subject from curriculum");
     }
 
     const record = existing[0];
     await logActivity(
-      userId, 
+      userId,
       `Removed subject ${record.subject_name} (${record.subject_code}) from curriculum: ${record.curriculum_name}`
     );
 
@@ -391,7 +414,7 @@ const removeSubjectFromCurriculumModel = async (curriculumId, subjectId, userId)
     return {
       curriculum_name: record.curriculum_name,
       subject_name: record.subject_name,
-      subject_code: record.subject_code
+      subject_code: record.subject_code,
     };
   } catch (err) {
     if (connection) await connection.rollback();
@@ -401,11 +424,16 @@ const removeSubjectFromCurriculumModel = async (curriculumId, subjectId, userId)
   }
 };
 
-const getCurriculumSubjectsModel = async (curriculumId, limit, offset, gradeLevel = null) => {
+const getCurriculumSubjectsModel = async (
+  curriculumId,
+  limit,
+  offset,
+  gradeLevel = null
+) => {
   let connection;
   try {
     connection = await db.getConnection();
-    
+
     let query = `
       SELECT s.subject_id, s.subject_code, s.subject_name, s.description,
              s.created_at, s.updated_at
@@ -422,12 +450,12 @@ const getCurriculumSubjectsModel = async (curriculumId, limit, offset, gradeLeve
     let queryParams = [curriculumId];
     let countParams = [curriculumId];
 
-    query += ' ORDER BY s.subject_name ASC LIMIT ? OFFSET ?';
+    query += " ORDER BY s.subject_name ASC LIMIT ? OFFSET ?";
     queryParams.push(parseInt(limit), parseInt(offset));
 
     const [rows] = await connection.execute(query, queryParams);
     const [totalRows] = await connection.execute(countQuery, countParams);
-    
+
     return { subjects: rows, total: totalRows[0].total };
   } catch (err) {
     throw err;
@@ -436,16 +464,21 @@ const getCurriculumSubjectsModel = async (curriculumId, limit, offset, gradeLeve
   }
 };
 
-const checkCurriculumNameExistsModel = async (curriculumName, schoolYearId, excludeId = null) => {
+const checkCurriculumNameExistsModel = async (
+  curriculumName,
+  schoolYearId,
+  excludeId = null
+) => {
   let connection;
   try {
     connection = await db.getConnection();
-    
-    let query = 'SELECT curriculum_id FROM curriculum WHERE curriculum_name = ? AND school_year_id = ?';
+
+    let query =
+      "SELECT curriculum_id FROM curriculum WHERE curriculum_name = ? AND school_year_id = ?";
     let params = [curriculumName, schoolYearId];
-    
+
     if (excludeId) {
-      query += ' AND curriculum_id != ?';
+      query += " AND curriculum_id != ?";
       params.push(excludeId);
     }
 
@@ -465,26 +498,28 @@ const toggleCurriculumStatusModel = async (curriculumId, userId) => {
     await connection.beginTransaction();
 
     const [curriculum] = await connection.execute(
-      'SELECT curriculum_id, curriculum_name, is_active FROM curriculum WHERE curriculum_id = ?',
+      "SELECT curriculum_id, curriculum_name, is_active FROM curriculum WHERE curriculum_id = ?",
       [curriculumId]
     );
 
     if (curriculum.length === 0) {
-      throw new Error('Curriculum not found');
+      throw new Error("Curriculum not found");
     }
 
     const targetCurriculum = curriculum[0];
 
     if (targetCurriculum.is_active === 1) {
-      throw new Error('Cannot deactivate the only active curriculum. One curriculum must always remain active.');
+      throw new Error(
+        "Cannot deactivate the only active curriculum. One curriculum must always remain active."
+      );
     }
 
     await connection.execute(
-      'UPDATE curriculum SET is_active = 0, updated_at = CURRENT_TIMESTAMP'
+      "UPDATE curriculum SET is_active = 0, updated_at = CURRENT_TIMESTAMP"
     );
 
     await connection.execute(
-      'UPDATE curriculum SET is_active = 1, updated_at = CURRENT_TIMESTAMP WHERE curriculum_id = ?',
+      "UPDATE curriculum SET is_active = 1, updated_at = CURRENT_TIMESTAMP WHERE curriculum_id = ?",
       [curriculumId]
     );
 
@@ -499,9 +534,9 @@ const toggleCurriculumStatusModel = async (curriculumId, userId) => {
       curriculum_id: curriculumId,
       curriculum_name: targetCurriculum.curriculum_name,
       new_status: true,
-      message: 'Curriculum activated successfully. All others were deactivated.'
+      message:
+        "Curriculum activated successfully. All others were deactivated.",
     };
-
   } catch (err) {
     if (connection) await connection.rollback();
     throw err;
@@ -510,8 +545,11 @@ const toggleCurriculumStatusModel = async (curriculumId, userId) => {
   }
 };
 
-
-const getActiveCurriculumSubjectsModel = async (limit, offset, gradeLevel = null) => {
+const getActiveCurriculumSubjectsModel = async (
+  limit,
+  offset,
+  gradeLevel = null
+) => {
   let connection;
   try {
     connection = await db.getConnection();
@@ -572,7 +610,7 @@ const getActiveCurriculumSubjectsModel = async (limit, offset, gradeLevel = null
     return {
       subjects: rows,
       total: totalRows[0].total,
-      curriculum: { curriculum_id, curriculum_name, school_year_id }
+      curriculum: { curriculum_id, curriculum_name, school_year_id },
     };
   } catch (err) {
     throw err;
@@ -580,8 +618,6 @@ const getActiveCurriculumSubjectsModel = async (limit, offset, gradeLevel = null
     if (connection) await connection.release();
   }
 };
-
-
 
 module.exports = {
   createCurriculumModel,
@@ -596,5 +632,5 @@ module.exports = {
   getCurriculumSubjectsModel,
   checkCurriculumNameExistsModel,
   toggleCurriculumStatusModel,
-  getActiveCurriculumSubjectsModel
+  getActiveCurriculumSubjectsModel,
 };

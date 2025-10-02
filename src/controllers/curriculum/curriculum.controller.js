@@ -362,7 +362,7 @@ exports.addSubjectToCurriculum = async (req, res) => {
   }
 
   const { id } = req.params;
-  const { subject_ids, grade_level_ids } = req.body; 
+  const { subject_ids, grade_level_ids } = req.body;
 
   const curriculumId = parseInt(id);
   const userId = req.user?.user_id;
@@ -396,50 +396,55 @@ exports.addSubjectToCurriculum = async (req, res) => {
 
     const curriculumName = curriculum[0].curriculum_name;
 
-    const results = await Promise.allSettled(
-      subject_ids.map((subject_id) =>
-        addSubjectToCurriculumModel(
-          curriculumId,
-          subject_id,
-          userId,
-          grade_level_ids?.[subject_id] || [] 
-        )
-      )
-    );
-
+    const chunkSize = 50; 
     const successful = [];
     const failed = [];
 
-    results.forEach((result, index) => {
-      const subject_id = subject_ids[index];
-      if (result.status === "fulfilled") {
-        const { subject_code, subject_name, grade_levels } = result.value;
-        successful.push({
-          curriculum_id: curriculumId,
-          curriculum_name: curriculumName,
-          subject_id,
-          subject_code,
-          subject_name,
-          grade_levels,
-        });
-      } else {
-        const error = result.reason;
-        let errorMessage;
-        if (error.code === "ER_DUP_ENTRY") {
-          errorMessage = "Subject already exists in this curriculum";
-        } else if (error.code === "ER_NO_REFERENCED_ROW_2") {
-          errorMessage = "Invalid subject ID or grade level";
+    for (let i = 0; i < subject_ids.length; i += chunkSize) {
+      const chunk = subject_ids.slice(i, i + chunkSize);
+
+      const results = await Promise.allSettled(
+        chunk.map((subject_id) =>
+          addSubjectToCurriculumModel(
+            curriculumId,
+            subject_id,
+            userId,
+            grade_level_ids?.[subject_id] || []
+          )
+        )
+      );
+
+      results.forEach((result, idx) => {
+        const subject_id = chunk[idx];
+        if (result.status === "fulfilled") {
+          const { subject_code, subject_name, grade_levels } = result.value;
+          successful.push({
+            curriculum_id: curriculumId,
+            curriculum_name: curriculumName,
+            subject_id,
+            subject_code,
+            subject_name,
+            grade_levels,
+          });
         } else {
-          errorMessage = error.message;
+          const error = result.reason;
+          let errorMessage;
+          if (error.code === "ER_DUP_ENTRY") {
+            errorMessage = "Subject already exists in this curriculum";
+          } else if (error.code === "ER_NO_REFERENCED_ROW_2") {
+            errorMessage = "Invalid subject ID or grade level";
+          } else {
+            errorMessage = error.message;
+          }
+          failed.push({
+            curriculum_id: curriculumId,
+            curriculum_name: curriculumName,
+            subject_id,
+            error: errorMessage,
+          });
         }
-        failed.push({
-          curriculum_id: curriculumId,
-          curriculum_name: curriculumName,
-          subject_id,
-          error: errorMessage,
-        });
-      }
-    });
+      });
+    }
 
     return res.status(201).json({
       success: true,
@@ -466,6 +471,7 @@ exports.addSubjectToCurriculum = async (req, res) => {
     });
   }
 };
+
 
 
 exports.removeSubjectFromCurriculum = async (req, res) => {
