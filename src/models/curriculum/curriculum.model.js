@@ -525,7 +525,7 @@ const toggleCurriculumStatusModel = async (curriculumId, userId) => {
 
     await logActivity(
       userId,
-      `Activated curriculum: ${targetCurriculum.curriculum_name}. All others automatically deactivated.`
+      `Activated curriculum: ${targetCurriculum.curriculum_name}.`
     );
 
     await connection.commit();
@@ -535,7 +535,7 @@ const toggleCurriculumStatusModel = async (curriculumId, userId) => {
       curriculum_name: targetCurriculum.curriculum_name,
       new_status: true,
       message:
-        "Curriculum activated successfully. All others were deactivated.",
+        "Curriculum activated successfully",
     };
   } catch (err) {
     if (connection) await connection.rollback();

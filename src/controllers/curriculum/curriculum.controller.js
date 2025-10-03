@@ -571,7 +571,7 @@ exports.toggleCurriculumStatus = async (req, res) => {
   if (!userId) {
     return res.status(401).json({
       success: false,
-      error: 'Unauthorized: User ID not found in request'
+      message: 'Unauthorized: User ID not found in request'
     });
   }
 
@@ -589,13 +589,13 @@ exports.toggleCurriculumStatus = async (req, res) => {
     if (error.message.includes('Cannot deactivate')) {
       return res.status(400).json({
         success: false,
-        error: error.message
+        message: error.message
       });
     }
 
     return res.status(error.message.includes('not found') ? 404 : 500).json({
       success: false,
-      error: error.message.includes('not found') ? 'Curriculum not found' : 'Server error toggling curriculum status',
+      message: error.message.includes('not found') ? 'Curriculum not found' : 'Server error toggling curriculum status',
       details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later',
     });
   }

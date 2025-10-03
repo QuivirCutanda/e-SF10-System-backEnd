@@ -157,7 +157,7 @@ exports.createSubjectGradeLevel = async (req, res) => {
         .status(404)
         .json({
           success: false,
-          error: error.message,
+          message: error.message,
           timestamp: new Date().toISOString(),
         });
     }

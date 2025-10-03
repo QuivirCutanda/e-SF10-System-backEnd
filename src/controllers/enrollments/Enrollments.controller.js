@@ -1,10 +1,12 @@
+
 const { 
   fetchAllEnrollments, 
   fetchEnrollmentById, 
   createNewEnrollment, 
   updateEnrollmentById, 
   deleteEnrollmentById,
-  fetchActiveEnrollments
+  fetchActiveEnrollments,
+  fetchActiveYearEnrollments
 } = require('../../models/enrollments/enrollment-model');
 
 exports.getAllEnrollments = async (req, res) => {
@@ -396,5 +398,25 @@ exports.deleteEnrollment = async (req, res) => {
       details: error.message,
       timestamp: new Date().toISOString()
     });
+  }
+};
+
+
+exports.getActiveYearEnrollments = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit, 10) || 20;
+    const offset = parseInt(req.query.offset, 10) || 0;
+
+    const result = await fetchActiveYearEnrollments(limit, offset);
+
+    return res.status(200).json({
+      success: true,
+      total: result.total,
+      count: result.data.length,
+      students: result.data
+    });
+  } catch (err) {
+    console.error('Error in getActiveYearEnrollments:', err);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };

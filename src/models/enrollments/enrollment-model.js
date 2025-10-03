@@ -513,11 +513,93 @@ const deleteEnrollmentById = async (enrollmentId, userId) => {
 };
 
 
+const fetchActiveYearEnrollments = async (limit, offset) => {
+  try {
+    const [[{ total }]] = await db.execute(
+      `SELECT COUNT(*) AS total
+       FROM enrollment e
+       JOIN school_years sy ON e.school_year_id = sy.school_year_id
+       WHERE sy.is_active = 1 AND e.status = 'Enrolled'`
+    );
+
+    const [rows] = await db.execute(
+      `SELECT 
+        e.enrollment_id,
+        e.student_id,
+        e.grade_level_id,
+        e.school_year_id,
+        e.section_id,
+        e.curriculum_id,
+        e.enrollment_date,
+        e.status,
+        s.lrn,
+        CONCAT(s.first_name, ' ', COALESCE(s.middle_name, ''), ' ', s.last_name, ' ', COALESCE(s.extension_name, '')) AS student_name,
+        gl.grade_name AS grade_level_name,
+        sec.section_name,
+        CONCAT(sy.start_year, '-', sy.end_year) AS school_year,
+        c.curriculum_name,
+        GROUP_CONCAT(DISTINCT CONCAT(u.first_name, ' ', COALESCE(u.middle_name, ''), ' ', u.last_name, ' ', COALESCE(u.extension_name, '')) SEPARATOR '|') AS teachers,
+        GROUP_CONCAT(DISTINCT sub.subject_name ORDER BY sub.subject_name SEPARATOR '|') AS enrolled_subjects
+
+       FROM enrollment e
+       JOIN students s ON e.student_id = s.student_id
+       JOIN grade_levels gl ON e.grade_level_id = gl.grade_level_id
+       JOIN sections sec ON e.section_id = sec.section_id
+       JOIN school_years sy ON e.school_year_id = sy.school_year_id
+       LEFT JOIN curriculum c ON e.curriculum_id = c.curriculum_id
+       LEFT JOIN teacher_assignments ta ON e.section_id = ta.section_id AND e.school_year_id = ta.school_year_id
+       LEFT JOIN teachers t ON ta.teacher_id = t.teacher_id
+       LEFT JOIN users u ON t.user_id = u.user_id
+       LEFT JOIN curriculum_subjects cs ON c.curriculum_id = cs.curriculum_id
+       LEFT JOIN subjects sub ON cs.subject_id = sub.subject_id
+       LEFT JOIN subject_grade_levels sgl ON sub.subject_id = sgl.subject_id AND sgl.grade_level_id = e.grade_level_id
+
+       WHERE sy.is_active = 1
+         AND e.status = 'Enrolled'
+
+       GROUP BY 
+        e.enrollment_id, e.student_id, e.grade_level_id, e.school_year_id,
+        e.section_id, e.curriculum_id, e.enrollment_date, e.status,
+        s.lrn, s.first_name, s.middle_name, s.last_name, s.extension_name,
+        gl.grade_name, sec.section_name, sy.start_year, sy.end_year, c.curriculum_name
+       ORDER BY gl.grade_order, sec.section_name, s.last_name
+       LIMIT ? OFFSET ?`,
+      [limit, offset]
+    );
+
+    return {
+      total,
+      data: rows.map(row => ({
+        enrollment_id: row.enrollment_id,
+        student_id: row.student_id,
+        lrn: row.lrn,
+        student_name: row.student_name.trim(),
+        grade_level_id: row.grade_level_id,
+        grade_level_name: row.grade_level_name,
+        school_year_id: row.school_year_id,
+        school_year: row.school_year,
+        section_id: row.section_id,
+        section_name: row.section_name,
+        curriculum_id: row.curriculum_id,
+        curriculum_name: row.curriculum_name,
+        enrollment_date: row.enrollment_date,
+        status: row.status,
+        teachers: row.teachers ? row.teachers.split('|').map(t => t.trim()) : [],
+        enrolled_subjects: row.enrolled_subjects ? row.enrolled_subjects.split('|').map(s => s.trim()) : []
+      }))
+    };
+  } catch (err) {
+    console.error('Error in fetchActiveYearEnrollments:', err);
+    throw new Error(`Error fetching active year enrollments: ${err.message}`);
+  }
+};
+
 module.exports = { 
   fetchAllEnrollments, 
   fetchEnrollmentById, 
   createNewEnrollment, 
   updateEnrollmentById, 
   deleteEnrollmentById,
-  fetchActiveEnrollments
+  fetchActiveEnrollments,
+  fetchActiveYearEnrollments
 };

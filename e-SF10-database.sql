@@ -456,7 +456,7 @@ FROM permissions
 WHERE permission_name IN (
     'search_student', 'view_student_info', 'view_ecards', 'upload_documents', 
     'download_documents', 'lock_records', 'register_student', 'delete_documents',
-    'view_grades','view_grades', 'manage_grades', 'view_teacher_assignments', 'view_subjects',
+    'view_grades', 'manage_grades', 'view_teacher_assignments', 'view_subjects',
     'view_sections', 'view_enrollments', 'view_class_schedules', 'view_curriculum','edit_student_info',
     'view_grade_levels', 'view_school_years', 'view_teachers','manage_curriculum','manage_enrollments'
 );

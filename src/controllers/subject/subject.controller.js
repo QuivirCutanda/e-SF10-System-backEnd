@@ -38,7 +38,7 @@ exports.createSubject = async (req, res) => {
     if (codeExists) {
       return res.status(409).json({
         success: false,
-        error: 'Subject code already exists',
+        message: 'Subject code already exists',
         details: `Subject code ${subject_code} is already in use`
       });
     }
